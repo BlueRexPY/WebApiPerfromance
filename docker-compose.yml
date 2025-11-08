@@ -67,26 +67,26 @@ services:
   #   networks:
   #     - webapi-network
 
-  dotnetapi:
-    build: ./DotNetApi
-    ports:
-      - "8001:8000"
-    environment:
-      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
-      ASPNETCORE_ENVIRONMENT: Production
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # dotnetapi:
+  #   build: ./DotNetApi
+  #   ports:
+  #     - "8001:8000"
+  #   environment:
+  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
   # dotnetapiaot:
   #   build: ./DotNetApiAot
@@ -190,25 +190,25 @@ services:
   #   networks:
   #     - webapi-network
 
-  # haskellservant:
-  #   build: ./HaskellServant
-  #   ports:
-  #     - "8006:8000"
-  #   environment:
-  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2.0"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "1.0"
-  #         memory: 512M
-  #   networks:
-  #     - webapi-network
+  haskellservant:
+    build: ./HaskellServant
+    ports:
+      - "8006:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
 
   # elixirphoenix:
   #   build: ./ElixirPhoenix

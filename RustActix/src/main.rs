@@ -37,16 +37,19 @@ async fn get_orders(data: web::Data<AppState>) -> impl Responder {
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };
 
-    let stmt = client
+    let stmt = match client
         .prepare_cached(
             "SELECT id, customer_id, total_cents, status, created_at 
              FROM orders 
              LIMIT $1",
         )
         .await
-        .unwrap();
+    {
+        Ok(stmt) => stmt,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
 
-    let rows = match client.query(&stmt, &[&100i32]).await {
+    let rows = match client.query(&stmt, &[&100i64]).await {
         Ok(rows) => rows,
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };

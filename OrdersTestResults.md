@@ -14,9 +14,12 @@
 | Framework       | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec |
 | --------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ |
 | Bun API         | 8002 | 16,183.56 | 7.43ms      | 41.88ms     | 323,896        | 172.70MB     |
+| Rust Actix      | 8005 | 12,040.43 | 24.94ms     | 264.48ms    | 241,769        | 128.28MB     |
 | .NET AOT        | 8013 | 8,584.76  | 19.03ms     | 89.77ms     | 171,890        | 91.20MB      |
 | .NET API        | 8001 | 7,539.63  | 22.76ms     | 170.07ms    | 151,035        | 80.10MB      |
 | Python Litestar | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
+| Python FastAPI  | 8004 | 3,410.61  | 36.50ms     | 97.78ms     | 68,272         | 37.10MB      |
+| Fastify API     | 8003 | 3,213.03  | 39.37ms     | 784.57ms    | 64,331         | 34.48MB      |
 
 ## Detailed Results
 
@@ -74,6 +77,48 @@ Running 20s test @ http://127.0.0.1:8013/orders
   171890 requests in 20.02s, 1.78GB read
 Requests/sec:   8584.76
 Transfer/sec:     91.20MB
+```
+
+### Python FastAPI (Port 8004)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8004/orders
+Running 20s test @ http://127.0.0.1:8004/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    36.50ms   26.20ms  97.78ms   60.48%
+    Req/Sec     1.72k   162.18     2.35k    78.75%
+  68272 requests in 20.02s, 742.70MB read
+Requests/sec:   3410.61
+Transfer/sec:     37.10MB
+```
+
+### Fastify API (Port 8003)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8003/orders
+Running 20s test @ http://127.0.0.1:8003/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    39.37ms   32.15ms 784.57ms   98.91%
+    Req/Sec     1.62k   145.51     2.26k    91.25%
+  64331 requests in 20.02s, 690.38MB read
+Requests/sec:   3213.03
+Transfer/sec:     34.48MB
+```
+
+### Rust Actix (Port 8005)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8005/orders
+Running 20s test @ http://127.0.0.1:8005/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    24.94ms   29.68ms 264.48ms   77.29%
+    Req/Sec     6.06k     0.90k    9.75k    85.00%
+  241769 requests in 20.08s, 2.52GB read
+Requests/sec:  12040.43
+Transfer/sec:    128.28MB
 ```
 
 ## Notes
