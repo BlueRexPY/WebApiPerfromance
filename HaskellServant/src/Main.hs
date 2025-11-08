@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators #-}
 
@@ -7,9 +8,10 @@ module Main where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson
+import Data.ByteString.Char8 qualified as BS
 import Data.Pool
 import Data.Text (Text)
-import qualified Data.Text as T
+import Data.Text qualified as T
 import Data.Time (UTCTime)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
@@ -21,33 +23,37 @@ import System.Environment (lookupEnv)
 -- Data types
 data HelloResponse = HelloResponse
   { message :: Text
-  } deriving (Generic, Show)
+  }
+  deriving (Generic, Show)
 
 instance ToJSON HelloResponse
 
 data Order = Order
-  { orderId :: Int
-  , customerId :: Int
-  , totalCents :: Int
-  , status :: Text
-  , createdAt :: UTCTime
-  } deriving (Generic, Show)
+  { orderId :: Int,
+    customerId :: Int,
+    totalCents :: Int,
+    status :: Text,
+    createdAt :: UTCTime
+  }
+  deriving (Generic, Show)
 
 instance ToJSON Order where
-  toJSON order = object
-    [ "id" .= orderId order
-    , "customer_id" .= customerId order
-    , "total_cents" .= totalCents order
-    , "status" .= status order
-    , "created_at" .= createdAt order
-    ]
+  toJSON order =
+    object
+      [ "id" .= orderId order,
+        "customer_id" .= customerId order,
+        "total_cents" .= totalCents order,
+        "status" .= status order,
+        "created_at" .= createdAt order
+      ]
 
 instance FromRow Order where
   fromRow = Order <$> field <*> field <*> field <*> field <*> field
 
 -- API definition
-type API = "hello" :> Get '[JSON] HelloResponse
-      :<|> "orders" :> Get '[JSON] [Order]
+type API =
+  "hello" :> Get '[JSON] HelloResponse
+    :<|> "orders" :> Get '[JSON] [Order]
 
 -- Handlers
 server :: Pool Connection -> Server API
@@ -77,7 +83,7 @@ getDatabaseUrl = do
 
 createConnectionPool :: String -> IO (Pool Connection)
 createConnectionPool connStr = do
-  let poolConfig = defaultPoolConfig (connectPostgreSQL $ T.pack connStr) close 30.0 90
+  let poolConfig = defaultPoolConfig (connectPostgreSQL $ BS.pack connStr) close 30.0 90
   newPool poolConfig
 
 -- Main

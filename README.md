@@ -496,15 +496,15 @@ You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all APIs
 
 ```bash
 # Example with wrk
-wrk -t12 -c400 -d30s http://localhost:8000/orders  # Litestar
-wrk -t12 -c400 -d30s http://localhost:8001/orders  # .NET
-wrk -t12 -c400 -d30s http://localhost:8002/orders  # Bun
-wrk -t12 -c400 -d30s http://localhost:8003/orders  # Fastify
-wrk -t12 -c400 -d30s http://localhost:8004/orders  # FastAPI
-wrk -t12 -c400 -d30s http://localhost:8005/orders  # Rust Actix
-wrk -t12 -c400 -d30s http://localhost:8006/orders  # Haskell Servant
-wrk -t12 -c400 -d30s http://localhost:8007/orders  # Elixir Phoenix
-wrk -t12 -c400 -d30s http://localhost:8008/orders  # Go Fiber
-wrk -t12 -c400 -d30s http://localhost:8009/orders  # Java Spring Boot
-wrk -t12 -c400 -d30s http://localhost:8010/orders  # Erlang Cowboy
+wrk -t 2 -c 120 -d 20s http://localhost:8000/orders  # Litestar
+wrk -t 2 -c 120 -d 20s http://localhost:8001/orders  # .NET
+wrk -t 2 -c 120 -d 20s http://localhost:8002/orders  # Bun
+wrk -t 2 -c 120 -d 20s http://localhost:8003/orders  # Fastify
+wrk -t 2 -c 120 -d 20s http://localhost:8004/orders  # FastAPI
+wrk -t 2 -c 120 -d 20s http://localhost:8005/orders  # Rust Actix
+wrk -t 2 -c 120 -d 20s http://localhost:8006/orders  # Haskell Servant
+wrk -t 2 -c 120 -d 20s http://localhost:8007/orders  # Elixir Phoenix
+wrk -t 2 -c 120 -d 20s http://localhost:8008/orders  # Go Fiber
+wrk -t 2 -c 120 -d 20s http://localhost:8009/orders  # Java Spring Boot
+wrk -t 2 -c 120 -d 20s http://localhost:8010/orders  # Erlang Cowboy
 ```

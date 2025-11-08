@@ -1,6 +1,6 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use chrono::NaiveDateTime;
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
 use serde::{Deserialize, Serialize};
 use std::env;
 use tokio_postgres::NoTls;
@@ -41,12 +41,12 @@ async fn get_orders(data: web::Data<AppState>) -> impl Responder {
         .prepare_cached(
             "SELECT id, customer_id, total_cents, status, created_at 
              FROM orders 
-             LIMIT $1 OFFSET $2",
+             LIMIT $1",
         )
         .await
         .unwrap();
 
-    let rows = match client.query(&stmt, &[&100i64, &1000i64]).await {
+    let rows = match client.query(&stmt, &[&100i32]).await {
         Ok(rows) => rows,
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };
@@ -85,6 +85,11 @@ async fn main() -> std::io::Result<()> {
     let pool = cfg
         .create_pool(Some(Runtime::Tokio1), NoTls)
         .expect("Failed to create pool");
+
+    // Warm up the connection pool
+    for _ in 0..10 {
+        let _ = pool.get().await;
+    }
 
     let app_state = web::Data::new(AppState { pool });
 
