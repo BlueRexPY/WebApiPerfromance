@@ -17,9 +17,9 @@
 | .NET API         | 8001 | 76,975.25  | 4.17ms      | 71.67ms     | 1,541,304      | 13.65MB      |
 | Fastify API      | 8003 | 64,871.74  | 2.33ms      | 281.60ms    | 1,298,648      | 12.25MB      |
 | Rust Actix       | 8005 | 48,972.36  | 11.37ms     | 65.59ms     | 981,202        | 6.30MB       |
+| Haskell Servant  | 8006 | 32,973.21  | 19.19ms     | 83.70ms     | 661,412        | 6.01MB       |
 | Python FastAPI   | 8004 | 24,908.39  | 12.11ms     | 87.63ms     | 498,526        | 3.61MB       |
 | Python Litestar  | 8000 | 13,449.94  | 24.93ms     | 94.26ms     | 269,630        | 1.95MB       |
-| Haskell Servant  | 8006 | -          | -           | -           | -              | -            |
 | Elixir Phoenix   | 8007 | -          | -           | -           | -              | -            |
 | Go Fiber         | 8008 | -          | -           | -           | -              | -            |
 | Java Spring Boot | 8009 | -          | -           | -           | -              | -            |
@@ -128,7 +128,15 @@ Transfer/sec:      1.95MB
 ### Haskell Servant (Port 8006)
 
 ```
-<!-- To be tested -->
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8006
+Running 20s test @ http://127.0.0.1:8006
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    19.19ms   25.54ms  83.70ms   79.14%
+    Req/Sec    16.57k     3.59k   32.69k    70.50%
+  661412 requests in 20.06s, 120.48MB read
+Requests/sec:  32973.21
+Transfer/sec:      6.01MB
 ```
 
 ### Elixir Phoenix (Port 8007)

@@ -52,7 +52,7 @@ instance FromRow Order where
 
 -- API definition
 type API =
-  "hello" :> Get '[JSON] HelloResponse
+  "" :> Get '[JSON] HelloResponse
     :<|> "orders" :> Get '[JSON] [Order]
 
 -- Handlers

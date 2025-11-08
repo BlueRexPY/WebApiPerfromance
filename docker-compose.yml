@@ -158,33 +158,12 @@ services:
   #   networks:
   #     - webapi-network
 
-  haskellservant:
-    build: ./HaskellServant
-    ports:
-      - "8006:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
-
-  # elixirphoenix:
-  #   build: ./ElixirPhoenix
+  # haskellservant:
+  #   build: ./HaskellServant
   #   ports:
-  #     - "8007:8000"
+  #     - "8006:8000"
   #   environment:
   #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-  #     MIX_ENV: prod
   #   depends_on:
   #     db:
   #       condition: service_healthy
@@ -198,6 +177,27 @@ services:
   #         memory: 512M
   #   networks:
   #     - webapi-network
+
+  elixirphoenix:
+    build: ./ElixirPhoenix
+    ports:
+      - "8007:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MIX_ENV: prod
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
 
   # gofiber:
   #   build: ./GoFiber
