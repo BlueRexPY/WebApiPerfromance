@@ -190,29 +190,29 @@ services:
   #   networks:
   #     - webapi-network
 
-  haskellservant:
-    build: ./HaskellServant
-    ports:
-      - "8006:8000"
-    environment:
-      PGHOST: db
-      PGPORT: 5432
-      PGUSER: ${POSTGRES_USER:-apiuser}
-      PGPASSWORD: ${POSTGRES_PASSWORD:-apipassword}
-      PGDATABASE: ${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # haskellservant:
+  #   build: ./HaskellServant
+  #   ports:
+  #     - "8006:8000"
+  #   environment:
+  #     PGHOST: db
+  #     PGPORT: 5432
+  #     PGUSER: ${POSTGRES_USER:-apiuser}
+  #     PGPASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+  #     PGDATABASE: ${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
   # elixirphoenix:
   #   build: ./ElixirPhoenix
@@ -255,25 +255,25 @@ services:
   #   networks:
   #     - webapi-network
 
-  # javaspringboot:
-  #   build: ./JavaSpringBoot
-  #   ports:
-  #     - "8009:8000"
-  #   environment:
-  #     DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2.0"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "1.0"
-  #         memory: 512M
-  #   networks:
-  #     - webapi-network
+  javaspringboot:
+    build: ./JavaSpringBoot
+    ports:
+      - "8009:8000"
+    environment:
+      DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
 
   # denoapi:
   #   build: ./NodeDenoApi

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class ApiController {
 
     private final DatabaseClient databaseClient;
+    private static final HelloResponse HELLO_RESPONSE = new HelloResponse();
 
     public ApiController(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
@@ -23,18 +24,13 @@ public class ApiController {
 
     @GetMapping("/")
     public Mono<HelloResponse> hello() {
-        return Mono.just(new HelloResponse());
+        return Mono.just(HELLO_RESPONSE);
     }
 
     @GetMapping("/orders")
     public Flux<Order> getOrders() {
-        String sql = """
-            SELECT id, customer_id, total_cents, status, created_at
-            FROM orders
-            LIMIT 100 OFFSET 1000
-            """;
-
-        return databaseClient.sql(sql)
+        return databaseClient
+            .sql("SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000")
             .map(this::mapRowToOrder)
             .all();
     }

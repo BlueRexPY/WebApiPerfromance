@@ -102,10 +102,10 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Spring Boot 3.2 with WebFlux (reactive)
 - **Database**: PostgreSQL with R2DBC and connection pooling
-- **Connection Pool**: 100 max connections, 20 initial connections
+- **Connection Pool**: 120 max connections, 30 initial connections
 - **Runtime**: Java 21 with ZGC (low-latency garbage collector)
 - **Reactive**: Project Reactor for non-blocking operations
-- **Optimizations**: Netty tuning, reactor scheduler optimization, minimal logging
+- **Optimizations**: Netty tuning (8 IO workers, 500 max connections), reactive buffering, minimal logging
 
 ### ErlangCowboy
 
@@ -609,7 +609,7 @@ docker run -p 8000:8000 --env-file .env django-api
 
 ### Go Fiber API
 
-- Fiber framework with fasthttp
+- Fiber framework
 - Connection pool: 90 max, 10 min connections
 - Goroutines for concurrency
 - pgx/v5 driver with prepared statements

@@ -22,22 +22,16 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8000
 
-# Run with optimized JVM settings for performance
+# Run with optimized JVM settings for performance and 1G container
 ENTRYPOINT ["java", \
     "-server", \
+    "-Xms512m", \
+    "-Xmx896m", \
     "-XX:+UseZGC", \
     "-XX:+ZGenerational", \
     "-XX:+UseStringDeduplication", \
-    "-XX:+UseCompressedOops", \
-    "-XX:+UseCompressedClassPointers", \
-    "-XX:MaxRAMPercentage=75.0", \
-    "-XX:InitialRAMPercentage=50.0", \
-    "-XX:+AlwaysPreTouch", \
-    "-XX:+UseNUMA", \
-    "-Xss256k", \
+    "-XX:MaxMetaspaceSize=128m", \
     "-Dreactor.netty.ioWorkerCount=8", \
     "-Dreactor.netty.pool.maxConnections=500", \
-    "-Dio.netty.allocator.numDirectArenas=8", \
-    "-Dio.netty.allocator.numHeapArenas=8", \
     "-jar", \
     "app.jar"]

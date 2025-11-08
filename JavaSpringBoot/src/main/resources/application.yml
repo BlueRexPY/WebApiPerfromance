@@ -1,18 +1,15 @@
 server:
   port: 8000
-  netty:
-    connection-timeout: 10s
-    idle-timeout: 30s
 
 spring:
   r2dbc:
-    url: ${DATABASE_URL:r2dbc:postgresql://apiuser:apipassword@localhost:5432/ordersdb}
+    url: ${DATABASE_URL:r2dbc:postgresql://apiuser:apipassword@postgres:5432/ordersdb}
     pool:
-      initial-size: 20
-      max-size: 100
-      max-idle-time: 30m
-      max-acquire-time: 3s
-      max-create-connection-time: 3s
+      initial-size: 10
+      max-size: 50
+      max-idle-time: 10m
+      max-acquire-time: 5s
+      max-create-connection-time: 5s
       validation-query: SELECT 1
   main:
     banner-mode: off
@@ -24,3 +21,4 @@ logging:
     root: ERROR
     org.springframework: ERROR
     io.r2dbc: ERROR
+    io.netty: ERROR

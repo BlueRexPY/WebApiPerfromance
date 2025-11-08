@@ -17,14 +17,14 @@
 | Bun API          | 8002 | 141,728.97 | 844.49us    | 5.48ms      | 2,836,940      | 18.25MB      |
 | Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
 | Fastify API      | 8003 | 74,282.46  | 1.87ms      | 213.04ms    | 1,486,596      | 14.03MB      |
-| .NET AOT         | 8013 | 73,548.20  | 3.79ms      | 58.79ms     | 1,472,209      | 13.05MB      |
-| .NET API         | 8001 | 62,185.33  | 4.52ms      | 69.04ms     | 1,245,119      | 11.03MB      |
+| .NET AOT         | 8013 | 69,817.66  | 5.45ms      | 65.75ms     | 1,399,595      | 12.38MB      |
+| .NET API         | 8001 | 66,257.57  | 4.41ms      | 55.56ms     | 1,327,010      | 11.75MB      |
+| Elixir Phoenix   | 8007 | 62,895.33  | 2.22ms      | 40.67ms     | 1,258,567      | 15.24MB      |
 | Rust Actix       | 8005 | 43,239.68  | 12.11ms     | 65.61ms     | 865,679        | 5.57MB       |
-| Go Fiber         | 8008 | 35,110.87  | 17.90ms     | 82.57ms     | 704,375        | 5.02MB       |
+| Go Fiber         | 8008 | 34,460.50  | 18.65ms     | 87.66ms     | 690,126        | 4.93MB       |
+| Java Spring Boot | 8009 | 34,276.09  | 18.86ms     | 96.46ms     | 686,588        | 3.20MB       |
 | Python FastAPI   | 8004 | 26,630.28  | 12.13ms     | 64.18ms     | 533,364        | 3.86MB       |
 | Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
-| Java Spring Boot | 8009 | 1,178.04   | 139.90ms    | 1.94s       | 23,631         | 112.74KB     |
-| Elixir Phoenix   | 8007 | -          | -           | -           | -              | -            |
 
 ## Detailed Results
 
@@ -49,11 +49,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8001
 Running 20s test @ http://127.0.0.1:8001
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     4.52ms    8.92ms  69.04ms   91.16%
-    Req/Sec    31.28k    10.64k   74.27k    68.00%
-  1245119 requests in 20.02s, 220.86MB read
-Requests/sec:  62185.33
-Transfer/sec:     11.03MB
+    Latency     4.41ms    8.31ms  55.56ms   89.91%
+    Req/Sec    33.33k    15.41k   95.22k    88.00%
+  1327010 requests in 20.03s, 235.39MB read
+Requests/sec:  66257.57
+Transfer/sec:     11.75MB
 ```
 
 ### Bun API (Port 8002)
@@ -147,11 +147,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8008
 Running 20s test @ http://127.0.0.1:8008
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    17.90ms   24.28ms  82.57ms   79.43%
-    Req/Sec    17.66k     6.87k   41.72k    64.25%
-  704375 requests in 20.06s, 100.76MB read
-Requests/sec:  35110.87
-Transfer/sec:      5.02MB
+    Latency    18.65ms   25.07ms  87.66ms   79.24%
+    Req/Sec    17.32k     5.51k   44.18k    68.25%
+  690126 requests in 20.03s, 98.72MB read
+Requests/sec:  34460.50
+Transfer/sec:      4.93MB
 ```
 
 ### Java Spring Boot (Port 8009)
@@ -161,32 +161,25 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8009
 Running 20s test @ http://127.0.0.1:8009
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   139.90ms  240.67ms   1.94s    94.05%
-    Req/Sec   700.27    406.50     2.65k    76.92%
-  23631 requests in 20.06s, 2.21MB read
-  Socket errors: connect 0, read 0, write 0, timeout 3
-Requests/sec:   1178.04
-Transfer/sec:    112.74KB
-```
-
-### Erlang Cowboy (Port 8010)
-
-```
-wrk -t 2 -c 120 -d 20s http://127.0.0.1:8010
-Running 20s test @ http://127.0.0.1:8010
-  2 threads and 120 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     1.40ms    0.94ms  43.73ms   93.65%
-    Req/Sec    44.87k     3.27k   52.56k    80.50%
-  1786173 requests in 20.01s, 257.25MB read
-Requests/sec:  89270.28
-Transfer/sec:     12.86MB
+    Latency    18.86ms   25.22ms  96.46ms   79.35%
+    Req/Sec    17.23k     8.00k   32.14k    54.75%
+  686588 requests in 20.03s, 64.17MB read
+Requests/sec:  34276.09
+Transfer/sec:      3.20MB
 ```
 
 ### Elixir Phoenix (Port 8007)
 
 ```
-<!-- To be tested -->
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8007
+Running 20s test @ http://127.0.0.1:8007
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.22ms    1.92ms  40.67ms   91.98%
+    Req/Sec    31.62k     1.37k   34.86k    74.50%
+  1258567 requests in 20.01s, 304.89MB read
+Requests/sec:  62895.33
+Transfer/sec:     15.24MB
 ```
 
 ## Notes
