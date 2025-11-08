@@ -22,9 +22,11 @@
 | Python Litestar  | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
 | Python FastAPI   | 8004 | 3,410.61  | 36.50ms     | 97.78ms     | 68,272         | 37.10MB      |
 | Fastify API      | 8003 | 3,213.03  | 39.37ms     | 784.57ms    | 64,331         | 34.48MB      |
+| Erlang Cowboy    | 8010 | 3,067.72  | 39.03ms     | 95.43ms     | 61,445         | 31.32MB      |
 | Express API      | 8014 | 2,665.05  | 45.47ms     | 325.87ms    | 53,375         | 28.60MB      |
 | Deno API         | 8011 | 1,614.91  | 74.04ms     | 115.41ms    | 32,364         | 17.27MB      |
 | Java Spring Boot | 8009 | 992.71    | 120.47ms    | 248.20ms    | 19,889         | 11.42MB      |
+| Django API       | 8016 | 970.55\*  | 124.66ms    | 386.37ms    | 19,443         | 10.70MB      |
 | Haskell Servant  | 8006 | 925.92    | 136.67ms    | 1.76s       | 18,554         | 10.09MB      |
 | Swift Vapor      | 8012 | 722.94\*  | 222.61ms    | 2.00s       | 14,506         | 7.41MB       |
 | Ruby Rails       | 8015 | 550.01\*  | 219.04ms    | 674.98ms    | 11,018         | 5.35MB       |
@@ -115,6 +117,20 @@ Running 20s test @ http://127.0.0.1:8003/orders
   64331 requests in 20.02s, 690.38MB read
 Requests/sec:   3213.03
 Transfer/sec:     34.48MB
+```
+
+### Erlang Cowboy (Port 8010)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8010/orders
+Running 20s test @ http://127.0.0.1:8010/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    39.03ms    2.79ms  95.43ms   80.93%
+    Req/Sec     1.54k    80.81     1.70k    70.50%
+  61445 requests in 20.03s, 627.36MB read
+Requests/sec:   3067.72
+Transfer/sec:     31.32MB
 ```
 
 ### Express API (Port 8014)
@@ -247,6 +263,23 @@ Transfer/sec:      5.35MB
 ```
 
 **Note**: Ruby Rails experienced 1,126 non-2xx/3xx error responses during the orders endpoint test.
+
+### Django API (Port 8016)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8016/orders
+Running 20s test @ http://127.0.0.1:8016/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   124.66ms   48.71ms 386.37ms   78.38%
+    Req/Sec   489.51    185.55     1.20k    80.65%
+  19443 requests in 20.03s, 214.29MB read
+  Socket errors: connect 0, read 75, write 0, timeout 0
+Requests/sec:    970.55
+Transfer/sec:     10.70MB
+```
+
+**Note**: Django API experienced 75 socket read errors during the orders endpoint test.
 
 ## Notes
 

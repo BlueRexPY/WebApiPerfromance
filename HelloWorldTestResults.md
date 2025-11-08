@@ -16,7 +16,7 @@
 | Haskell Servant  | 8006 | 188,678.37 | 640.00us    | 6.18ms      | 3,778,052      | 34.37MB      |
 | Bun API          | 8002 | 141,728.97 | 844.49us    | 5.48ms      | 2,836,940      | 18.25MB      |
 | Deno API         | 8011 | 124,983.26 | 0.96ms      | 5.07ms      | 2,501,555      | 18.83MB      |
-| Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
+| Erlang Cowboy    | 8010 | 100,448.93 | 1.23ms      | 10.38ms     | 2,011,002      | 14.47MB      |
 | Fastify API      | 8003 | 74,282.46  | 1.87ms      | 213.04ms    | 1,486,596      | 14.03MB      |
 | .NET AOT         | 8013 | 69,817.66  | 5.45ms      | 65.75ms     | 1,399,595      | 12.38MB      |
 | .NET API         | 8001 | 66,257.57  | 4.41ms      | 55.56ms     | 1,327,010      | 11.75MB      |
@@ -29,6 +29,7 @@
 | Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
 | Swift Vapor      | 8012 | 4,689.72\* | 3.76ms      | 56.08ms     | 94,253         | 865.58KB     |
 | Ruby Rails       | 8015 | 2,696.53   | 44.86ms     | 157.11ms    | 53,991         | 755.77KB     |
+| Django API       | 8016 | 1,904.07\* | 65.49ms     | 514.20ms    | 38,131         | 561.31KB     |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test
 
@@ -232,8 +233,6 @@ Requests/sec:   4689.72
 Transfer/sec:    865.58KB
 ```
 
-**Note**: Swift Vapor experienced 480 timeouts and all responses were non-2xx/3xx errors during the hello world test.
-
 ### Ruby Rails (Port 8015)
 
 ```
@@ -247,6 +246,23 @@ Running 20s test @ http://127.0.0.1:8015/
 Requests/sec:   2696.53
 Transfer/sec:    755.77KB
 ```
+
+### Django API (Port 8016)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8016/
+Running 20s test @ http://127.0.0.1:8016/
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    65.49ms   42.99ms 514.20ms   79.07%
+    Req/Sec     0.97k   410.63     2.59k    79.38%
+  38131 requests in 20.03s, 10.98MB read
+  Socket errors: connect 0, read 796, write 0, timeout 0
+Requests/sec:   1904.07
+Transfer/sec:    561.31KB
+```
+
+**Note**: Django API experienced 796 socket read errors during the hello world test.
 
 ## Notes
 
