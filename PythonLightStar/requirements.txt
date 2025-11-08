@@ -1,5 +1,4 @@
 litestar[standard]
-litestar-psycopg
 psycopg[binary,pool]
 granian[uvloop]
 uvloop

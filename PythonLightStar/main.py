@@ -5,9 +5,9 @@ from typing import Sequence
 
 from dotenv import load_dotenv
 from litestar import Litestar, get
-from litestar_psycopg import AsyncConnectionPoolConfig, PsycopgConfig, PsycopgPlugin
 from psycopg import AsyncConnection, sql
 from psycopg.rows import class_row
+from psycopg_pool import AsyncConnectionPool
 
 load_dotenv()
 
@@ -19,6 +19,10 @@ def get_database_connection_string() -> str:
         raise ValueError("DATABASE_URL environment variable is not set")
 
     return url
+
+
+# Global connection pool
+pool: AsyncConnectionPool | None = None
 
 
 @dataclass
@@ -44,15 +48,6 @@ ORDERS_SQL = sql.SQL(
     """
 )
 
-psycopg = PsycopgPlugin(
-    config=PsycopgConfig(
-        pool_config=AsyncConnectionPoolConfig(
-            max_size=90,
-            conninfo=get_database_connection_string(),
-        )
-    )
-)
-
 
 @get("/")
 async def hello() -> HelloResponse:
@@ -60,17 +55,40 @@ async def hello() -> HelloResponse:
 
 
 @get("/orders")
-async def get_orders(
-    db_connection: AsyncConnection,
-) -> Sequence[Order]:
+async def get_orders() -> Sequence[Order]:
+    if pool is None:
+        raise RuntimeError("Database pool not initialized")
 
-    async with db_connection.cursor(row_factory=class_row(Order)) as cursor:
-        await cursor.execute(ORDERS_SQL, {"limit": 100, "offset": 1000}, prepare=True)
+    async with pool.connection() as conn:
+        async with conn.cursor(row_factory=class_row(Order)) as cursor:
+            await cursor.execute(
+                ORDERS_SQL, {"limit": 100, "offset": 1000}, prepare=True
+            )
+            return await cursor.fetchall()
 
-        return await cursor.fetchall()
+
+async def on_startup() -> None:
+    global pool
+    # Per-worker pool: 90 total / 14 workers ≈ 6-7 connections per worker
+    # But we'll use a smaller pool per worker and let workers share
+    pool = AsyncConnectionPool(
+        conninfo=get_database_connection_string(),
+        min_size=5,
+        max_size=10,  # 10 connections per worker max
+        timeout=30,
+        max_waiting=0,  # Don't queue, fail fast
+    )
+    await pool.wait()
+
+
+async def on_shutdown() -> None:
+    global pool
+    if pool is not None:
+        await pool.close()
 
 
 app = Litestar(
     route_handlers=[hello, get_orders],
-    plugins=[psycopg],
+    on_startup=[on_startup],
+    on_shutdown=[on_shutdown],
 )

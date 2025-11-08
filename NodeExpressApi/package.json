@@ -1,0 +1,12 @@
+{
+    "name": "node-express-api",
+    "version": "0.1.0",
+    "type": "module",
+    "dependencies": {
+        "express": "4.21.2",
+        "postgres": "3.4.4"
+    },
+    "scripts": {
+        "start": "node src/index.js"
+    }
+}

@@ -42,7 +42,7 @@ services:
   #       condition: service_healthy
   #   volumes:
   #     - ./PythonLightStar:/app
-  #   command: granian --interface asgi --host 0.0.0.0 --port 8000 --workers 14 --no-access-log --loop uvloop main:app
+  #   command: granian --interface asgi --host 0.0.0.0 --port 8000 --workers 8 --no-access-log --loop uvloop main:app
   #   deploy:
   #     resources:
   #       limits:
@@ -284,6 +284,71 @@ services:
   #     - "8012:8000"
   #   environment:
   #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
+  # expressapi:
+  #   build: ./NodeExpressApi
+  #   ports:
+  #     - "8014:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     NODE_ENV: production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
+  # rubyrails:
+  #   build: ./RubyRails
+  #   ports:
+  #     - "8015:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     RAILS_ENV: production
+  #     WEB_CONCURRENCY: 4
+  #     RAILS_MAX_THREADS: 90
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
+  # djangoapi:
+  #   build: ./DjangoApi
+  #   ports:
+  #     - "8016:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     DJANGO_SETTINGS_MODULE: djangoapi.settings
   #   depends_on:
   #     db:
   #       condition: service_healthy

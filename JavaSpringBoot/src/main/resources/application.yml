@@ -1,16 +1,26 @@
 server:
   port: 8000
+  netty:
+    connection-timeout: 10s
+    idle-timeout: 30s
 
 spring:
   r2dbc:
     url: ${DATABASE_URL:r2dbc:postgresql://apiuser:apipassword@localhost:5432/ordersdb}
     pool:
-      initial-size: 10
-      max-size: 90
+      initial-size: 20
+      max-size: 100
       max-idle-time: 30m
       max-acquire-time: 3s
+      max-create-connection-time: 3s
+      validation-query: SELECT 1
+  main:
+    banner-mode: off
+  jackson:
+    default-property-inclusion: non_null
 
 logging:
   level:
-    root: WARN
-    org.springframework: WARN
+    root: ERROR
+    org.springframework: ERROR
+    io.r2dbc: ERROR

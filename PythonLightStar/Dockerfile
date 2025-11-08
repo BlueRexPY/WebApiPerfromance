@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["granian", "--interface", "asgi", "--host", "0.0.0.0", "--port", "8000", "--workers", "14", "--no-access-log", "--loop", "uvloop", "main:app"]
+# Reduced workers from 14 to 8 for better connection pool distribution
+CMD ["granian", "--interface", "asgi", "--host", "0.0.0.0", "--port", "8000", "--workers", "8", "--no-access-log", "--loop", "uvloop", "main:app"]

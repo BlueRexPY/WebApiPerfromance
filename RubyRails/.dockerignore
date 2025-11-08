@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+tmp/
+log/
+.bundle/
+vendor/bundle/
+node_modules/
+.env
+.env.*
+*.log

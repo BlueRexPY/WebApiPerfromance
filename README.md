@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), and Erlang (Cowboy) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), and Erlang (Cowboy) with PostgreSQL database integration.
 
 ## Projects
 
@@ -10,6 +10,7 @@ This repository contains performance-focused web API implementations in Python (
 - **Database**: PostgreSQL with Psycopg3 and connection pooling
 - **Serialization**: msgspec
 - **Event Loop**: uvloop
+- **Workers**: 8 (optimized for connection pool distribution)
 
 ### PythonFastApi
 
@@ -45,6 +46,14 @@ This repository contains performance-focused web API implementations in Python (
 - **Framework**: Fastify (fastest Node.js web framework)
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
 - **Connection Pool**: 90 connections with prepared statements
+
+### NodeExpressApi
+
+- **Runtime**: Node.js 22
+- **Framework**: Express (most popular Node.js web framework)
+- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Connection Pool**: 90 connections with prepared statements
+- **Optimizations**: Disabled unnecessary middleware (x-powered-by, etag)
 
 ### NodeDenoApi
 
@@ -90,9 +99,10 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Spring Boot 3.2 with WebFlux (reactive)
 - **Database**: PostgreSQL with R2DBC and connection pooling
-- **Connection Pool**: 90 max connections, 10 initial connections
+- **Connection Pool**: 100 max connections, 20 initial connections
 - **Runtime**: Java 21 with ZGC (low-latency garbage collector)
 - **Reactive**: Project Reactor for non-blocking operations
+- **Optimizations**: Netty tuning, reactor scheduler optimization, minimal logging
 
 ### ErlangCowboy
 
@@ -109,6 +119,26 @@ This repository contains performance-focused web API implementations in Python (
 - **Connection Pool**: 90 connections per event loop
 - **Runtime**: Swift 5.9 with async/await
 - **Compilation**: Release build with static Swift stdlib
+
+### RubyRails
+
+- **Framework**: Ruby on Rails 7.1 (API-only mode)
+- **Database**: PostgreSQL with pg gem and connection pooling
+- **Connection Pool**: 90 connections with prepared statements
+- **Server**: Puma with 4 workers
+- **Runtime**: Ruby 3.3.0
+- **JSON**: Oj for fast JSON serialization
+- **Optimizations**: Bootsnap precompilation, minimal logging
+
+### DjangoApi
+
+- **Framework**: Django 5.0 with Django REST Framework
+- **Database**: PostgreSQL with psycopg3 and persistent connections
+- **Connection Pool**: Persistent connections with health checks
+- **Server**: Gunicorn with 4 workers and 4 threads per worker
+- **Runtime**: Python 3.11
+- **JSON**: orjson for fast JSON serialization
+- **Optimizations**: Disabled migrations, minimal middleware, direct SQL queries
 
 ## Endpoints
 
@@ -131,6 +161,7 @@ All APIs implement the same endpoints:
 - Go 1.23+ (for local Go development)
 - Java 21+ and Maven 3.9+ (for local Java development)
 - Swift 5.9+ (for local Swift development)
+- Ruby 3.3.0+ (for local Ruby development)
 - Erlang/OTP 26+ and rebar3 (for local Erlang development)
 - PostgreSQL 15+
 
@@ -172,6 +203,9 @@ The services will be available at:
 - **Deno API**: http://localhost:8011
 - **Swift Vapor API**: http://localhost:8012
 - **.NET AOT API**: http://localhost:8013
+- **Express API**: http://localhost:8014
+- **Ruby Rails API**: http://localhost:8015
+- **Django API**: http://localhost:8016
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -207,7 +241,7 @@ DATABASE_URL=postgresql://apiuser:apipassword@localhost:5432/ordersdb
 ```bash
 cd PythonLightStar
 pip install -r requirements.txt
-granian --interface asgi --host 0.0.0.0 --port 8000 --workers 14 --no-access-log --loop uvloop main:app
+granian --interface asgi --host 0.0.0.0 --port 8000 --workers 8 --no-access-log --loop uvloop main:app
 ```
 
 ### Python FastAPI
@@ -246,6 +280,14 @@ bun run src/index.ts
 
 ```bash
 cd NodeFastifyApi
+npm install
+npm start
+```
+
+### Express API
+
+```bash
+cd NodeExpressApi
 npm install
 npm start
 ```
@@ -313,6 +355,22 @@ swift build -c release
 .build/release/App serve --env production --hostname 0.0.0.0 --port 8000
 ```
 
+### Ruby Rails API
+
+```bash
+cd RubyRails
+bundle install
+bundle exec rails server -b 0.0.0.0 -p 8000 -e production
+```
+
+### Django API
+
+```bash
+cd DjangoApi
+pip install -r requirements.txt
+gunicorn --bind 0.0.0.0:8000 --workers 4 --worker-class sync --threads 4 djangoapi.wsgi:application
+```
+
 ## Running with Docker
 
 ### Python Litestar
@@ -361,6 +419,14 @@ docker run -p 8000:8000 --env-file .env bun-api
 cd NodeFastifyApi
 docker build -t fastify-api .
 docker run -p 8000:8000 --env-file .env fastify-api
+```
+
+### Express API
+
+```bash
+cd NodeExpressApi
+docker build -t express-api .
+docker run -p 8000:8000 --env-file .env express-api
 ```
 
 ### Deno API
@@ -427,14 +493,31 @@ docker build -t swift-vapor-api .
 docker run -p 8000:8000 --env-file .env swift-vapor-api
 ```
 
+### Ruby Rails API
+
+```bash
+cd RubyRails
+docker build -t ruby-rails-api .
+docker run -p 8000:8000 --env-file .env ruby-rails-api
+```
+
+### Django API
+
+```bash
+cd DjangoApi
+docker build -t django-api .
+docker run -p 8000:8000 --env-file .env django-api
+```
+
 ## Performance Tuning
 
 ### Python Litestar
 
-- Connection pool size: 90
-- Workers: 14
+- Connection pool size: 10 per worker (80 total with 8 workers)
+- Workers: 8 (reduced from 14 for better pool distribution)
 - uvloop for async performance
 - Prepared statements enabled
+- Per-worker connection pool for better isolation
 
 ### Python FastAPI
 
@@ -472,6 +555,14 @@ docker run -p 8000:8000 --env-file .env swift-vapor-api
 - Connection pool size: 90
 - Prepared statements enabled
 - Logging disabled for max performance
+- Node.js 22 with latest V8 optimizations
+
+### Express API
+
+- Express (most popular Node.js framework)
+- Connection pool size: 90
+- Prepared statements enabled
+- Middleware optimizations (disabled x-powered-by, etag)
 - Node.js 22 with latest V8 optimizations
 
 ### Node Deno API
@@ -519,10 +610,13 @@ docker run -p 8000:8000 --env-file .env swift-vapor-api
 ### Java Spring Boot API
 
 - Spring Boot WebFlux (reactive/non-blocking)
-- R2DBC connection pool: 90 max, 10 initial connections
+- R2DBC connection pool: 100 max, 20 initial connections
 - Project Reactor for reactive streams
-- ZGC for low-latency garbage collection
+- ZGC with generational mode for low-latency GC
 - Java 21 with virtual threads support
+- Netty optimizations (8 IO workers, 500 max connections)
+- Minimal logging for maximum performance
+- Record classes for zero-copy data transfer
 
 ### Erlang Cowboy API
 
@@ -540,6 +634,27 @@ docker run -p 8000:8000 --env-file .env swift-vapor-api
 - Release build with static Swift stdlib
 - NIO event loop for high performance
 - Compiled to native code with LLVM optimizations
+
+### Ruby Rails API
+
+- Rails 7.1 API-only mode for minimal overhead
+- Puma web server with 4 workers
+- Connection pool: 90 connections with prepared statements
+- Oj for high-performance JSON serialization
+- Bootsnap for faster boot times
+- Direct SQL queries (bypassing ActiveRecord for reads)
+- Minimal logging in production
+
+### Django API
+
+- Django 5.0 with Django REST Framework
+- Gunicorn with 4 workers and 4 threads per worker (16 concurrent requests)
+- Persistent database connections with health checks
+- orjson for high-performance JSON serialization
+- Disabled migrations and unnecessary middleware
+- Direct SQL queries with raw cursors
+- Minimal logging (NullHandler)
+- Connection reuse with CONN_MAX_AGE
 
 ## Testing
 
@@ -561,6 +676,10 @@ curl http://localhost:8002/orders
 # Fastify API
 curl http://localhost:8003/
 curl http://localhost:8003/orders
+
+# Express API
+curl http://localhost:8014/
+curl http://localhost:8014/orders
 
 # Python FastAPI
 curl http://localhost:8004/
@@ -601,6 +720,14 @@ curl http://localhost:8012/orders
 # .NET AOT API
 curl http://localhost:8013/
 curl http://localhost:8013/orders
+
+# Ruby Rails API
+curl http://localhost:8015/
+curl http://localhost:8015/orders
+
+# Django API
+curl http://localhost:8016/
+curl http://localhost:8016/orders
 ```
 
 ## Performance Testing
@@ -623,4 +750,7 @@ wrk -t 2 -c 120 -d 20s http://localhost:8010/orders  # Erlang Cowboy
 wrk -t 2 -c 120 -d 20s http://localhost:8011/orders  # Deno
 wrk -t 2 -c 120 -d 20s http://localhost:8012/orders  # Swift Vapor
 wrk -t 2 -c 120 -d 20s http://localhost:8013/orders  # .NET AOT
+wrk -t 2 -c 120 -d 20s http://localhost:8014/orders  # Express
+wrk -t 2 -c 120 -d 20s http://localhost:8015/orders  # Ruby Rails
+wrk -t 2 -c 120 -d 20s http://localhost:8016/orders  # Django
 ```
