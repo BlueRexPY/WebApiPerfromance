@@ -1,0 +1,29 @@
+name: haskell-servant-api
+version: 0.1.0.0
+synopsis: Performance focused Servant API with PostgreSQL
+category: Web
+author: Performance Team
+maintainer: team@example.com
+
+dependencies:
+  - base >= 4.7 && < 5
+  - aeson
+  - servant
+  - servant-server
+  - warp
+  - text
+  - bytestring
+  - postgresql-simple
+  - resource-pool
+  - time
+  - http-types
+
+executables:
+  haskell-servant-api:
+    main: Main.hs
+    source-dirs: src
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -O2

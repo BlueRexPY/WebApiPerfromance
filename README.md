@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), .NET (ASP.NET Core), Node.js (Bun), and Node.js (Fastify) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), and Erlang (Cowboy) with PostgreSQL database integration.
 
 ## Projects
 
@@ -9,6 +9,13 @@ This repository contains performance-focused web API implementations in Python (
 - **Framework**: Litestar with Granian ASGI server
 - **Database**: PostgreSQL with Psycopg3 and connection pooling
 - **Serialization**: msgspec
+- **Event Loop**: uvloop
+
+### PythonFastApi
+
+- **Framework**: FastAPI with Uvicorn ASGI server
+- **Database**: PostgreSQL with Psycopg3 and connection pooling
+- **Connection Pool**: 90 connections with prepared statements
 - **Event Loop**: uvloop
 
 ### DotNetApi
@@ -31,6 +38,54 @@ This repository contains performance-focused web API implementations in Python (
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
 - **Connection Pool**: 90 connections with prepared statements
 
+### RustActix
+
+- **Framework**: Actix-web 4.9 (blazing fast Rust web framework)
+- **Database**: PostgreSQL with tokio-postgres and deadpool connection pooling
+- **Connection Pool**: 90 connections with prepared statements
+- **Workers**: 14
+- **Compilation**: Release build with LTO and optimizations
+
+### HaskellServant
+
+- **Framework**: Servant with Warp web server
+- **Database**: PostgreSQL with postgresql-simple and resource-pool
+- **Connection Pool**: 90 connections
+- **Runtime**: GHC with threaded runtime (-N14)
+- **Compilation**: Optimized build (-O2)
+
+### ElixirPhoenix
+
+- **Framework**: Phoenix with Cowboy web server
+- **Database**: PostgreSQL with Ecto and Postgrex
+- **Connection Pool**: 90 connections
+- **Concurrency**: BEAM VM with lightweight processes
+- **Runtime**: Erlang/OTP for fault tolerance and scalability
+
+### GoFiber
+
+- **Framework**: Fiber (Express-inspired Go web framework)
+- **Database**: PostgreSQL with pgx/v5 driver and connection pooling
+- **Connection Pool**: 90 max connections, 10 min connections
+- **Runtime**: Go 1.23 with goroutines
+- **Compilation**: Static binary with size optimization
+
+### JavaSpringBoot
+
+- **Framework**: Spring Boot 3.2 with WebFlux (reactive)
+- **Database**: PostgreSQL with R2DBC and connection pooling
+- **Connection Pool**: 90 max connections, 10 initial connections
+- **Runtime**: Java 21 with ZGC (low-latency garbage collector)
+- **Reactive**: Project Reactor for non-blocking operations
+
+### ErlangCowboy
+
+- **Framework**: Cowboy 2.12 (high-performance HTTP server)
+- **Database**: PostgreSQL with epgsql driver
+- **Connection Pool**: Custom pool with 90 connections
+- **Concurrency**: BEAM VM with lightweight processes
+- **Runtime**: Erlang/OTP 26 for fault tolerance and scalability
+
 ## Endpoints
 
 All APIs implement the same endpoints:
@@ -45,6 +100,12 @@ All APIs implement the same endpoints:
 - .NET 9.0 SDK (for local .NET development)
 - Bun 1.0+ (for local Node/Bun development)
 - Node.js 22+ (for local Node/Fastify development)
+- Rust 1.83+ (for local Rust development)
+- Stack/GHC 9.6+ (for local Haskell development)
+- Elixir 1.17+ (for local Elixir development)
+- Go 1.23+ (for local Go development)
+- Java 21+ and Maven 3.9+ (for local Java development)
+- Erlang/OTP 26+ and rebar3 (for local Erlang development)
 - PostgreSQL 15+
 
 ## Database Setup
@@ -63,7 +124,7 @@ CREATE TABLE orders (
 
 ## Quick Start with Docker Compose
 
-Run all services (database + all four APIs) with a single command:
+Run all services (database + all APIs) with a single command:
 
 ```bash
 docker-compose up --build
@@ -75,6 +136,13 @@ The services will be available at:
 - **.NET API**: http://localhost:8001
 - **Bun API**: http://localhost:8002
 - **Fastify API**: http://localhost:8003
+- **Python FastAPI**: http://localhost:8004
+- **Rust Actix API**: http://localhost:8005
+- **Haskell Servant API**: http://localhost:8006
+- **Elixir Phoenix API**: http://localhost:8007
+- **Go Fiber API**: http://localhost:8008
+- **Java Spring Boot API**: http://localhost:8009
+- **Erlang Cowboy API**: http://localhost:8010
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -113,6 +181,14 @@ pip install -r requirements.txt
 granian --interface asgi --host 0.0.0.0 --port 8000 --workers 14 --no-access-log --loop uvloop main:app
 ```
 
+### Python FastAPI
+
+```bash
+cd PythonFastApi
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4 --loop uvloop --no-access-log
+```
+
 ### .NET API
 
 ```bash
@@ -137,6 +213,54 @@ npm install
 npm start
 ```
 
+### Rust Actix API
+
+```bash
+cd RustActix
+cargo build --release
+./target/release/rust-actix-api
+```
+
+### Haskell Servant API
+
+```bash
+cd HaskellServant
+stack build
+stack exec haskell-servant-api
+```
+
+### Elixir Phoenix API
+
+```bash
+cd ElixirPhoenix
+mix deps.get
+mix run --no-halt
+```
+
+### Go Fiber API
+
+```bash
+cd GoFiber
+go mod download
+go run main.go
+```
+
+### Java Spring Boot API
+
+```bash
+cd JavaSpringBoot
+mvn clean install
+mvn spring-boot:run
+```
+
+### Erlang Cowboy API
+
+```bash
+cd ErlangCowboy
+rebar3 compile
+rebar3 shell
+```
+
 ## Running with Docker
 
 ### Python Litestar
@@ -145,6 +269,14 @@ npm start
 cd PythonLightStar
 docker build -t python-litestar-api .
 docker run -p 8000:8000 --env-file .env python-litestar-api
+```
+
+### Python FastAPI
+
+```bash
+cd PythonFastApi
+docker build -t python-fastapi .
+docker run -p 8000:8000 --env-file .env python-fastapi
 ```
 
 ### .NET API
@@ -171,12 +303,67 @@ docker build -t fastify-api .
 docker run -p 8000:8000 --env-file .env fastify-api
 ```
 
+### Rust Actix API
+
+```bash
+cd RustActix
+docker build -t rust-actix-api .
+docker run -p 8000:8000 --env-file .env rust-actix-api
+```
+
+### Haskell Servant API
+
+```bash
+cd HaskellServant
+docker build -t haskell-servant-api .
+docker run -p 8000:8000 --env-file .env haskell-servant-api
+```
+
+### Elixir Phoenix API
+
+```bash
+cd ElixirPhoenix
+docker build -t elixir-phoenix-api .
+docker run -p 8000:8000 --env-file .env elixir-phoenix-api
+```
+
+### Go Fiber API
+
+```bash
+cd GoFiber
+docker build -t go-fiber-api .
+docker run -p 8000:8000 --env-file .env go-fiber-api
+```
+
+### Java Spring Boot API
+
+```bash
+cd JavaSpringBoot
+docker build -t java-springboot-api .
+docker run -p 8000:8000 --env-file .env java-springboot-api
+```
+
+### Erlang Cowboy API
+
+```bash
+cd ErlangCowboy
+docker build -t erlang-cowboy-api .
+docker run -p 8000:8000 --env-file .env erlang-cowboy-api
+```
+
 ## Performance Tuning
 
 ### Python Litestar
 
 - Connection pool size: 90
 - Workers: 14
+- uvloop for async performance
+- Prepared statements enabled
+
+### Python FastAPI
+
+- Connection pool size: 90
+- Workers: 4 (uvicorn)
 - uvloop for async performance
 - Prepared statements enabled
 
@@ -203,6 +390,56 @@ docker run -p 8000:8000 --env-file .env fastify-api
 - Logging disabled for max performance
 - Node.js 22 with latest V8 optimizations
 
+### Rust Actix API
+
+- Actix-web with tokio async runtime
+- Connection pool size: 90
+- Workers: 14
+- Prepared statements with statement caching
+- Release build with LTO and codegen optimizations
+- Zero-cost abstractions and memory safety
+
+### Haskell Servant API
+
+- Warp web server (high-performance HTTP)
+- Connection pool size: 90
+- Threaded runtime with 14 capabilities (-N14)
+- GHC optimizations (-O2)
+- Lazy evaluation and type safety
+- postgresql-simple with resource pooling
+
+### Elixir Phoenix API
+
+- Phoenix framework with Cowboy
+- Connection pool size: 90
+- BEAM VM concurrency model
+- Lightweight processes for handling requests
+- Production release build
+
+### Go Fiber API
+
+- Fiber framework with fasthttp
+- Connection pool: 90 max, 10 min connections
+- Goroutines for concurrency
+- pgx/v5 driver with prepared statements
+- Static binary with optimizations
+
+### Java Spring Boot API
+
+- Spring Boot WebFlux (reactive/non-blocking)
+- R2DBC connection pool: 90 max, 10 initial connections
+- Project Reactor for reactive streams
+- ZGC for low-latency garbage collection
+- Java 21 with virtual threads support
+
+### Erlang Cowboy API
+
+- Cowboy HTTP server (battle-tested performance)
+- Connection pool: 90 connections
+- BEAM VM lightweight processes
+- 100 acceptors for concurrent connections
+- OTP supervision tree for fault tolerance
+
 ## Testing
 
 Test the endpoints:
@@ -223,16 +460,51 @@ curl http://localhost:8002/orders
 # Fastify API
 curl http://localhost:8003/
 curl http://localhost:8003/orders
+
+# Python FastAPI
+curl http://localhost:8004/
+curl http://localhost:8004/orders
+
+# Rust Actix API
+curl http://localhost:8005/
+curl http://localhost:8005/orders
+
+# Haskell Servant API
+curl http://localhost:8006/hello
+curl http://localhost:8006/orders
+
+# Elixir Phoenix API
+curl http://localhost:8007/
+curl http://localhost:8007/orders
+
+# Go Fiber API
+curl http://localhost:8008/
+curl http://localhost:8008/orders
+
+# Java Spring Boot API
+curl http://localhost:8009/
+curl http://localhost:8009/orders
+
+# Erlang Cowboy API
+curl http://localhost:8010/
+curl http://localhost:8010/orders
 ```
 
 ## Performance Testing
 
-You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all four APIs:
+You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all APIs:
 
 ```bash
 # Example with wrk
-wrk -t12 -c400 -d30s http://localhost:8000/orders  # Python
+wrk -t12 -c400 -d30s http://localhost:8000/orders  # Litestar
 wrk -t12 -c400 -d30s http://localhost:8001/orders  # .NET
 wrk -t12 -c400 -d30s http://localhost:8002/orders  # Bun
 wrk -t12 -c400 -d30s http://localhost:8003/orders  # Fastify
+wrk -t12 -c400 -d30s http://localhost:8004/orders  # FastAPI
+wrk -t12 -c400 -d30s http://localhost:8005/orders  # Rust Actix
+wrk -t12 -c400 -d30s http://localhost:8006/orders  # Haskell Servant
+wrk -t12 -c400 -d30s http://localhost:8007/orders  # Elixir Phoenix
+wrk -t12 -c400 -d30s http://localhost:8008/orders  # Go Fiber
+wrk -t12 -c400 -d30s http://localhost:8009/orders  # Java Spring Boot
+wrk -t12 -c400 -d30s http://localhost:8010/orders  # Erlang Cowboy
 ```

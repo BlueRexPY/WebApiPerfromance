@@ -29,3 +29,35 @@ Thumbs.db
 # .env
 
 node_modules/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+vendor/
+
+# Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+.idea/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Erlang
+_build/
+.rebar3/
+rebar.lock
+*.beam
+*.dump
+erl_crash.dump
+.erlang.cookie

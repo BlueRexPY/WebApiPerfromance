@@ -1,0 +1,16 @@
+server:
+  port: 8000
+
+spring:
+  r2dbc:
+    url: ${DATABASE_URL:r2dbc:postgresql://apiuser:apipassword@localhost:5432/ordersdb}
+    pool:
+      initial-size: 10
+      max-size: 90
+      max-idle-time: 30m
+      max-acquire-time: 3s
+
+logging:
+  level:
+    root: WARN
+    org.springframework: WARN
