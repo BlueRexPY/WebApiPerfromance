@@ -1,9 +1,11 @@
-FROM elixir:1.17-alpine AS builder
+FROM elixir:1.17 AS builder
 
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache build-base git
+RUN apt-get update && \
+    apt-get install -y build-essential git && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install hex and rebar
 RUN mix local.hex --force && \
@@ -13,7 +15,8 @@ RUN mix local.hex --force && \
 ENV MIX_ENV=prod
 
 # Copy mix files
-COPY mix.exs mix.lock ./
+COPY mix.exs ./
+COPY mix.lock* ./
 RUN mix deps.get --only prod
 RUN mix deps.compile
 
@@ -25,10 +28,12 @@ COPY lib ./lib
 RUN mix compile
 RUN mix release
 
-# Runtime stage
-FROM alpine:3.19
+# Runtime stage - use slim elixir image
+FROM elixir:1.17-slim
 
-RUN apk add --no-cache libstdc++ openssl ncurses-libs
+RUN apt-get update && \
+    apt-get install -y libssl3 libncurses6 ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
