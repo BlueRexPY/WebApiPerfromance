@@ -7,12 +7,13 @@ RUN swift package resolve
 
 COPY . .
 
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release
 
-FROM ubuntu:22.04
+FROM swift:5.9-jammy-slim
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
+    libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -21,5 +22,4 @@ COPY --from=build /build/.build/release/App /app/App
 
 EXPOSE 8000
 
-ENTRYPOINT ["/app/App"]
-CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8000"]
+CMD ["/app/App"]

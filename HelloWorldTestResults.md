@@ -15,6 +15,7 @@
 | ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ |
 | Haskell Servant  | 8006 | 188,678.37 | 640.00us    | 6.18ms      | 3,778,052      | 34.37MB      |
 | Bun API          | 8002 | 141,728.97 | 844.49us    | 5.48ms      | 2,836,940      | 18.25MB      |
+| Deno API         | 8011 | 124,983.26 | 0.96ms      | 5.07ms      | 2,501,555      | 18.83MB      |
 | Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
 | Fastify API      | 8003 | 74,282.46  | 1.87ms      | 213.04ms    | 1,486,596      | 14.03MB      |
 | .NET AOT         | 8013 | 69,817.66  | 5.45ms      | 65.75ms     | 1,399,595      | 12.38MB      |
@@ -25,6 +26,7 @@
 | Java Spring Boot | 8009 | 34,276.09  | 18.86ms     | 96.46ms     | 686,588        | 3.20MB       |
 | Python FastAPI   | 8004 | 26,630.28  | 12.13ms     | 64.18ms     | 533,364        | 3.86MB       |
 | Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
+| Swift Vapor      | 8012 | 4,689.72\* | 3.76ms      | 56.08ms     | 94,253         | 865.58KB     |
 
 ## Detailed Results
 
@@ -181,6 +183,38 @@ Running 20s test @ http://127.0.0.1:8007
 Requests/sec:  62895.33
 Transfer/sec:     15.24MB
 ```
+
+### Deno API (Port 8011)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8011
+Running 20s test @ http://127.0.0.1:8011
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     0.96ms  210.26us   5.07ms   92.12%
+    Req/Sec    62.85k     9.15k   71.47k    87.25%
+  2501555 requests in 20.02s, 376.94MB read
+Requests/sec: 124983.26
+Transfer/sec:     18.83MB
+```
+
+### Swift Vapor (Port 8012)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8012/
+Running 20s test @ http://127.0.0.1:8012/
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.76ms    1.66ms  56.08ms   94.08%
+    Req/Sec    12.89k     5.96k   18.58k    85.29%
+  94253 requests in 20.10s, 16.99MB read
+  Socket errors: connect 0, read 0, write 0, timeout 480
+  Non-2xx or 3xx responses: 94253
+Requests/sec:   4689.72
+Transfer/sec:    865.58KB
+```
+
+**Note**: Swift Vapor experienced 480 timeouts and all responses were non-2xx/3xx errors during the hello world test.
 
 ## Notes
 

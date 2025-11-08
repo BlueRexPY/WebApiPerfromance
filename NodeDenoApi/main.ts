@@ -11,7 +11,8 @@ interface Order {
 const DATABASE_URL = Deno.env.get("DATABASE_URL") || "";
 const PORT = 8000;
 
-const pool = new Pool(DATABASE_URL, 90, true);
+// Fix: Properly configure the pool with connection string parsing
+const pool = new Pool(DATABASE_URL, 20, true);
 
 const ORDERS_QUERY = `
   SELECT id, customer_id, total_cents, status, created_at
@@ -32,9 +33,19 @@ async function handler(req: Request): Promise<Response> {
   if (url.pathname === "/orders" && req.method === "GET") {
     const client = await pool.connect();
     try {
-      const result = await client.queryObject<Order>(ORDERS_QUERY, [100, 1000]);
+      // Fix: Use proper query execution with queryObject
+      const result = await client.queryObject<Order>({
+        text: ORDERS_QUERY,
+        args: [100, 1000],
+      });
 
       return new Response(JSON.stringify(result.rows), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Database error:", error);
+      return new Response(JSON.stringify({ error: "Database error" }), {
+        status: 500,
         headers: { "Content-Type": "application/json" },
       });
     } finally {
