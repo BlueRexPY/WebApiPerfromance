@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "8iTHX/z+LBs=",
+  "success": true,
+  "projectFilePath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/DotNetApi.csproj",
+  "expectedPackageFiles": [
+    "/home/admin/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "/home/admin/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.2/microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "/home/admin/.nuget/packages/npgsql/9.0.2/npgsql.9.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
