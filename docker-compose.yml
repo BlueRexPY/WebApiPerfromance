@@ -75,6 +75,27 @@ services:
   #   networks:
   #     - webapi-network
 
+  # dotnetapiaot:
+  #   build: ./DotNetApiAot
+  #   ports:
+  #     - "8013:8000"
+  #   environment:
+  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
   # bunapi:
   #   build: ./NodeBunApi
   #   ports:
@@ -223,6 +244,46 @@ services:
   #     - "8009:8000"
   #   environment:
   #     DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
+  # denoapi:
+  #   build: ./NodeDenoApi
+  #   ports:
+  #     - "8011:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
+
+  # swiftvapor:
+  #   build: ./SwiftVapor
+  #   ports:
+  #     - "8012:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
   #   depends_on:
   #     db:
   #       condition: service_healthy

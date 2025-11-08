@@ -61,3 +61,15 @@ rebar.lock
 *.dump
 erl_crash.dump
 .erlang.cookie
+
+# Deno
+deno.lock
+
+# Swift
+.build/
+.swiftpm/
+*.xcodeproj
+*.xcworkspace
+DerivedData/
+.DS_Store
+Package.resolved
