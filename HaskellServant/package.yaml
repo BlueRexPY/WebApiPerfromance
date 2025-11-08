@@ -17,6 +17,8 @@ dependencies:
   - resource-pool
   - time
   - http-types
+  - deepseq
+  - dotenv
 
 executables:
   haskell-servant-api:

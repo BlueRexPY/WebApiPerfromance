@@ -32,4 +32,4 @@ COPY --from=builder /app/bin/haskell-servant-api /app/haskell-servant-api
 
 EXPOSE 8000
 
-CMD ["/app/haskell-servant-api", "+RTS", "-N14", "-RTS"]
+CMD ["/app/haskell-servant-api", "+RTS", "-N2", "-I0", "-A32m", "-RTS"]

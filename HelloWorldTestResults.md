@@ -13,6 +13,7 @@
 
 | Framework        | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec |
 | ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ |
+| Haskell Servant  | 8006 | 188,678.37 | 640.00us    | 6.18ms      | 3,778,052      | 34.37MB      |
 | Bun API          | 8002 | 141,728.97 | 844.49us    | 5.48ms      | 2,836,940      | 18.25MB      |
 | Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
 | Fastify API      | 8003 | 74,282.46  | 1.87ms      | 213.04ms    | 1,486,596      | 14.03MB      |
@@ -20,7 +21,6 @@
 | .NET API         | 8001 | 62,185.33  | 4.52ms      | 69.04ms     | 1,245,119      | 11.03MB      |
 | Rust Actix       | 8005 | 43,239.68  | 12.11ms     | 65.61ms     | 865,679        | 5.57MB       |
 | Go Fiber         | 8008 | 35,110.87  | 17.90ms     | 82.57ms     | 704,375        | 5.02MB       |
-| Haskell Servant  | 8006 | 32,973.21  | 19.19ms     | 83.70ms     | 661,412        | 6.01MB       |
 | Python FastAPI   | 8004 | 26,630.28  | 12.13ms     | 64.18ms     | 533,364        | 3.86MB       |
 | Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
 | Java Spring Boot | 8009 | 1,178.04   | 139.90ms    | 1.94s       | 23,631         | 112.74KB     |
@@ -133,11 +133,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8006
 Running 20s test @ http://127.0.0.1:8006
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    19.19ms   25.54ms  83.70ms   79.14%
-    Req/Sec    16.57k     3.59k   32.69k    70.50%
-  661412 requests in 20.06s, 120.48MB read
-Requests/sec:  32973.21
-Transfer/sec:      6.01MB
+    Latency   640.00us  376.72us   6.18ms   80.75%
+    Req/Sec    94.97k    13.37k  121.51k    68.25%
+  3778052 requests in 20.02s, 688.18MB read
+Requests/sec: 188678.37
+Transfer/sec:     34.37MB
 ```
 
 ### Go Fiber (Port 8008)

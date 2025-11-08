@@ -20,6 +20,7 @@
 | Python Litestar | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
 | Python FastAPI  | 8004 | 3,410.61  | 36.50ms     | 97.78ms     | 68,272         | 37.10MB      |
 | Fastify API     | 8003 | 3,213.03  | 39.37ms     | 784.57ms    | 64,331         | 34.48MB      |
+| Haskell Servant | 8006 | 925.92    | 136.67ms    | 1.76s       | 18,554         | 10.09MB      |
 
 ## Detailed Results
 
@@ -119,6 +120,20 @@ Running 20s test @ http://127.0.0.1:8005/orders
   241769 requests in 20.08s, 2.52GB read
 Requests/sec:  12040.43
 Transfer/sec:    128.28MB
+```
+
+### Haskell Servant (Port 8006)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8006/orders
+Running 20s test @ http://127.0.0.1:8006/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   136.67ms  115.58ms   1.76s    78.81%
+    Req/Sec   465.54     56.27     0.89k    75.75%
+  18554 requests in 20.04s, 202.25MB read
+Requests/sec:    925.92
+Transfer/sec:     10.09MB
 ```
 
 ## Notes

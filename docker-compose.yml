@@ -195,7 +195,11 @@ services:
     ports:
       - "8006:8000"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-apiuser}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+      PGDATABASE: ${POSTGRES_DB:-ordersdb}
     depends_on:
       db:
         condition: service_healthy
