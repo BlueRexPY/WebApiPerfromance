@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar) and .NET (ASP.NET Core) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), .NET (ASP.NET Core), and Node.js (Bun) with PostgreSQL database integration.
 
 ## Projects
 
@@ -17,9 +17,16 @@ This repository contains performance-focused web API implementations in Python (
 - **Database**: PostgreSQL with Npgsql (raw SQL, no ORM)
 - **Connection Pooling**: NpgsqlDataSource with multiplexing
 
+### NodeBunApi
+
+- **Runtime**: Bun (ultra-fast JavaScript runtime)
+- **Framework**: Bun's native HTTP server (zero overhead)
+- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Connection Pool**: 90 connections with prepared statements
+
 ## Endpoints
 
-Both APIs implement the same endpoints:
+All APIs implement the same endpoints:
 
 - `GET /` - Returns a simple "Hello, World!" message
 - `GET /orders` - Returns 100 orders from the database (offset 1000, limit 100)
@@ -29,6 +36,7 @@ Both APIs implement the same endpoints:
 - Docker and Docker Compose
 - Python 3.14+ (for local Python development)
 - .NET 9.0 SDK (for local .NET development)
+- Bun 1.0+ (for local Node/Bun development)
 - PostgreSQL 15+
 
 ## Database Setup
@@ -47,7 +55,7 @@ CREATE TABLE orders (
 
 ## Quick Start with Docker Compose
 
-Run all services (database + both APIs) with a single command:
+Run all services (database + all three APIs) with a single command:
 
 ```bash
 docker-compose up --build
@@ -57,6 +65,7 @@ The services will be available at:
 
 - **Python Litestar API**: http://localhost:8000
 - **.NET API**: http://localhost:8001
+- **Bun API**: http://localhost:8002
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -103,6 +112,14 @@ dotnet restore
 dotnet run
 ```
 
+### Bun API
+
+```bash
+cd NodeBunApi
+bun install
+bun run src/index.ts
+```
+
 ## Running with Docker
 
 ### Python Litestar
@@ -119,6 +136,14 @@ docker run -p 8000:8000 --env-file .env python-litestar-api
 cd DotNetApi
 docker build -t dotnet-api .
 docker run -p 8000:8000 -e DATABASE_URL=postgresql://apiuser:apipassword@host.docker.internal:5432/ordersdb dotnet-api
+```
+
+### Bun API
+
+```bash
+cd NodeBunApi
+docker build -t bun-api .
+docker run -p 8000:8000 --env-file .env bun-api
 ```
 
 ## Performance Tuning
@@ -138,6 +163,13 @@ docker run -p 8000:8000 -e DATABASE_URL=postgresql://apiuser:apipassword@host.do
 - Prepared statements for queries
 - Minimal API for reduced overhead
 
+### Bun API
+
+- Bun's native HTTP server (fastest JS runtime)
+- Connection pool size: 90
+- Prepared statements enabled
+- Zero-overhead native performance
+
 ## Testing
 
 Test the endpoints:
@@ -150,14 +182,19 @@ curl http://localhost:8000/orders
 # .NET API
 curl http://localhost:8001/
 curl http://localhost:8001/orders
+
+# Bun API
+curl http://localhost:8002/
+curl http://localhost:8002/orders
 ```
 
 ## Performance Testing
 
-You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark both APIs:
+You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all three APIs:
 
 ```bash
 # Example with wrk
-wrk -t12 -c400 -d30s http://localhost:8000/orders
-wrk -t12 -c400 -d30s http://localhost:8001/orders
+wrk -t12 -c400 -d30s http://localhost:8000/orders  # Python
+wrk -t12 -c400 -d30s http://localhost:8001/orders  # .NET
+wrk -t12 -c400 -d30s http://localhost:8002/orders  # Bun
 ```
