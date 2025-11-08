@@ -14,6 +14,7 @@
 | Framework       | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec |
 | --------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ |
 | Bun API         | 8002 | 16,183.56 | 7.43ms      | 41.88ms     | 323,896        | 172.70MB     |
+| .NET AOT        | 8013 | 8,584.76  | 19.03ms     | 89.77ms     | 171,890        | 91.20MB      |
 | .NET API        | 8001 | 7,539.63  | 22.76ms     | 170.07ms    | 151,035        | 80.10MB      |
 | Python Litestar | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
 
@@ -59,6 +60,20 @@ Running 20s test @ http://127.0.0.1:8002/orders
   323896 requests in 20.01s, 3.38GB read
 Requests/sec:  16183.56
 Transfer/sec:    172.70MB
+```
+
+### .NET AOT (Port 8013)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8013/orders
+Running 20s test @ http://127.0.0.1:8013/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    19.03ms   18.71ms  89.77ms   80.18%
+    Req/Sec     4.32k     1.29k   10.10k    73.75%
+  171890 requests in 20.02s, 1.78GB read
+Requests/sec:   8584.76
+Transfer/sec:     91.20MB
 ```
 
 ## Notes

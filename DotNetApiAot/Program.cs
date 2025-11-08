@@ -40,8 +40,6 @@ app.MapGet(
         command.Parameters.Add(new NpgsqlParameter { Value = 100 });
         command.Parameters.Add(new NpgsqlParameter { Value = 1000 });
 
-        await command.PrepareAsync();
-
         List<Order> orders = new List<Order>();
         await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 
