@@ -4,21 +4,17 @@ class ApiController < ApplicationController
   end
 
   def orders
-    sql = <<-SQL
-      SELECT id, customer_id, total_cents, status, created_at
-      FROM orders
-      LIMIT 100 OFFSET 1000
-    SQL
+    result = ActiveRecord::Base.connection.exec_query(
+      "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000"
+    )
     
-    result = ActiveRecord::Base.connection.exec_query(sql)
-    
-    orders = result.map do |row|
+    orders = result.rows.map do |row|
       {
-        id: row['id'],
-        customer_id: row['customer_id'],
-        total_cents: row['total_cents'],
-        status: row['status'],
-        created_at: row['created_at']
+        id: row[0],
+        customer_id: row[1],
+        total_cents: row[2],
+        status: row[3],
+        created_at: row[4]
       }
     end
     

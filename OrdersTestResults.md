@@ -22,10 +22,14 @@
 | Python Litestar  | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
 | Python FastAPI   | 8004 | 3,410.61  | 36.50ms     | 97.78ms     | 68,272         | 37.10MB      |
 | Fastify API      | 8003 | 3,213.03  | 39.37ms     | 784.57ms    | 64,331         | 34.48MB      |
+| Express API      | 8014 | 2,665.05  | 45.47ms     | 325.87ms    | 53,375         | 28.60MB      |
 | Deno API         | 8011 | 1,614.91  | 74.04ms     | 115.41ms    | 32,364         | 17.27MB      |
 | Java Spring Boot | 8009 | 992.71    | 120.47ms    | 248.20ms    | 19,889         | 11.42MB      |
 | Haskell Servant  | 8006 | 925.92    | 136.67ms    | 1.76s       | 18,554         | 10.09MB      |
 | Swift Vapor      | 8012 | 722.94\*  | 222.61ms    | 2.00s       | 14,506         | 7.41MB       |
+| Ruby Rails       | 8015 | 550.01\*  | 219.04ms    | 674.98ms    | 11,018         | 5.35MB       |
+
+**Note**: \* = Non-2xx or 3xx responses occurred during the test
 
 ## Detailed Results
 
@@ -111,6 +115,20 @@ Running 20s test @ http://127.0.0.1:8003/orders
   64331 requests in 20.02s, 690.38MB read
 Requests/sec:   3213.03
 Transfer/sec:     34.48MB
+```
+
+### Express API (Port 8014)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8014/orders
+Running 20s test @ http://127.0.0.1:8014/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    45.47ms   18.04ms 325.87ms   77.16%
+    Req/Sec     1.34k   145.30     1.52k    93.25%
+  53375 requests in 20.03s, 572.75MB read
+Requests/sec:   2665.05
+Transfer/sec:     28.60MB
 ```
 
 ### Rust Actix (Port 8005)
@@ -213,7 +231,22 @@ Requests/sec:    722.94
 Transfer/sec:      7.41MB
 ```
 
-**Note**: Swift Vapor experienced 7 timeouts and 105 non-2xx/3xx error responses during the orders endpoint test.
+### Ruby Rails (Port 8015)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8015/orders
+Running 20s test @ http://127.0.0.1:8015/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   219.04ms   98.69ms 674.98ms   71.04%
+    Req/Sec   276.41    109.19   590.00     66.75%
+  11018 requests in 20.03s, 107.10MB read
+  Non-2xx or 3xx responses: 1126
+Requests/sec:    550.01
+Transfer/sec:      5.35MB
+```
+
+**Note**: Ruby Rails experienced 1,126 non-2xx/3xx error responses during the orders endpoint test.
 
 ## Notes
 

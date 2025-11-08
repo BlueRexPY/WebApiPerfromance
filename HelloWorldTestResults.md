@@ -24,9 +24,13 @@
 | Rust Actix       | 8005 | 43,239.68  | 12.11ms     | 65.61ms     | 865,679        | 5.57MB       |
 | Go Fiber         | 8008 | 34,460.50  | 18.65ms     | 87.66ms     | 690,126        | 4.93MB       |
 | Java Spring Boot | 8009 | 34,276.09  | 18.86ms     | 96.46ms     | 686,588        | 3.20MB       |
+| Express API      | 8014 | 27,406.81  | 4.60ms      | 284.85ms    | 548,649        | 5.15MB       |
 | Python FastAPI   | 8004 | 26,630.28  | 12.13ms     | 64.18ms     | 533,364        | 3.86MB       |
 | Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
 | Swift Vapor      | 8012 | 4,689.72\* | 3.76ms      | 56.08ms     | 94,253         | 865.58KB     |
+| Ruby Rails       | 8015 | 2,696.53   | 44.86ms     | 157.11ms    | 53,991         | 755.77KB     |
+
+**Note**: \* = Non-2xx or 3xx responses occurred during the test
 
 ## Detailed Results
 
@@ -184,6 +188,20 @@ Requests/sec:  62895.33
 Transfer/sec:     15.24MB
 ```
 
+### Express API (Port 8014)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8014
+Running 20s test @ http://127.0.0.1:8014
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.60ms    5.46ms 284.85ms   99.55%
+    Req/Sec    13.79k     1.10k   15.03k    94.50%
+  548649 requests in 20.02s, 103.08MB read
+Requests/sec:  27406.81
+Transfer/sec:      5.15MB
+```
+
 ### Deno API (Port 8011)
 
 ```
@@ -215,6 +233,20 @@ Transfer/sec:    865.58KB
 ```
 
 **Note**: Swift Vapor experienced 480 timeouts and all responses were non-2xx/3xx errors during the hello world test.
+
+### Ruby Rails (Port 8015)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8015/
+Running 20s test @ http://127.0.0.1:8015/
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    44.86ms   30.63ms 157.11ms   53.57%
+    Req/Sec     1.36k   569.25     3.40k    71.75%
+  53991 requests in 20.02s, 14.78MB read
+Requests/sec:   2696.53
+Transfer/sec:    755.77KB
+```
 
 ## Notes
 

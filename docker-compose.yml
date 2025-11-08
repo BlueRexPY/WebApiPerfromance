@@ -295,29 +295,29 @@ services:
   #   networks:
   #     - webapi-network
 
-  swiftvapor:
-    build: ./SwiftVapor
-    ports:
-      - "8012:8000"
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: ${POSTGRES_USER:-apiuser}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
-      DB_NAME: ${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # swiftvapor:
+  #   build: ./SwiftVapor
+  #   ports:
+  #     - "8012:8000"
+  #   environment:
+  #     DB_HOST: db
+  #     DB_PORT: 5432
+  #     DB_USER: ${POSTGRES_USER:-apiuser}
+  #     DB_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+  #     DB_NAME: ${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
   # expressapi:
   #   build: ./NodeExpressApi
@@ -340,28 +340,29 @@ services:
   #   networks:
   #     - webapi-network
 
-  # rubyrails:
-  #   build: ./RubyRails
-  #   ports:
-  #     - "8015:8000"
-  #   environment:
-  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-  #     RAILS_ENV: production
-  #     WEB_CONCURRENCY: 4
-  #     RAILS_MAX_THREADS: 90
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2.0"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "1.0"
-  #         memory: 512M
-  #   networks:
-  #     - webapi-network
+  rubyrails:
+    build: ./RubyRails
+    ports:
+      - "8015:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      RAILS_ENV: production
+      WEB_CONCURRENCY: 4
+      RAILS_MAX_THREADS: 90
+      SECRET_KEY_BASE: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
 
   # djangoapi:
   #   build: ./DjangoApi

@@ -1,11 +1,10 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 90 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 16 } %>
   timeout: 5000
-  prepared_statements: true
-  variables:
-    statement_timeout: 10000
+  prepared_statements: false
+  checkout_timeout: 5
 
 production:
   <<: *default
