@@ -84,11 +84,12 @@ This repository contains performance-focused web API implementations in Python (
 
 ### ElixirPhoenix
 
-- **Framework**: Phoenix with Cowboy web server
+- **Framework**: Phoenix 1.7 with Cowboy web server
 - **Database**: PostgreSQL with Ecto and Postgrex
-- **Connection Pool**: 90 connections
+- **Connection Pool**: 90 connections with queue management
 - **Concurrency**: BEAM VM with lightweight processes
 - **Runtime**: Erlang/OTP for fault tolerance and scalability
+- **Compilation**: Production release build with optimizations
 
 ### GoFiber
 
@@ -322,7 +323,16 @@ stack exec haskell-servant-api
 ```bash
 cd ElixirPhoenix
 mix deps.get
-mix run --no-halt
+MIX_ENV=prod mix release
+_build/prod/rel/elixir_phoenix_api/bin/elixir_phoenix_api start
+```
+
+Or for development:
+
+```bash
+cd ElixirPhoenix
+mix deps.get
+iex -S mix phx.server
 ```
 
 ### Go Fiber API
@@ -601,11 +611,13 @@ docker run -p 8000:8000 --env-file .env django-api
 
 ### Elixir Phoenix API
 
-- Phoenix framework with Cowboy
-- Connection pool size: 90
-- BEAM VM concurrency model
-- Lightweight processes for handling requests
-- Production release build
+- Phoenix framework with Cowboy HTTP server
+- Connection pool size: 90 connections
+- Queue target: 50ms, Queue interval: 1000ms
+- BEAM VM concurrency model with lightweight processes
+- Production release build with compilation optimizations
+- Ecto query optimization with direct SQL queries
+- JSON encoding with Jason library
 
 ### Go Fiber API
 
