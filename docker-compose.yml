@@ -42,7 +42,20 @@ services:
         condition: service_healthy
     volumes:
       - ./PythonLightStar:/app
-    command: granian --interface asgi --host 0.0.0.0 --port 8000 --workers 8 --no-access-log --loop uvloop main:app
+    command: >
+      granian
+      --interface asgi
+      --host 0.0.0.0
+      --port 8000
+      --workers 4
+      --blocking-threads 1
+      --http 1
+      --http1-buffer-size 32768
+      --backlog 4096
+      --loop uvloop
+      --no-access-log
+      --respawn-failed-workers
+      main:app
     deploy:
       resources:
         limits:
@@ -54,334 +67,334 @@ services:
     networks:
       - webapi-network
 
-  dotnetapi:
-    build: ./DotNetApi
-    ports:
-      - "8001:8000"
-    environment:
-      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
-      ASPNETCORE_ENVIRONMENT: Production
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # dotnetapi:
+  #   build: ./DotNetApi
+  #   ports:
+  #     - "8001:8000"
+  #   environment:
+  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  dotnetapiaot:
-    build: ./DotNetApiAot
-    ports:
-      - "8013:8000"
-    environment:
-      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
-      ASPNETCORE_ENVIRONMENT: Production
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # dotnetapiaot:
+  #   build: ./DotNetApiAot
+  #   ports:
+  #     - "8013:8000"
+  #   environment:
+  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  bunapi:
-    build: ./NodeBunApi
-    ports:
-      - "8002:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # bunapi:
+  #   build: ./NodeBunApi
+  #   ports:
+  #     - "8002:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  fastapi:
-    build: ./PythonFastApi
-    ports:
-      - "8004:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # fastapi:
+  #   build: ./PythonFastApi
+  #   ports:
+  #     - "8004:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  fastifyapi:
-    build: ./NodeFastifyApi
-    ports:
-      - "8003:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-      NODE_ENV: production
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # fastifyapi:
+  #   build: ./NodeFastifyApi
+  #   ports:
+  #     - "8003:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     NODE_ENV: production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  rustactix:
-    build: ./RustActix
-    ports:
-      - "8005:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # rustactix:
+  #   build: ./RustActix
+  #   ports:
+  #     - "8005:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  haskellservant:
-    build: ./HaskellServant
-    ports:
-      - "8006:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # haskellservant:
+  #   build: ./HaskellServant
+  #   ports:
+  #     - "8006:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  elixirphoenix:
-    build: ./ElixirPhoenix
-    ports:
-      - "8007:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-      MIX_ENV: prod
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # elixirphoenix:
+  #   build: ./ElixirPhoenix
+  #   ports:
+  #     - "8007:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     MIX_ENV: prod
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  gofiber:
-    build: ./GoFiber
-    ports:
-      - "8008:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # gofiber:
+  #   build: ./GoFiber
+  #   ports:
+  #     - "8008:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  javaspringboot:
-    build: ./JavaSpringBoot
-    ports:
-      - "8009:8000"
-    environment:
-      DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # javaspringboot:
+  #   build: ./JavaSpringBoot
+  #   ports:
+  #     - "8009:8000"
+  #   environment:
+  #     DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  denoapi:
-    build: ./NodeDenoApi
-    ports:
-      - "8011:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # denoapi:
+  #   build: ./NodeDenoApi
+  #   ports:
+  #     - "8011:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  swiftvapor:
-    build: ./SwiftVapor
-    ports:
-      - "8012:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # swiftvapor:
+  #   build: ./SwiftVapor
+  #   ports:
+  #     - "8012:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  expressapi:
-    build: ./NodeExpressApi
-    ports:
-      - "8014:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-      NODE_ENV: production
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # expressapi:
+  #   build: ./NodeExpressApi
+  #   ports:
+  #     - "8014:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     NODE_ENV: production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  rubyrails:
-    build: ./RubyRails
-    ports:
-      - "8015:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-      RAILS_ENV: production
-      WEB_CONCURRENCY: 4
-      RAILS_MAX_THREADS: 90
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # rubyrails:
+  #   build: ./RubyRails
+  #   ports:
+  #     - "8015:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     RAILS_ENV: production
+  #     WEB_CONCURRENCY: 4
+  #     RAILS_MAX_THREADS: 90
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  djangoapi:
-    build: ./DjangoApi
-    ports:
-      - "8016:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-      DJANGO_SETTINGS_MODULE: djangoapi.settings
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # djangoapi:
+  #   build: ./DjangoApi
+  #   ports:
+  #     - "8016:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #     DJANGO_SETTINGS_MODULE: djangoapi.settings
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
-  erlangcowboy:
-    build: ./ErlangCowboy
-    ports:
-      - "8010:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # erlangcowboy:
+  #   build: ./ErlangCowboy
+  #   ports:
+  #     - "8010:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
 volumes:
   postgres_data:

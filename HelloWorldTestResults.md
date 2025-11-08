@@ -1,6 +1,6 @@
 # Hello World Performance Test Results
 
-**Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:800X`
+**Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:80XX`
 
 **Test Configuration**:
 
@@ -21,7 +21,7 @@
 | Go Fiber         | 8008 | 35,110.87  | 17.90ms     | 82.57ms     | 704,375        | 5.02MB       |
 | Haskell Servant  | 8006 | 32,973.21  | 19.19ms     | 83.70ms     | 661,412        | 6.01MB       |
 | Python FastAPI   | 8004 | 24,908.39  | 12.11ms     | 87.63ms     | 498,526        | 3.61MB       |
-| Python Litestar  | 8000 | 13,449.94  | 24.93ms     | 94.26ms     | 269,630        | 1.95MB       |
+| Python Litestar  | 8000 | 15,523.37  | 18.84ms     | 77.98ms     | 311,230        | 2.25MB       |
 | Java Spring Boot | 8009 | 1,178.04   | 139.90ms    | 1.94s       | 23,631         | 112.74KB     |
 | Elixir Phoenix   | 8007 | -          | -           | -           | -              | -            |
 
@@ -34,11 +34,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8000
 Running 20s test @ http://127.0.0.1:8000
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    24.93ms   30.00ms  94.26ms   79.39%
-    Req/Sec     6.76k     2.52k   12.81k    72.25%
-  269630 requests in 20.05s, 39.09MB read
-Requests/sec:  13449.94
-Transfer/sec:      1.95MB
+    Latency    18.84ms   23.10ms  77.98ms   79.83%
+    Req/Sec     7.82k     3.19k   35.60k    88.00%
+  311230 requests in 20.05s, 45.12MB read
+Requests/sec:  15523.37
+Transfer/sec:      2.25MB
 ```
 
 ### .NET API (Port 8001)
@@ -118,11 +118,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8000
 Running 20s test @ http://127.0.0.1:8000
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    24.93ms   30.00ms  94.26ms   79.39%
-    Req/Sec     6.76k     2.52k   12.81k    72.25%
-  269630 requests in 20.05s, 39.09MB read
-Requests/sec:  13449.94
-Transfer/sec:      1.95MB
+    Latency    18.84ms   23.10ms  77.98ms   79.83%
+    Req/Sec     7.82k     3.19k   35.60k    88.00%
+  311230 requests in 20.05s, 45.12MB read
+Requests/sec:  15523.37
+Transfer/sec:      2.25MB
 ```
 
 ### Haskell Servant (Port 8006)

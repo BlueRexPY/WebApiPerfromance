@@ -6,7 +6,7 @@ from typing import Sequence
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from psycopg import AsyncConnection, sql
+from psycopg import sql
 from psycopg.rows import class_row
 from psycopg_pool import AsyncConnectionPool
 
@@ -45,25 +45,22 @@ ORDERS_SQL = sql.SQL(
     """
 )
 
-# Global connection pool
 pool: AsyncConnectionPool | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     global pool
     pool = AsyncConnectionPool(
         conninfo=get_database_connection_string(),
-        max_size=90,
-        open=True,
+        min_size=2,
+        max_size=20,
     )
     yield
-    # Shutdown
     await pool.close()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, openapi_url=None, docs_url=None, redoc_url=None)
 
 
 @app.get("/")

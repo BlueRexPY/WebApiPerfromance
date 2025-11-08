@@ -9,5 +9,24 @@ COPY . .
 
 EXPOSE 8000
 
-# Reduced workers from 14 to 8 for better connection pool distribution
-CMD ["granian", "--interface", "asgi", "--host", "0.0.0.0", "--port", "8000", "--workers", "8", "--no-access-log", "--loop", "uvloop", "main:app"]
+
+# Maximum performance tuning:
+# - workers: 4 (matches CPU cores typically available)
+# - blocking-threads: 1 (minimize overhead)
+# - backlog: 4096 (increased from 2048)
+# - http: 1 (HTTP/1 only, faster than auto-negotiation)
+# - http1-buffer-size: 32768 (32KB, increased from default 8KB)
+# - websockets: disabled (not needed)
+CMD ["granian", \
+    "--interface", "asgi", \
+    "--host", "0.0.0.0", \
+    "--port", "8000", \
+    "--workers", "4", \
+    "--blocking-threads", "1", \
+    "--http", "1", \
+    "--http1-buffer-size", "32768", \
+    "--backlog", "4096", \
+    "--loop", "uvloop", \
+    "--no-access-log", \
+    "--respawn-failed-workers", \
+    "main:app"]

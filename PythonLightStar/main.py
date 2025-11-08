@@ -1,11 +1,11 @@
 import datetime
 import os
-from dataclasses import dataclass
 from typing import Sequence
 
+import msgspec
 from dotenv import load_dotenv
-from litestar import Litestar, get
-from psycopg import AsyncConnection, sql
+from litestar import Litestar, Response, get
+from psycopg import sql
 from psycopg.rows import class_row
 from psycopg_pool import AsyncConnectionPool
 
@@ -21,17 +21,14 @@ def get_database_connection_string() -> str:
     return url
 
 
-# Global connection pool
 pool: AsyncConnectionPool | None = None
 
 
-@dataclass
-class HelloResponse:
+class HelloResponse(msgspec.Struct):
     message: str = "Hello, World!"
 
 
-@dataclass
-class Order:
+class Order(msgspec.Struct):
     id: int
     customer_id: int
     total_cents: int
@@ -50,8 +47,8 @@ ORDERS_SQL = sql.SQL(
 
 
 @get("/")
-async def hello() -> HelloResponse:
-    return HelloResponse()
+async def hello() -> Response[dict[str, str]]:
+    return Response({"message": "Hello, World!"})
 
 
 @get("/orders")
@@ -69,16 +66,14 @@ async def get_orders() -> Sequence[Order]:
 
 async def on_startup() -> None:
     global pool
-    # Per-worker pool: 90 total / 14 workers ≈ 6-7 connections per worker
-    # But we'll use a smaller pool per worker and let workers share
     pool = AsyncConnectionPool(
         conninfo=get_database_connection_string(),
         min_size=5,
-        max_size=10,  # 10 connections per worker max
-        timeout=30,
-        max_waiting=0,  # Don't queue, fail fast
+        max_size=15,
+        timeout=5,
+        max_idle=300,
+        max_lifetime=3600,
     )
-    await pool.wait()
 
 
 async def on_shutdown() -> None:
@@ -91,4 +86,7 @@ app = Litestar(
     route_handlers=[hello, get_orders],
     on_startup=[on_startup],
     on_shutdown=[on_shutdown],
+    debug=False,
+    openapi_config=None,
+    compression_config=None,
 )

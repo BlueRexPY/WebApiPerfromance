@@ -10,7 +10,10 @@ This repository contains performance-focused web API implementations in Python (
 - **Database**: PostgreSQL with Psycopg3 and connection pooling
 - **Serialization**: msgspec
 - **Event Loop**: uvloop
-- **Workers**: 8 (optimized for connection pool distribution)
+- **Workers**: 4 (matching FastAPI for fair comparison)
+- **Connection Pool**: 15 per worker (60 total)
+- **HTTP**: HTTP/1 only for maximum performance
+- **Backlog**: 4096 connections
 
 ### PythonFastApi
 
@@ -241,7 +244,7 @@ DATABASE_URL=postgresql://apiuser:apipassword@localhost:5432/ordersdb
 ```bash
 cd PythonLightStar
 pip install -r requirements.txt
-granian --interface asgi --host 0.0.0.0 --port 8000 --workers 8 --no-access-log --loop uvloop main:app
+granian --interface asgi --host 0.0.0.0 --port 8000 --workers 4 --blocking-threads 1 --http 1 --http1-buffer-size 32768 --backlog 4096 --loop uvloop --no-access-log --respawn-failed-workers main:app
 ```
 
 ### Python FastAPI
@@ -513,11 +516,17 @@ docker run -p 8000:8000 --env-file .env django-api
 
 ### Python Litestar
 
-- Connection pool size: 10 per worker (80 total with 8 workers)
-- Workers: 8 (reduced from 14 for better pool distribution)
+- Connection pool size: 15 per worker (60 total with 4 workers)
+- Workers: 4
+- Blocking threads: 1 (minimal overhead)
+- HTTP/1 only (no auto-negotiation overhead)
+- HTTP/1 buffer: 32KB (increased from 8KB default)
+- Backlog: 4096 (high connection queue)
 - uvloop for async performance
 - Prepared statements enabled
 - Per-worker connection pool for better isolation
+- Compression disabled for maximum speed
+- Failed worker auto-respawn enabled
 
 ### Python FastAPI
 

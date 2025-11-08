@@ -1,6 +1,6 @@
 litestar[standard]
 psycopg[binary,pool]
-granian[uvloop]
+granian[uvloop]>=1.6.0
 uvloop
 python-dotenv
 msgspec
