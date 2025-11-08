@@ -14,16 +14,16 @@
 | Framework        | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec |
 | ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ |
 | Bun API          | 8002 | 123,123.15 | 1.01ms      | 62.06ms     | 2,464,336      | 15.85MB      |
+| Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
 | .NET API         | 8001 | 76,975.25  | 4.17ms      | 71.67ms     | 1,541,304      | 13.65MB      |
 | Fastify API      | 8003 | 64,871.74  | 2.33ms      | 281.60ms    | 1,298,648      | 12.25MB      |
 | Rust Actix       | 8005 | 48,972.36  | 11.37ms     | 65.59ms     | 981,202        | 6.30MB       |
+| Go Fiber         | 8008 | 35,110.87  | 17.90ms     | 82.57ms     | 704,375        | 5.02MB       |
 | Haskell Servant  | 8006 | 32,973.21  | 19.19ms     | 83.70ms     | 661,412        | 6.01MB       |
 | Python FastAPI   | 8004 | 24,908.39  | 12.11ms     | 87.63ms     | 498,526        | 3.61MB       |
 | Python Litestar  | 8000 | 13,449.94  | 24.93ms     | 94.26ms     | 269,630        | 1.95MB       |
+| Java Spring Boot | 8009 | 1,178.04   | 139.90ms    | 1.94s       | 23,631         | 112.74KB     |
 | Elixir Phoenix   | 8007 | -          | -           | -           | -              | -            |
-| Go Fiber         | 8008 | -          | -           | -           | -              | -            |
-| Java Spring Boot | 8009 | -          | -           | -           | -              | -            |
-| Erlang Cowboy    | 8010 | -          | -           | -           | -              | -            |
 
 ## Detailed Results
 
@@ -139,25 +139,50 @@ Requests/sec:  32973.21
 Transfer/sec:      6.01MB
 ```
 
-### Elixir Phoenix (Port 8007)
-
-```
-<!-- To be tested -->
-```
-
 ### Go Fiber (Port 8008)
 
 ```
-<!-- To be tested -->
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8008
+Running 20s test @ http://127.0.0.1:8008
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    17.90ms   24.28ms  82.57ms   79.43%
+    Req/Sec    17.66k     6.87k   41.72k    64.25%
+  704375 requests in 20.06s, 100.76MB read
+Requests/sec:  35110.87
+Transfer/sec:      5.02MB
 ```
 
 ### Java Spring Boot (Port 8009)
 
 ```
-<!-- To be tested -->
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8009
+Running 20s test @ http://127.0.0.1:8009
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   139.90ms  240.67ms   1.94s    94.05%
+    Req/Sec   700.27    406.50     2.65k    76.92%
+  23631 requests in 20.06s, 2.21MB read
+  Socket errors: connect 0, read 0, write 0, timeout 3
+Requests/sec:   1178.04
+Transfer/sec:    112.74KB
 ```
 
 ### Erlang Cowboy (Port 8010)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8010
+Running 20s test @ http://127.0.0.1:8010
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.40ms    0.94ms  43.73ms   93.65%
+    Req/Sec    44.87k     3.27k   52.56k    80.50%
+  1786173 requests in 20.01s, 257.25MB read
+Requests/sec:  89270.28
+Transfer/sec:     12.86MB
+```
+
+### Elixir Phoenix (Port 8007)
 
 ```
 <!-- To be tested -->
