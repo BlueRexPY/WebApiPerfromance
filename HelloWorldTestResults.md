@@ -13,10 +13,10 @@
 
 | Framework        | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec |
 | ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ |
-| Bun API          | 8002 | 123,123.15 | 1.01ms      | 62.06ms     | 2,464,336      | 15.85MB      |
+| Bun API          | 8002 | 141,728.97 | 844.49us    | 5.48ms      | 2,836,940      | 18.25MB      |
 | Erlang Cowboy    | 8010 | 89,270.28  | 1.40ms      | 43.73ms     | 1,786,173      | 12.86MB      |
-| .NET API         | 8001 | 76,975.25  | 4.17ms      | 71.67ms     | 1,541,304      | 13.65MB      |
 | Fastify API      | 8003 | 64,871.74  | 2.33ms      | 281.60ms    | 1,298,648      | 12.25MB      |
+| .NET API         | 8001 | 62,185.33  | 4.52ms      | 69.04ms     | 1,245,119      | 11.03MB      |
 | Rust Actix       | 8005 | 48,972.36  | 11.37ms     | 65.59ms     | 981,202        | 6.30MB       |
 | Go Fiber         | 8008 | 35,110.87  | 17.90ms     | 82.57ms     | 704,375        | 5.02MB       |
 | Haskell Servant  | 8006 | 32,973.21  | 19.19ms     | 83.70ms     | 661,412        | 6.01MB       |
@@ -48,11 +48,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8001
 Running 20s test @ http://127.0.0.1:8001
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     4.17ms    9.18ms  71.67ms   92.16%
-    Req/Sec    38.74k    18.83k   96.37k    72.75%
-  1541304 requests in 20.02s, 273.40MB read
-Requests/sec:  76975.25
-Transfer/sec:     13.65MB
+    Latency     4.52ms    8.92ms  69.04ms   91.16%
+    Req/Sec    31.28k    10.64k   74.27k    68.00%
+  1245119 requests in 20.02s, 220.86MB read
+Requests/sec:  62185.33
+Transfer/sec:     11.03MB
 ```
 
 ### Bun API (Port 8002)
@@ -62,11 +62,11 @@ wrk -t 2 -c 120 -d 20s http://127.0.0.1:8002
 Running 20s test @ http://127.0.0.1:8002
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     1.01ms    1.12ms  62.06ms   99.27%
-    Req/Sec    61.94k     4.92k   70.62k    78.00%
-  2464336 requests in 20.02s, 317.27MB read
-Requests/sec: 123123.15
-Transfer/sec:     15.85MB
+    Latency   844.49us  215.56us   5.48ms   90.88%
+    Req/Sec    71.31k     5.53k   88.09k    72.75%
+  2836940 requests in 20.02s, 365.24MB read
+Requests/sec: 141728.97
+Transfer/sec:     18.25MB
 ```
 
 ### Fastify API (Port 8003)

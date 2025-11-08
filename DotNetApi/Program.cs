@@ -1,19 +1,19 @@
 using Npgsql;
 
-WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-string? connectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+string connectionString =
+    Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DATABASE_URL is not set");
 
-NpgsqlDataSourceBuilder? dataSourceBuilder = new(connectionString);
+NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
 dataSourceBuilder.EnableParameterLogging(false);
-NpgsqlDataSource? dataSource = dataSourceBuilder.Build();
+NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSingleton(dataSource);
 
-WebApplication? app = builder.Build();
+WebApplication app = builder.Build();
 
 app.MapGet("/", () => new HelloResponse { Message = "Hello, World!" });
 app.MapGet(
@@ -27,16 +27,14 @@ app.MapGet(
         LIMIT $1
         OFFSET $2";
 
-        await using NpgsqlConnection? connection = await ds.OpenConnectionAsync();
-        await using NpgsqlCommand? command = new NpgsqlCommand(sql, connection);
+        await using NpgsqlConnection connection = await ds.OpenConnectionAsync();
+        await using NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
         command.Parameters.Add(new NpgsqlParameter { Value = 100 });
         command.Parameters.Add(new NpgsqlParameter { Value = 1000 });
 
-        await command.PrepareAsync();
-
-        List<Order>? orders = new List<Order>();
-        await using NpgsqlDataReader? reader = await command.ExecuteReaderAsync();
+        List<Order> orders = new List<Order>();
+        await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
         {

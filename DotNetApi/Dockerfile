@@ -15,5 +15,4 @@ RUN dotnet publish "DotNetApi.csproj" -c Release -o /app/publish /p:UseAppHost=f
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV ASPNETCORE_URLS=http://+:8000
 ENTRYPOINT ["dotnet", "DotNetApi.dll"]

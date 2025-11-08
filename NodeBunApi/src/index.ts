@@ -49,7 +49,7 @@ const server = Bun.serve({
     // GET /orders
     if (url.pathname === "/orders") {
       try {
-        const orders: Order[] = await getOrdersQuery;
+        const orders = await getOrdersQuery;
         return new Response(JSON.stringify(orders), {
           headers: { "Content-Type": "application/json" },
         });

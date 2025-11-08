@@ -186,9 +186,8 @@ CREATE TABLE orders (
 
 Run all services (database + all APIs) with a single command:
 
-```bash
+````bash
 docker-compose up --build
-```
 
 The services will be available at:
 
@@ -215,7 +214,7 @@ To run in detached mode:
 
 ```bash
 docker-compose up -d --build
-```
+````
 
 To stop all services:
 

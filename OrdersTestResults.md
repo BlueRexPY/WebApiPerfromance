@@ -11,11 +11,27 @@
 
 ## Results Summary
 
-| Framework       | Port | Req/sec  | Avg Latency | Max Latency | Total Requests | Transfer/sec |
-| --------------- | ---- | -------- | ----------- | ----------- | -------------- | ------------ |
-| Python Litestar | 8000 | 3,845.36 | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
+| Framework       | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec |
+| --------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ |
+| Bun API         | 8002 | 16,183.56 | 7.43ms      | 41.88ms     | 323,896        | 172.70MB     |
+| .NET API        | 8001 | 7,539.63  | 22.76ms     | 170.07ms    | 151,035        | 80.10MB      |
+| Python Litestar | 8000 | 3,845.36  | 34.37ms     | 167.43ms    | 77,053         | 41.83MB      |
 
 ## Detailed Results
+
+### .NET API (Port 8001)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8001/orders
+Running 20s test @ http://127.0.0.1:8001/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    22.76ms   23.61ms 170.07ms   80.53%
+    Req/Sec     3.81k     1.39k   10.51k    81.91%
+  151035 requests in 20.03s, 1.57GB read
+Requests/sec:   7539.63
+Transfer/sec:     80.10MB
+```
 
 ### Python Litestar (Port 8000)
 
@@ -29,6 +45,20 @@ Running 20s test @ http://127.0.0.1:8000/orders
   77053 requests in 20.04s, 838.23MB read
 Requests/sec:   3845.36
 Transfer/sec:     41.83MB
+```
+
+### Bun API (Port 8002)
+
+```
+wrk -t 2 -c 120 -d 20s http://127.0.0.1:8002/orders
+Running 20s test @ http://127.0.0.1:8002/orders
+  2 threads and 120 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     7.43ms    0.94ms  41.88ms   99.00%
+    Req/Sec     8.14k   280.43     8.56k    92.50%
+  323896 requests in 20.01s, 3.38GB read
+Requests/sec:  16183.56
+Transfer/sec:    172.70MB
 ```
 
 ## Notes

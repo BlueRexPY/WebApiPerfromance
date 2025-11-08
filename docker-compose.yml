@@ -31,41 +31,41 @@ services:
     networks:
       - webapi-network
 
-  litestar:
-    build: ./PythonLightStar
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./PythonLightStar:/app
-    command: >
-      granian
-      --interface asgi
-      --host 0.0.0.0
-      --port 8000
-      --workers 4
-      --blocking-threads 1
-      --http 1
-      --http1-buffer-size 32768
-      --backlog 4096
-      --loop uvloop
-      --no-access-log
-      --respawn-failed-workers
-      main:app
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "1.0"
-          memory: 512M
-    networks:
-      - webapi-network
+  # litestar:
+  #   build: ./PythonLightStar
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./PythonLightStar:/app
+  #   command: >
+  #     granian
+  #     --interface asgi
+  #     --host 0.0.0.0
+  #     --port 8000
+  #     --workers 4
+  #     --blocking-threads 1
+  #     --http 1
+  #     --http1-buffer-size 32768
+  #     --backlog 4096
+  #     --loop uvloop
+  #     --no-access-log
+  #     --respawn-failed-workers
+  #     main:app
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
   # dotnetapi:
   #   build: ./DotNetApi
@@ -88,26 +88,26 @@ services:
   #   networks:
   #     - webapi-network
 
-  # dotnetapiaot:
-  #   build: ./DotNetApiAot
-  #   ports:
-  #     - "8013:8000"
-  #   environment:
-  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
-  #     ASPNETCORE_ENVIRONMENT: Production
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2.0"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "1.0"
-  #         memory: 512M
-  #   networks:
-  #     - webapi-network
+  dotnetapiaot:
+    build: ./DotNetApiAot
+    ports:
+      - "8013:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
 
   # bunapi:
   #   build: ./NodeBunApi
