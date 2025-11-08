@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), .NET (ASP.NET Core), and Node.js (Bun) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), .NET (ASP.NET Core), Node.js (Bun), and Node.js (Fastify) with PostgreSQL database integration.
 
 ## Projects
 
@@ -24,6 +24,13 @@ This repository contains performance-focused web API implementations in Python (
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
 - **Connection Pool**: 90 connections with prepared statements
 
+### NodeFastifyApi
+
+- **Runtime**: Node.js 22
+- **Framework**: Fastify (fastest Node.js web framework)
+- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Connection Pool**: 90 connections with prepared statements
+
 ## Endpoints
 
 All APIs implement the same endpoints:
@@ -37,6 +44,7 @@ All APIs implement the same endpoints:
 - Python 3.14+ (for local Python development)
 - .NET 9.0 SDK (for local .NET development)
 - Bun 1.0+ (for local Node/Bun development)
+- Node.js 22+ (for local Node/Fastify development)
 - PostgreSQL 15+
 
 ## Database Setup
@@ -55,7 +63,7 @@ CREATE TABLE orders (
 
 ## Quick Start with Docker Compose
 
-Run all services (database + all three APIs) with a single command:
+Run all services (database + all four APIs) with a single command:
 
 ```bash
 docker-compose up --build
@@ -66,6 +74,7 @@ The services will be available at:
 - **Python Litestar API**: http://localhost:8000
 - **.NET API**: http://localhost:8001
 - **Bun API**: http://localhost:8002
+- **Fastify API**: http://localhost:8003
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -120,6 +129,14 @@ bun install
 bun run src/index.ts
 ```
 
+### Fastify API
+
+```bash
+cd NodeFastifyApi
+npm install
+npm start
+```
+
 ## Running with Docker
 
 ### Python Litestar
@@ -146,6 +163,14 @@ docker build -t bun-api .
 docker run -p 8000:8000 --env-file .env bun-api
 ```
 
+### Fastify API
+
+```bash
+cd NodeFastifyApi
+docker build -t fastify-api .
+docker run -p 8000:8000 --env-file .env fastify-api
+```
+
 ## Performance Tuning
 
 ### Python Litestar
@@ -170,6 +195,14 @@ docker run -p 8000:8000 --env-file .env bun-api
 - Prepared statements enabled
 - Zero-overhead native performance
 
+### Fastify API
+
+- Fastify (fastest Node.js framework)
+- Connection pool size: 90
+- Prepared statements enabled
+- Logging disabled for max performance
+- Node.js 22 with latest V8 optimizations
+
 ## Testing
 
 Test the endpoints:
@@ -186,15 +219,20 @@ curl http://localhost:8001/orders
 # Bun API
 curl http://localhost:8002/
 curl http://localhost:8002/orders
+
+# Fastify API
+curl http://localhost:8003/
+curl http://localhost:8003/orders
 ```
 
 ## Performance Testing
 
-You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all three APIs:
+You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all four APIs:
 
 ```bash
 # Example with wrk
 wrk -t12 -c400 -d30s http://localhost:8000/orders  # Python
 wrk -t12 -c400 -d30s http://localhost:8001/orders  # .NET
 wrk -t12 -c400 -d30s http://localhost:8002/orders  # Bun
+wrk -t12 -c400 -d30s http://localhost:8003/orders  # Fastify
 ```

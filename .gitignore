@@ -27,3 +27,5 @@ Thumbs.db
 
 # Local env overrides (keep the template)
 # .env
+
+node_modules/
