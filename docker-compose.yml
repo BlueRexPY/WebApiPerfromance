@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-apiuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+      POSTGRES_DB: ${POSTGRES_DB:-ordersdb}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-apiuser} -d ${POSTGRES_DB:-ordersdb}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - webapi-network
+
+  litestar:
+    build: ./PythonLightStar
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./PythonLightStar:/app
+    command: granian --interface asgi --host 0.0.0.0 --port 8000 --workers 14 --no-access-log --loop uvloop main:app
+    networks:
+      - webapi-network
+
+volumes:
+  postgres_data:
+
+networks:
+  webapi-network:
+    driver: bridge
