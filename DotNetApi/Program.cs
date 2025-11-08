@@ -13,12 +13,20 @@ NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSingleton(dataSource);
 
+builder.Services.AddScoped<NpgsqlConnection>(sp =>
+{
+    var ds = sp.GetRequiredService<NpgsqlDataSource>();
+    var connection = ds.CreateConnection();
+    connection.Open();
+    return connection;
+});
+
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => new HelloResponse { Message = "Hello, World!" });
 app.MapGet(
     "/orders",
-    async (NpgsqlDataSource ds) =>
+    async (NpgsqlConnection connection) =>
     {
         const string sql =
             @"
@@ -27,7 +35,6 @@ app.MapGet(
         LIMIT $1
         OFFSET $2";
 
-        await using NpgsqlConnection connection = await ds.OpenConnectionAsync();
         await using NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
         command.Parameters.Add(new NpgsqlParameter { Value = 100 });

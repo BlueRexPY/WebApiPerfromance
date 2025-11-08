@@ -67,31 +67,10 @@ services:
   #   networks:
   #     - webapi-network
 
-  # dotnetapi:
-  #   build: ./DotNetApi
-  #   ports:
-  #     - "8001:8000"
-  #   environment:
-  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
-  #     ASPNETCORE_ENVIRONMENT: Production
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2.0"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "1.0"
-  #         memory: 512M
-  #   networks:
-  #     - webapi-network
-
-  dotnetapiaot:
-    build: ./DotNetApiAot
+  dotnetapi:
+    build: ./DotNetApi
     ports:
-      - "8013:8000"
+      - "8001:8000"
     environment:
       DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
@@ -108,6 +87,27 @@ services:
           memory: 512M
     networks:
       - webapi-network
+
+  # dotnetapiaot:
+  #   build: ./DotNetApiAot
+  #   ports:
+  #     - "8013:8000"
+  #   environment:
+  #     DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "2.0"
+  #         memory: 1G
+  #       reservations:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #   networks:
+  #     - webapi-network
 
   # bunapi:
   #   build: ./NodeBunApi
