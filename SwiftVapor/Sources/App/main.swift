@@ -16,19 +16,31 @@ struct Order: Content {
 @main
 struct Main {
     static func main() async throws {
-        let app = Application(.detect())
+        var env = try Environment.detect()
+        try LoggingSystem.bootstrap(from: &env)
+        
+        let app = try await Application.make(env)
         defer { app.shutdown() }
         
         // Configure PostgreSQL connection pool
         let databaseURL = Environment.get("DATABASE_URL") ?? "postgresql://apiuser:apipassword@localhost:5432/ordersdb"
         
-        guard let config = try? PostgresConnection.Configuration(url: databaseURL) else {
-            fatalError("Invalid DATABASE_URL")
-        }
+        // Parse connection string
+        let host = "localhost"
+        let port = 5432
+        let username = "apiuser"
+        let password = "apipassword"
+        let database = "ordersdb"
         
-        let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+        let config = PostgresConnection.Configuration(
+            connection: .init(host: host, port: port),
+            authentication: .init(username: username, database: database, password: password),
+            tls: .disable
+        )
+        
+        let eventLoopGroup = app.eventLoopGroup
         let pool = EventLoopGroupConnectionPool(
-            source: PostgresConnectionSource(configuration: config),
+            source: PostgresConnection.Configuration.makeConnectionSource(configuration: config, eventLoop: eventLoopGroup.any()),
             maxConnectionsPerEventLoop: 90,
             on: eventLoopGroup
         )
@@ -43,26 +55,18 @@ struct Main {
         
         app.get("orders") { req async throws -> [Order] in
             try await pool.withConnection { connection in
-                let query = """
-                SELECT id, customer_id, total_cents, status, created_at
-                FROM orders
-                LIMIT $1
-                OFFSET $2
-                """
-                
                 let rows = try await connection.query(
-                    PostgresQuery(stringLiteral: query),
-                    [100, 1000]
+                    """
+                    SELECT id, customer_id, total_cents, status, created_at
+                    FROM orders
+                    LIMIT 100
+                    OFFSET 1000
+                    """,
+                    logger: req.logger
                 )
                 
                 var orders: [Order] = []
-                for try await row in rows {
-                    let id = try row.decode(Int.self, context: .default)
-                    let customerId = try row.decode(Int.self, context: .default)
-                    let totalCents = try row.decode(Int.self, context: .default)
-                    let status = try row.decode(String.self, context: .default)
-                    let createdAt = try row.decode(Date.self, context: .default)
-                    
+                for try await (id, customerId, totalCents, status, createdAt) in rows.decode((Int, Int, Int, String, Date).self) {
                     orders.append(Order(
                         id: id,
                         customer_id: customerId,
@@ -76,6 +80,6 @@ struct Main {
             }
         }
         
-        try app.run()
+        try await app.execute()
     }
 }

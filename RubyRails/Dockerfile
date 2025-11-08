@@ -5,8 +5,7 @@ RUN apk add --no-cache build-base postgresql-dev tzdata
 WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set --local deployment 'true' && \
-    bundle config set --local without 'development test' && \
+RUN bundle config set --local without 'development test' && \
     bundle install --jobs 4
 
 COPY . .
