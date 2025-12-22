@@ -17,10 +17,12 @@ RUN apt-get update && apt-get install -y \
     libjsoncpp-dev \
     uuid-dev \
     libbrotli-dev \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone and build Drogon
-RUN git clone --depth 1 --branch v1.9.7 https://github.com/drogonframework/drogon.git /drogon && \
+RUN git config --global http.sslVerify false && \
+    git clone --depth 1 --branch v1.9.7 https://github.com/drogonframework/drogon.git /drogon && \
     cd /drogon && \
     git submodule update --init && \
     mkdir build && \
