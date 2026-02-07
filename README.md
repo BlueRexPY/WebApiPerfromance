@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), and Erlang (Cowboy) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), Erlang (Cowboy), and C++ (Drogon) with PostgreSQL database integration.
 
 ## Projects
 
@@ -144,6 +144,15 @@ This repository contains performance-focused web API implementations in Python (
 - **JSON**: orjson for fast JSON serialization
 - **Optimizations**: Disabled migrations, minimal middleware, direct SQL queries
 
+### CppDrogon
+
+- **Framework**: Drogon 1.9 (high-performance C++ web framework)
+- **Database**: PostgreSQL with libpq and connection pooling
+- **Connection Pool**: 90 connections
+- **Workers**: 14 threads
+- **Compilation**: Release build with -O3 optimizations
+- **Runtime**: Native compiled binary
+
 ## Endpoints
 
 All APIs implement the same endpoints:
@@ -167,6 +176,7 @@ All APIs implement the same endpoints:
 - Swift 5.9+ (for local Swift development)
 - Ruby 3.3.0+ (for local Ruby development)
 - Erlang/OTP 26+ and rebar3 (for local Erlang development)
+- C++ compiler with C++17 support, CMake 3.16+, and Drogon framework (for local C++ development)
 - PostgreSQL 15+
 
 ## Database Setup
@@ -209,6 +219,7 @@ The services will be available at:
 - **Express API**: http://localhost:8014
 - **Ruby Rails API**: http://localhost:8015
 - **Django API**: http://localhost:8016
+- **C++ Drogon API**: http://localhost:8017
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -383,6 +394,16 @@ pip install -r requirements.txt
 gunicorn --bind 0.0.0.0:8000 --workers 4 --worker-class sync --threads 4 djangoapi.wsgi:application
 ```
 
+### C++ Drogon API
+
+```bash
+cd CppDrogon
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+./cpp-drogon-api
+```
+
 ## Running with Docker
 
 ### Python Litestar
@@ -519,6 +540,14 @@ docker run -p 8000:8000 --env-file .env ruby-rails-api
 cd DjangoApi
 docker build -t django-api .
 docker run -p 8000:8000 --env-file .env django-api
+```
+
+### C++ Drogon API
+
+```bash
+cd CppDrogon
+docker build -t cpp-drogon-api .
+docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ```
 
 ## Performance Tuning
@@ -676,6 +705,16 @@ docker run -p 8000:8000 --env-file .env django-api
 - Minimal logging (NullHandler)
 - Connection reuse with CONN_MAX_AGE
 
+### C++ Drogon API
+
+- Drogon framework (one of the fastest C++ web frameworks)
+- Connection pool size: 90
+- Worker threads: 14
+- Native compiled binary with -O3 optimizations
+- libpq for PostgreSQL connectivity
+- Zero-overhead JSON serialization with jsoncpp
+- Async I/O with event-driven architecture
+
 ## Testing
 
 Test the endpoints:
@@ -748,6 +787,10 @@ curl http://localhost:8015/orders
 # Django API
 curl http://localhost:8016/
 curl http://localhost:8016/orders
+
+# C++ Drogon API
+curl http://localhost:8017/
+curl http://localhost:8017/orders
 ```
 
 ## Performance Testing
@@ -773,4 +816,5 @@ wrk -t 2 -c 120 -d 20s http://localhost:8013/orders  # .NET AOT
 wrk -t 2 -c 120 -d 20s http://localhost:8014/orders  # Express
 wrk -t 2 -c 120 -d 20s http://localhost:8015/orders  # Ruby Rails
 wrk -t 2 -c 120 -d 20s http://localhost:8016/orders  # Django
+wrk -t 2 -c 120 -d 20s http://localhost:8017/orders  # C++ Drogon
 ```
