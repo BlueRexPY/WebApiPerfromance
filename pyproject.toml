@@ -1,0 +1,29 @@
+[project]
+name = "webapi-benchmarks"
+version = "1.0.0"
+description = "Automated performance benchmark suite for Web API framework comparison"
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["benchmarks"]
+python_files = ["test_*.py"]
+python_classes = [""]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "-x",
+]
+# Custom markers
+markers = [
+    "benchmark: Performance benchmark test",
+]
+# Default timeout per test (wrk duration + overhead)
+# timeout = 120
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"

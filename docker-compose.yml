@@ -32,7 +32,7 @@ services:
       - webapi-network
 
   litestar:
-    build: ./PythonLightStar
+    build: ./apps/PythonLightStar
     ports:
       - "8000:8000"
     environment:
@@ -41,7 +41,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./PythonLightStar:/app
+      - ./apps/PythonLightStar:/app
     command: >
       granian
       --interface asgi
@@ -68,7 +68,7 @@ services:
       - webapi-network
 
   dotnetapi:
-    build: ./DotNetApi
+    build: ./apps/DotNetApi
     ports:
       - "8001:8000"
     environment:
@@ -89,7 +89,7 @@ services:
       - webapi-network
 
   dotnetapiaot:
-    build: ./DotNetApiAot
+    build: ./apps/DotNetApiAot
     ports:
       - "8013:8000"
     environment:
@@ -110,7 +110,7 @@ services:
       - webapi-network
 
   bunapi:
-    build: ./NodeBunApi
+    build: ./apps/NodeBunApi
     ports:
       - "8002:8000"
     environment:
@@ -130,7 +130,7 @@ services:
       - webapi-network
 
   fastapi:
-    build: ./PythonFastApi
+    build: ./apps/PythonFastApi
     ports:
       - "8004:8000"
     environment:
@@ -150,7 +150,7 @@ services:
       - webapi-network
 
   fastifyapi:
-    build: ./NodeFastifyApi
+    build: ./apps/NodeFastifyApi
     ports:
       - "8003:8000"
     environment:
@@ -171,7 +171,7 @@ services:
       - webapi-network
 
   rustactix:
-    build: ./RustActix
+    build: ./apps/RustActix
     ports:
       - "8005:8000"
     environment:
@@ -191,7 +191,7 @@ services:
       - webapi-network
 
   haskellservant:
-    build: ./HaskellServant
+    build: ./apps/HaskellServant
     ports:
       - "8006:8000"
     environment:
@@ -215,7 +215,7 @@ services:
       - webapi-network
 
   elixirphoenix:
-    build: ./ElixirPhoenix
+    build: ./apps/ElixirPhoenix
     ports:
       - "8007:8000"
     environment:
@@ -236,7 +236,7 @@ services:
       - webapi-network
 
   gofiber:
-    build: ./GoFiber
+    build: ./apps/GoFiber
     ports:
       - "8008:8000"
     environment:
@@ -256,7 +256,7 @@ services:
       - webapi-network
 
   javaspringboot:
-    build: ./JavaSpringBoot
+    build: ./apps/JavaSpringBoot
     ports:
       - "8009:8000"
     environment:
@@ -276,7 +276,7 @@ services:
       - webapi-network
 
   denoapi:
-    build: ./NodeDenoApi
+    build: ./apps/NodeDenoApi
     ports:
       - "8011:8000"
     environment:
@@ -296,7 +296,7 @@ services:
       - webapi-network
 
   swiftvapor:
-    build: ./SwiftVapor
+    build: ./apps/SwiftVapor
     ports:
       - "8012:8000"
     environment:
@@ -320,7 +320,7 @@ services:
       - webapi-network
 
   expressapi:
-    build: ./NodeExpressApi
+    build: ./apps/NodeExpressApi
     ports:
       - "8014:8000"
     environment:
@@ -341,7 +341,7 @@ services:
       - webapi-network
 
   rubyrails:
-    build: ./RubyRails
+    build: ./apps/RubyRails
     ports:
       - "8015:8000"
     environment:
@@ -365,7 +365,7 @@ services:
       - webapi-network
 
   djangoapi:
-    build: ./DjangoApi
+    build: ./apps/DjangoApi
     ports:
       - "8016:8000"
     environment:
@@ -386,7 +386,7 @@ services:
       - webapi-network
 
   erlangcowboy:
-    build: ./ErlangCowboy
+    build: ./apps/ErlangCowboy
     ports:
       - "8010:8000"
     environment:
@@ -406,7 +406,7 @@ services:
       - webapi-network
 
   cppdrogon:
-    build: ./CppDrogon
+    build: ./apps/CppDrogon
     ports:
       - "8017:8000"
     environment:
