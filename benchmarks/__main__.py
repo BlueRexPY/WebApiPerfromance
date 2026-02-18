@@ -37,13 +37,38 @@ from .formatter import write_summary
 from .runner import run_all, stop_all_services
 
 
+class _ColorFormatter(logging.Formatter):
+    """Logging formatter that colorizes output by level."""
+
+    _RESET = "\033[0m"
+    _BOLD = "\033[1m"
+    _LEVEL_COLORS: dict[int, str] = {
+        logging.DEBUG: "\033[36m",  # cyan
+        logging.INFO: "\033[32m",  # green
+        logging.WARNING: "\033[33m",  # yellow
+        logging.ERROR: "\033[31m",  # red
+        logging.CRITICAL: "\033[35m",  # magenta
+    }
+
+    def format(self, record: logging.LogRecord) -> str:
+        color = self._LEVEL_COLORS.get(record.levelno, "")
+        time_str = self.formatTime(record, "%H:%M:%S")
+        level = f"{color}{self._BOLD}{record.levelname:<8}{self._RESET}"
+        msg = record.getMessage()
+        # Highlight success / failure markers
+        if msg.startswith("\u2713"):  # ✓
+            msg = f"\033[32m{self._BOLD}{msg}{self._RESET}"
+        elif msg.startswith("\u2717"):  # ✗
+            msg = f"\033[31m{self._BOLD}{msg}{self._RESET}"
+        return f"{color}{time_str}{self._RESET} │ {level} │ {msg}"
+
+
 def _setup_logging(verbose: bool = False) -> None:
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s │ %(levelname)-7s │ %(message)s",
-        datefmt="%H:%M:%S",
-    )
+    handler = logging.StreamHandler()
+    handler.setFormatter(_ColorFormatter())
+    logging.root.setLevel(level)
+    logging.root.handlers = [handler]
 
 
 def _cmd_list(args: argparse.Namespace) -> int:

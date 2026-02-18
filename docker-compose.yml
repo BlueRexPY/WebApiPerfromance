@@ -425,8 +425,8 @@ services:
     networks:
       - webapi-network
 
-  capi:
-    build: ./apps/CApi
+  cmicrohttpd:
+    build: ./apps/CMicrohttpd
     ports:
       - "8018:8000"
     environment:

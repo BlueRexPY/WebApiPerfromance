@@ -54,28 +54,6 @@ python -m benchmarks summary --test hello_world
 python -m benchmarks stop
 ```
 
-## Pytest (VS Code Test Explorer)
-
-```bash
-# All
-pytest benchmarks/
-
-# Filter by service
-pytest benchmarks/ --service dotnetapiaot
-
-# Filter by test type
-pytest benchmarks/ --test-type hello_world
-
-# Run one specific combo
-pytest benchmarks/ -k "dotnetapiaot__hello_world"
-
-# Skip Docker (services already running)
-pytest benchmarks/ --no-docker
-
-# Custom wrk settings
-pytest benchmarks/ --wrk-threads 4 --wrk-connections 200 --wrk-duration 30
-```
-
 ## Services
 
 | Name           | Port |

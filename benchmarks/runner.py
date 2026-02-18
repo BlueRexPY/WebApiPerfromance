@@ -145,6 +145,19 @@ def stop_all_services() -> None:
     )
 
 
+def restart_db() -> None:
+    """Restart the DB container to flush all stale connections."""
+    cmd = _compose_cmd()
+    logger.info("Restarting database to clear stale connections...")
+    subprocess.run(
+        [*cmd, "restart", "db"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    ensure_db_up()
+
+
 # ── Health check ───────────────────────────────────────────────────────────────
 def wait_for_service(service: Service, timeout: int = SERVICE_START_TIMEOUT) -> None:
     """Wait until the service responds to HTTP on its port."""
@@ -427,12 +440,21 @@ def _run_sequential(
     tt_list: list[TestType],
     wrk_config: WrkConfig,
 ) -> list[BenchmarkResult]:
-    """Run benchmarks sequentially, one service at a time."""
+    """Run benchmarks sequentially, one service at a time.
+
+    The DB is restarted before each service to drop stale connections
+    left by the previously tested service.
+    """
     results: list[BenchmarkResult] = []
     total = len(svc_list) * len(tt_list)
     current = 0
 
-    for svc in svc_list:
+    for i, svc in enumerate(svc_list):
+        # Restart DB between services to clear stale connections.
+        # Skip on the first iteration — run_all already called ensure_db_up().
+        if i > 0:
+            restart_db()
+
         try:
             start_service(svc)
             wait_for_service(svc)
