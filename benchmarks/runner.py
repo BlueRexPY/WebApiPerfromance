@@ -385,32 +385,28 @@ def run_all(
     wrk_config: WrkConfig = DEFAULT_WRK,
     *,
     parallel: bool = False,
-    max_workers: int = 4,
+    max_workers: int = 0,
 ) -> list[BenchmarkResult]:
     """Run benchmarks for multiple services and test types.
 
-    In sequential mode (default), services are tested one at a time to
-    avoid resource contention.
+    In sequential mode (default), services are tested one at a time.
 
-    In parallel mode, multiple services are started and benchmarked
-    concurrently using a thread pool.
+    In parallel mode, ALL services are started simultaneously, then ALL
+    wrk processes are launched at the same time (one per service×test combo).
+    max_workers=0 (default) means no cap — every combo runs concurrently.
 
     Args:
         services: List of service names. None = all services.
         test_types: List of test type names. None = all test types.
         wrk_config: wrk parameters.
-        parallel: If True, run service benchmarks concurrently.
-        max_workers: Max concurrent services in parallel mode.
+        parallel: If True, start all services and fire all wrk runs at once.
+        max_workers: Max concurrent wrk processes. 0 = unlimited (all at once).
 
     Returns:
         List of all benchmark results.
     """
     svc_list = [SERVICES[s] for s in (services or SERVICES.keys())]
     tt_list = [TEST_TYPES[t] for t in (test_types or TEST_TYPES.keys())]
-
-    results: list[BenchmarkResult] = []
-    total = len(svc_list) * len(tt_list)
-    current = 0
 
     ensure_db_up()
 
@@ -473,36 +469,10 @@ def _run_sequential(
     return results
 
 
-def _bench_service(
-    svc: Service,
-    tt_list: list[TestType],
-    wrk_config: WrkConfig,
-) -> list[BenchmarkResult]:
-    """Benchmark one service across all test types (used by parallel runner)."""
-    results: list[BenchmarkResult] = []
-    try:
-        start_service(svc)
-        wait_for_service(svc)
-        for tt in tt_list:
-            logger.info("Benchmarking %s — %s", svc.display_name, tt.label)
-            result = run_benchmark(svc, tt, wrk_config, manage_docker=False)
-            results.append(result)
-    except Exception as e:
-        logger.error("Failed to start %s: %s", svc.name, e)
-        for tt in tt_list:
-            results.append(
-                BenchmarkResult(
-                    service=svc,
-                    test_type=tt,
-                    wrk_result=WrkResult(),
-                    result_path=Path(),
-                    success=False,
-                    error=str(e),
-                )
-            )
-    finally:
-        stop_service(svc)
-    return results
+def _start_and_wait(service: Service) -> None:
+    """Start a service and block until it responds."""
+    start_service(service)
+    wait_for_service(service)
 
 
 def _run_parallel(
@@ -511,26 +481,37 @@ def _run_parallel(
     wrk_config: WrkConfig,
     max_workers: int,
 ) -> list[BenchmarkResult]:
-    """Run benchmarks in parallel using a thread pool."""
+    """True parallel execution.
+
+    Phase 1 — start every service simultaneously.
+    Phase 2 — warmup every (service × test_type) simultaneously.
+    Phase 3 — fire every wrk process at the same time.
+    Phase 4 — stop all services simultaneously.
+
+    max_workers=0 means no cap on concurrent wrk processes.
+    """
     results: list[BenchmarkResult] = []
+    total_combos = len(svc_list) * len(tt_list)
+
     logger.info(
-        "Running %d services in parallel (max %d workers)",
+        "Parallel mode: starting %d services, then launching %d wrk processes simultaneously",
         len(svc_list),
-        max_workers,
+        total_combos,
     )
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {
-            executor.submit(_bench_service, svc, tt_list, wrk_config): svc
-            for svc in svc_list
-        }
+    # ── Phase 1: start all services in parallel ────────────────────────────────
+    started: list[Service] = []
+
+    with ThreadPoolExecutor(max_workers=len(svc_list)) as executor:
+        futures = {executor.submit(_start_and_wait, svc): svc for svc in svc_list}
         for future in as_completed(futures):
             svc = futures[future]
             try:
-                svc_results = future.result()
-                results.extend(svc_results)
+                future.result()
+                started.append(svc)
+                logger.info("✓ Up: %s (port %d)", svc.name, svc.port)
             except Exception as e:
-                logger.error("Parallel task failed for %s: %s", svc.name, e)
+                logger.error("✗ Failed to start %s: %s", svc.name, e)
                 for tt in tt_list:
                     results.append(
                         BenchmarkResult(
@@ -542,5 +523,60 @@ def _run_parallel(
                             error=str(e),
                         )
                     )
+
+    if not started:
+        return results
+
+    # ── Phase 2: warmup all (service × test_type) in parallel ─────────────────
+    warmup_combos = [(svc, tt) for svc in started for tt in tt_list]
+    with ThreadPoolExecutor(max_workers=len(warmup_combos)) as executor:
+        warmup_futures = [executor.submit(warmup, svc, tt) for svc, tt in warmup_combos]
+        for f in as_completed(warmup_futures):
+            try:
+                f.result()
+            except Exception:
+                pass  # warmup failures are non-fatal
+
+    # ── Phase 3: fire all wrk processes simultaneously ─────────────────────────
+    bench_combos = [(svc, tt) for svc in started for tt in tt_list]
+    # 0 = unlimited: one thread per combo so all wrk runs start at the same time
+    workers = (
+        len(bench_combos) if max_workers <= 0 else min(max_workers, len(bench_combos))
+    )
+
+    logger.info(
+        "Launching %d wrk processes (%d concurrent)...",
+        len(bench_combos),
+        workers,
+    )
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(run_benchmark, svc, tt, wrk_config, manage_docker=False): (
+                svc,
+                tt,
+            )
+            for svc, tt in bench_combos
+        }
+        for future in as_completed(futures):
+            svc, tt = futures[future]
+            try:
+                results.append(future.result())
+            except Exception as e:
+                logger.error("Benchmark failed for %s / %s: %s", svc.name, tt.name, e)
+                results.append(
+                    BenchmarkResult(
+                        service=svc,
+                        test_type=tt,
+                        wrk_result=WrkResult(),
+                        result_path=Path(),
+                        success=False,
+                        error=str(e),
+                    )
+                )
+
+    # ── Phase 4: stop all services in parallel ─────────────────────────────────
+    with ThreadPoolExecutor(max_workers=len(started)) as executor:
+        list(executor.map(stop_service, started))
 
     return results

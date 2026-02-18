@@ -98,7 +98,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         test_types,
         wrk_config,
         parallel=getattr(args, "parallel", False),
-        max_workers=getattr(args, "max_workers", 4),
+        max_workers=getattr(args, "max_workers", 0),
     )
 
     # Print summary
@@ -217,8 +217,8 @@ def main(argv: list[str] | None = None) -> int:
     run_parser.add_argument(
         "--max-workers",
         type=int,
-        default=4,
-        help="Max concurrent services in parallel mode (default: 4)",
+        default=0,
+        help="Max concurrent wrk processes in parallel mode. 0 = unlimited, all at once (default: 0)",
     )
 
     # ── list ──

@@ -33,10 +33,10 @@ python -m benchmarks run --threads 4 --connections 200 --duration 30
 # Multiple services/tests (repeat the flag)
 python -m benchmarks run --service dotnetapi --service rustactix
 
-# Run all services in parallel (faster, may affect accuracy)
+# Run all services in parallel — starts all containers, fires all wrk processes simultaneously
 python -m benchmarks run --parallel
 
-# Parallel with custom worker count (default: 4)
+# Cap concurrent wrk processes (default: 0 = unlimited, all at once)
 python -m benchmarks run --parallel --max-workers 8
 ```
 
