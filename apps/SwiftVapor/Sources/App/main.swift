@@ -105,7 +105,7 @@ struct Main {
         app.http.server.configuration.port = 8000
         
         // Routes
-        app.get("/") { req -> String in
+        app.get { req -> String in
             "Hello, World!"
         }
         

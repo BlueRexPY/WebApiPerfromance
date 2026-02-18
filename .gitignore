@@ -65,8 +65,6 @@ erl_crash.dump
 # Deno
 deno.lock
 
-# Benchmark results (regenerated)
-results/
 
 # Swift
 .build/
