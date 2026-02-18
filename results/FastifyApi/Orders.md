@@ -1,35 +1,35 @@
 # Fastify API — Orders Benchmark
 
-**Tested**: 2026-02-18 02:28:36 UTC
+**Tested**: 2026-02-18 03:22:13 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8003/orders`
 
 ## Summary
 
-| Metric         | Value    |
-| -------------- | -------- |
-| Requests/sec   | 3,712.32 |
-| Avg Latency    | 32.75ms  |
-| Max Latency    | 290.46ms |
-| Total Requests | 74,266   |
-| Transfer/sec   | 39.84MB  |
-| Port           | 8003     |
+| Metric | Value |
+| --- | --- |
+| Requests/sec | 3,253.89 |
+| Avg Latency | 39.59ms |
+| Max Latency | 848.97ms |
+| Total Requests | 65,113 |
+| Transfer/sec | 34.92MB |
+| Port | 8003 |
 
 ## Thread Stats
 
-| Stat    | Avg     | Stdev   | Max      | +/- Stdev |
-| ------- | ------- | ------- | -------- | --------- |
-| Latency | 32.75ms | 14.18ms | 290.46ms | 77.14%    |
-| Req/Sec | 1.87k   | 180.39  | 2.14k    | 87.50%    |
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | 39.59ms | 37.53ms | 848.97ms | 98.80% |
+| Req/Sec | 1.64k | 146.12 | 1.95k | 69.50% |
 
 ## Resource Usage
 
-| Metric       | Value    |
-| ------------ | -------- |
-| Memory Usage | 46.36MiB |
-| Memory Limit | 1GiB     |
-| Memory %     | 4.53%    |
-| CPU %        | 0.01%    |
-| PIDs         | 11       |
+| Metric | Value |
+| --- | --- |
+| Memory Usage | 47.86MiB |
+| Memory Limit | 1GiB |
+| Memory % | 4.67% |
+| CPU % | 0.01% |
+| PIDs | 11 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8003/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    32.75ms   14.18ms 290.46ms   77.14%
-    Req/Sec     1.87k   180.39     2.14k    87.50%
-  74266 requests in 20.01s, 797.00MB read
-Requests/sec:   3712.32
-Transfer/sec:     39.84MB
+    Latency    39.59ms   37.53ms 848.97ms   98.80%
+    Req/Sec     1.64k   146.12     1.95k    69.50%
+  65113 requests in 20.01s, 698.77MB read
+Requests/sec:   3253.89
+Transfer/sec:     34.92MB
 ```

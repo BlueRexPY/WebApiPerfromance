@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-18 03:17:39 UTC
+**Generated**: 2026-02-18 03:38:32 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -14,24 +14,24 @@
 
 | Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Haskell Servant | 8006 | 158,828.12 | 800.54us | 91.30ms | 3,176,712 | 28.93MB | 252.2MiB |
-| Rust Actix | 8005 | 136,275.09 | 10.40ms | 63.43ms | 2,725,597 | 17.54MB | 4.5MiB |
-| Bun API | 8002 | 128,261.01 | 0.99ms | 63.18ms | 2,565,540 | 16.51MB | 16.35MiB |
-| Deno API | 8011 | 127,777.84 | 1.02ms | 75.07ms | 2,555,872 | 19.25MB | 43.31MiB |
-| Erlang Cowboy | 8010 | 94,813.52 | 1.33ms | 59.39ms | 1,896,587 | 13.66MB | 99.94MiB |
-| Fastify API | 8003 | 94,293.78 | 1.74ms | 262.72ms | 1,886,129 | 17.81MB | 28.61MiB |
-| .NET AOT | 8013 | 88,743.25 | 4.99ms | 70.94ms | 1,775,163 | 15.74MB | 18.07MiB |
-| .NET API | 8001 | 69,305.26 | 4.93ms | 76.90ms | 1,387,512 | 12.29MB | 31.32MiB |
-| Elixir Phoenix | 8007 | 63,088.54 | 2.20ms | 59.78ms | 1,268,080 | 15.28MB | 169.9MiB |
-| C Microhttpd | 8018 | 46,977.74 | 12.23ms | 68.22ms | 940,442 | 6.05MB | 3.047MiB |
-| C++ Drogon | 8017 | 44,330.15 | 13.12ms | 70.81ms | 886,733 | 7.27MB | 9.184MiB |
-| Swift Vapor | 8012 | 38,655.65 | 3.15ms | 54.51ms | 773,162 | 5.68MB | 5.062MiB |
-| Go Fiber | 8008 | 31,542.32 | 18.61ms | 84.42ms | 632,287 | 4.51MB | 12.91MiB |
-| Express API | 8014 | 26,751.77 | 5.73ms | 446.04ms | 535,113 | 5.03MB | 39.1MiB |
-| Python FastAPI | 8004 | 24,245.88 | 12.33ms | 78.04ms | 485,065 | 3.51MB | 191.4MiB |
-| Java Spring Boot | 8009 | 21,019.49 | 14.91ms | 265.46ms | 420,522 | 1.96MB | 142.3MiB |
-| Python Litestar | 8000 | 13,273.26 | 19.75ms | 76.94ms | 266,041 | 1.92MB | 147.6MiB |
-| Ruby Rails | 8015 | 2,118.87\* | 74.64ms | 1.98s | 42,428 | 593.86KB | 289.4MiB |
-| Django API | 8016 | 1,937.01\* | 64.76ms | 418.89ms | 38,772 | 570.99KB | 137.8MiB |
+| Haskell Servant | 8006 | 137,467.54 | 0.96ms | 105.72ms | 2,749,565 | 25.04MB | 233.2MiB |
+| .NET AOT | 8013 | 109,601.23 | 4.93ms | 71.35ms | 2,192,307 | 19.44MB | 15.47MiB |
+| Rust Actix | 8005 | 109,437.17 | 9.72ms | 63.08ms | 2,188,924 | 14.09MB | 4.516MiB |
+| Bun API | 8002 | 109,049.66 | 1.14ms | 52.55ms | 2,181,135 | 14.04MB | 15.36MiB |
+| Deno API | 8011 | 106,969.31 | 1.16ms | 49.06ms | 2,139,575 | 16.12MB | 45.88MiB |
+| C++ Drogon | 8017 | 87,762.42 | 11.69ms | 66.54ms | 1,756,354 | 14.40MB | 9.484MiB |
+| C Microhttpd | 8018 | 86,707.59 | 10.99ms | 67.06ms | 1,735,387 | 11.16MB | 3.035MiB |
+| Erlang Cowboy | 8010 | 81,949.53 | 1.53ms | 43.57ms | 1,639,094 | 11.80MB | 95.89MiB |
+| .NET API | 8001 | 79,500.61 | 4.96ms | 85.37ms | 1,590,473 | 14.10MB | 30.9MiB |
+| Fastify API | 8003 | 77,541.28 | 1.95ms | 250.10ms | 1,551,078 | 14.64MB | 27.5MiB |
+| Elixir Phoenix | 8007 | 52,176.80 | 2.59ms | 30.83ms | 1,043,659 | 12.64MB | 166.3MiB |
+| Go Fiber | 8008 | 44,459.89 | 16.73ms | 80.90ms | 890,398 | 6.36MB | 13.11MiB |
+| Swift Vapor | 8012 | 33,271.14 | 3.64ms | 47.88ms | 665,452 | 4.89MB | 4.582MiB |
+| Java Spring Boot | 8009 | 30,736.76 | 12.80ms | 142.28ms | 615,208 | 2.87MB | 139.3MiB |
+| Python FastAPI | 8004 | 23,455.92 | 12.17ms | 75.56ms | 469,673 | 3.40MB | 190.4MiB |
+| Express API | 8014 | 23,261.88 | 6.50ms | 533.98ms | 465,312 | 4.37MB | 38.89MiB |
+| Python Litestar | 8000 | 15,136.85 | 19.02ms | 78.58ms | 302,749 | 2.19MB | 145.7MiB |
+| Ruby Rails | 8015 | 3,842.95 | 35.45ms | 936.16ms | 76,964 | 1.05MB | 274.7MiB |
+| Django API | 8016 | 2,545.96\* | 55.53ms | 417.33ms | 50,949 | 750.58KB | 137.7MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

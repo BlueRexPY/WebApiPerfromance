@@ -157,7 +157,9 @@ def start_monitoring() -> None:
         capture_output=True,
         text=True,
     )
-    logger.info("Monitoring is up — Grafana: http://localhost:3000  Prometheus: http://localhost:9090")
+    logger.info(
+        "Monitoring is up — Grafana: http://localhost:3000  Prometheus: http://localhost:9090"
+    )
 
 
 def stop_monitoring() -> None:
