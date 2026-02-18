@@ -37,7 +37,7 @@ void parseAndConfigureDatabase() {
         database,
         user,
         password,
-        80,  // connection pool size
+        40,  // connection pool size
         "",  // filename (not used for postgresql)
         "default",
         false,  // isFast

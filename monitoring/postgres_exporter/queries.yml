@@ -1,0 +1,260 @@
+# ── Wait events by type (from pg_stat_activity) ──────────────────────────────
+pg_stat_activity_wait_events:
+  query: |
+    SELECT
+      COALESCE(wait_event_type, 'CPU') AS wait_event_type,
+      COALESCE(wait_event, 'Running') AS wait_event,
+      state,
+      COUNT(*) AS count
+    FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+      AND datname = current_database()
+    GROUP BY wait_event_type, wait_event, state
+  metrics:
+    - wait_event_type:
+        usage: "LABEL"
+        description: "Type of wait event (IO, Lock, LWLock, etc.)"
+    - wait_event:
+        usage: "LABEL"
+        description: "Specific wait event name"
+    - state:
+        usage: "LABEL"
+        description: "Backend state (active, idle, etc.)"
+    - count:
+        usage: "GAUGE"
+        description: "Number of backends in this wait state"
+
+# ── Active connections by state ──────────────────────────────────────────────
+pg_stat_activity_states:
+  query: |
+    SELECT
+      state,
+      COUNT(*) AS count,
+      COALESCE(EXTRACT(EPOCH FROM MAX(clock_timestamp() - state_change)), 0) AS max_duration_seconds
+    FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+      AND datname = current_database()
+    GROUP BY state
+  metrics:
+    - state:
+        usage: "LABEL"
+        description: "Backend state"
+    - count:
+        usage: "GAUGE"
+        description: "Number of connections in this state"
+    - max_duration_seconds:
+        usage: "GAUGE"
+        description: "Longest time a connection has been in this state"
+
+# ── IO wait breakdown ────────────────────────────────────────────────────────
+pg_stat_activity_io_waits:
+  query: |
+    SELECT
+      wait_event AS io_wait_event,
+      COUNT(*) AS count
+    FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+      AND datname = current_database()
+      AND wait_event_type = 'IO'
+    GROUP BY wait_event
+  metrics:
+    - io_wait_event:
+        usage: "LABEL"
+        description: "IO wait event name"
+    - count:
+        usage: "GAUGE"
+        description: "Number of backends waiting on this IO event"
+
+# ── Lock waits ───────────────────────────────────────────────────────────────
+pg_stat_activity_lock_waits:
+  query: |
+    SELECT
+      wait_event AS lock_wait_event,
+      COUNT(*) AS count
+    FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+      AND datname = current_database()
+      AND wait_event_type = 'Lock'
+    GROUP BY wait_event
+  metrics:
+    - lock_wait_event:
+        usage: "LABEL"
+        description: "Lock wait event name"
+    - count:
+        usage: "GAUGE"
+        description: "Number of backends waiting on this lock"
+
+# ── LWLock waits ─────────────────────────────────────────────────────────────
+pg_stat_activity_lwlock_waits:
+  query: |
+    SELECT
+      wait_event AS lwlock_wait_event,
+      COUNT(*) AS count
+    FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+      AND datname = current_database()
+      AND wait_event_type = 'LWLock'
+    GROUP BY wait_event
+  metrics:
+    - lwlock_wait_event:
+        usage: "LABEL"
+        description: "LWLock wait event name"
+    - count:
+        usage: "GAUGE"
+        description: "Number of backends waiting on this LWLock"
+
+# ── Database-level stats ─────────────────────────────────────────────────────
+pg_stat_database_extended:
+  query: |
+    SELECT
+      numbackends,
+      xact_commit,
+      xact_rollback,
+      blks_read,
+      blks_hit,
+      tup_returned,
+      tup_fetched,
+      tup_inserted,
+      tup_updated,
+      tup_deleted,
+      conflicts,
+      temp_files,
+      temp_bytes,
+      deadlocks,
+      CASE WHEN (blks_hit + blks_read) > 0
+        THEN round(blks_hit::numeric / (blks_hit + blks_read), 4)
+        ELSE 1
+      END AS cache_hit_ratio
+    FROM pg_stat_database
+    WHERE datname = current_database()
+  metrics:
+    - numbackends:
+        usage: "GAUGE"
+        description: "Number of connected backends"
+    - xact_commit:
+        usage: "COUNTER"
+        description: "Transactions committed"
+    - xact_rollback:
+        usage: "COUNTER"
+        description: "Transactions rolled back"
+    - blks_read:
+        usage: "COUNTER"
+        description: "Disk blocks read"
+    - blks_hit:
+        usage: "COUNTER"
+        description: "Buffer cache hits"
+    - tup_returned:
+        usage: "COUNTER"
+        description: "Rows returned by queries"
+    - tup_fetched:
+        usage: "COUNTER"
+        description: "Rows fetched by queries"
+    - tup_inserted:
+        usage: "COUNTER"
+        description: "Rows inserted"
+    - tup_updated:
+        usage: "COUNTER"
+        description: "Rows updated"
+    - tup_deleted:
+        usage: "COUNTER"
+        description: "Rows deleted"
+    - conflicts:
+        usage: "COUNTER"
+        description: "Queries canceled due to conflicts"
+    - temp_files:
+        usage: "COUNTER"
+        description: "Temp files created"
+    - temp_bytes:
+        usage: "COUNTER"
+        description: "Temp bytes written"
+    - deadlocks:
+        usage: "COUNTER"
+        description: "Deadlocks detected"
+    - cache_hit_ratio:
+        usage: "GAUGE"
+        description: "Buffer cache hit ratio"
+
+# ── Table stats for orders ───────────────────────────────────────────────────
+pg_stat_user_tables_orders:
+  query: |
+    SELECT
+      seq_scan,
+      seq_tup_read,
+      idx_scan,
+      idx_tup_fetch,
+      n_tup_ins,
+      n_tup_upd,
+      n_tup_del,
+      n_live_tup,
+      n_dead_tup,
+      COALESCE(EXTRACT(EPOCH FROM last_vacuum), 0) AS last_vacuum_epoch,
+      COALESCE(EXTRACT(EPOCH FROM last_autovacuum), 0) AS last_autovacuum_epoch
+    FROM pg_stat_user_tables
+    WHERE relname = 'orders'
+  metrics:
+    - seq_scan:
+        usage: "COUNTER"
+        description: "Sequential scans on orders table"
+    - seq_tup_read:
+        usage: "COUNTER"
+        description: "Rows read via sequential scans"
+    - idx_scan:
+        usage: "COUNTER"
+        description: "Index scans on orders table"
+    - idx_tup_fetch:
+        usage: "COUNTER"
+        description: "Rows fetched via index scans"
+    - n_tup_ins:
+        usage: "COUNTER"
+        description: "Rows inserted"
+    - n_tup_upd:
+        usage: "COUNTER"
+        description: "Rows updated"
+    - n_tup_del:
+        usage: "COUNTER"
+        description: "Rows deleted"
+    - n_live_tup:
+        usage: "GAUGE"
+        description: "Live rows"
+    - n_dead_tup:
+        usage: "GAUGE"
+        description: "Dead rows"
+    - last_vacuum_epoch:
+        usage: "GAUGE"
+        description: "Last manual vacuum timestamp"
+    - last_autovacuum_epoch:
+        usage: "GAUGE"
+        description: "Last autovacuum timestamp"
+
+# ── Connection pool utilization ──────────────────────────────────────────────
+pg_connection_pool:
+  query: |
+    SELECT
+      COUNT(*) AS total_connections,
+      COUNT(*) FILTER (WHERE state = 'active') AS active_connections,
+      COUNT(*) FILTER (WHERE state = 'idle') AS idle_connections,
+      COUNT(*) FILTER (WHERE state = 'idle in transaction') AS idle_in_transaction,
+      COUNT(*) FILTER (WHERE wait_event_type IS NOT NULL AND state = 'active') AS waiting_connections,
+      (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') AS max_connections
+    FROM pg_stat_activity
+    WHERE datname = current_database()
+      AND pid <> pg_backend_pid()
+  metrics:
+    - total_connections:
+        usage: "GAUGE"
+        description: "Total connection count"
+    - active_connections:
+        usage: "GAUGE"
+        description: "Active connections"
+    - idle_connections:
+        usage: "GAUGE"
+        description: "Idle connections"
+    - idle_in_transaction:
+        usage: "GAUGE"
+        description: "Idle in transaction connections"
+    - waiting_connections:
+        usage: "GAUGE"
+        description: "Connections waiting on events"
+    - max_connections:
+        usage: "GAUGE"
+        description: "Maximum allowed connections"

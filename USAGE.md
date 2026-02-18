@@ -38,6 +38,12 @@ python -m benchmarks run --parallel
 
 # Cap concurrent wrk processes (default: 0 = unlimited, all at once)
 python -m benchmarks run --parallel --max-workers 8
+
+# Start monitoring stack (Prometheus + Grafana + cAdvisor) alongside benchmarks
+python -m benchmarks run --monitoring
+
+# Combine flags
+python -m benchmarks run --service rustactix --monitoring --parallel
 ```
 
 ## Other Commands

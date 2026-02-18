@@ -260,7 +260,9 @@ services:
     ports:
       - "8009:8000"
     environment:
-      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-ordersdb}?user=${POSTGRES_USER:-apiuser}&password=${POSTGRES_PASSWORD:-apipassword}
+      R2DBC_URL: r2dbc:postgresql://db:5432/${POSTGRES_DB:-ordersdb}
+      DB_USER: ${POSTGRES_USER:-apiuser}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
     depends_on:
       db:
         condition: service_healthy
@@ -445,8 +447,78 @@ services:
     networks:
       - webapi-network
 
+  # ── Monitoring Stack ────────────────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - webapi-network
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: /etc/postgres_exporter/queries.yml
+    volumes:
+      - ./monitoring/postgres_exporter/queries.yml:/etc/postgres_exporter/queries.yml:ro
+    ports:
+      - "9187:9187"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - webapi-network
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - webapi-network
+
+  grafana:
+    image: grafana/grafana:10.4.1
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/db-wait-events.json
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - webapi-network
+
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   webapi-network:

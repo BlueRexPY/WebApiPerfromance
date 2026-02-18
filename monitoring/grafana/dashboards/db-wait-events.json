@@ -1,0 +1,846 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+        {
+            "title": "Active Wait Events by Type",
+            "description": "Real-time distribution of PostgreSQL wait events across all backend types (IO, Lock, LWLock, Client, etc.)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 30,
+                        "stacking": {
+                            "mode": "normal"
+                        },
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "sum by (wait_event_type) (pg_stat_activity_wait_events_count{state=\"active\"})",
+                    "legendFormat": "{{wait_event_type}}"
+                }
+            ]
+        },
+        {
+            "title": "Wait Events Detail (Active Backends)",
+            "description": "Specific wait event names for active backends — drill into what exactly PG is waiting on",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 20,
+                        "stacking": {
+                            "mode": "normal"
+                        },
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "sum by (wait_event) (pg_stat_activity_wait_events_count{state=\"active\", wait_event_type!=\"CPU\"})",
+                    "legendFormat": "{{wait_event}}"
+                }
+            ]
+        },
+        {
+            "title": "IO Wait Events Breakdown",
+            "description": "Breakdown of IO-specific wait events (DataFileRead, WALWrite, etc.)",
+            "type": "piechart",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 10
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "multi"
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_activity_io_waits_count",
+                    "legendFormat": "{{io_wait_event}}"
+                }
+            ]
+        },
+        {
+            "title": "Lock Wait Events",
+            "description": "Lock-type wait events (relation, transactionid, tuple, etc.)",
+            "type": "piechart",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 10
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "multi"
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_activity_lock_waits_count",
+                    "legendFormat": "{{lock_wait_event}}"
+                }
+            ]
+        },
+        {
+            "title": "LWLock Wait Events",
+            "description": "Lightweight lock wait events (buffer_content, WALInsert, etc.)",
+            "type": "piechart",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 10
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "multi"
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_activity_lwlock_waits_count",
+                    "legendFormat": "{{lwlock_wait_event}}"
+                }
+            ]
+        },
+        {
+            "title": "Connection Pool Utilization",
+            "description": "Total, active, idle, and idle-in-transaction connections vs max_connections",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 18
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "max_connections"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.lineStyle",
+                                "value": {
+                                    "fill": "dash"
+                                }
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_connection_pool_total_connections",
+                    "legendFormat": "total"
+                },
+                {
+                    "expr": "pg_connection_pool_active_connections",
+                    "legendFormat": "active"
+                },
+                {
+                    "expr": "pg_connection_pool_idle_connections",
+                    "legendFormat": "idle"
+                },
+                {
+                    "expr": "pg_connection_pool_idle_in_transaction",
+                    "legendFormat": "idle_in_txn"
+                },
+                {
+                    "expr": "pg_connection_pool_waiting_connections",
+                    "legendFormat": "waiting"
+                },
+                {
+                    "expr": "pg_connection_pool_max_connections",
+                    "legendFormat": "max_connections"
+                }
+            ]
+        },
+        {
+            "title": "Connection States Over Time",
+            "description": "Backend state transitions: active, idle, idle in transaction, disabled",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 18
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 20,
+                        "stacking": {
+                            "mode": "normal"
+                        },
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_activity_states_count",
+                    "legendFormat": "{{state}}"
+                }
+            ]
+        },
+        {
+            "title": "Transactions/sec (Commit vs Rollback)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 26
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "ops",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "rollback"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(pg_stat_database_extended_xact_commit[1m])",
+                    "legendFormat": "commit"
+                },
+                {
+                    "expr": "rate(pg_stat_database_extended_xact_rollback[1m])",
+                    "legendFormat": "rollback"
+                }
+            ]
+        },
+        {
+            "title": "Cache Hit Ratio",
+            "type": "gauge",
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 12,
+                "y": 26
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit",
+                    "min": 0,
+                    "max": 1,
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 0.9
+                            },
+                            {
+                                "color": "green",
+                                "value": 0.99
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdLabels": false
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_database_extended_cache_hit_ratio",
+                    "legendFormat": "cache_hit_ratio"
+                }
+            ]
+        },
+        {
+            "title": "Deadlocks & Conflicts",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 18,
+                "y": 26
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "textMode": "auto"
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_database_extended_deadlocks",
+                    "legendFormat": "deadlocks"
+                },
+                {
+                    "expr": "pg_stat_database_extended_conflicts",
+                    "legendFormat": "conflicts"
+                }
+            ]
+        },
+        {
+            "title": "Temp Files & Bytes",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 18,
+                "y": 30
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 1
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "textMode": "auto"
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_database_extended_temp_files",
+                    "legendFormat": "temp_files"
+                },
+                {
+                    "expr": "pg_stat_database_extended_temp_bytes",
+                    "legendFormat": "temp_bytes"
+                }
+            ]
+        },
+        {
+            "title": "Block IO: Reads vs Hits /sec",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 34
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "ops",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 15,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(pg_stat_database_extended_blks_hit[1m])",
+                    "legendFormat": "buffer_hits"
+                },
+                {
+                    "expr": "rate(pg_stat_database_extended_blks_read[1m])",
+                    "legendFormat": "disk_reads"
+                }
+            ]
+        },
+        {
+            "title": "Rows Returned & Fetched /sec",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 34
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "ops",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 15,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(pg_stat_database_extended_tup_returned[1m])",
+                    "legendFormat": "returned"
+                },
+                {
+                    "expr": "rate(pg_stat_database_extended_tup_fetched[1m])",
+                    "legendFormat": "fetched"
+                }
+            ]
+        },
+        {
+            "title": "Orders Table Stats",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 42
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "ops",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(pg_stat_user_tables_orders_seq_scan[1m])",
+                    "legendFormat": "seq_scan/s"
+                },
+                {
+                    "expr": "rate(pg_stat_user_tables_orders_idx_scan[1m])",
+                    "legendFormat": "idx_scan/s"
+                },
+                {
+                    "expr": "rate(pg_stat_user_tables_orders_seq_tup_read[1m])",
+                    "legendFormat": "seq_tup_read/s"
+                }
+            ]
+        },
+        {
+            "title": "Orders Table: Live vs Dead Tuples",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 42
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_user_tables_orders_n_live_tup",
+                    "legendFormat": "live_tuples"
+                },
+                {
+                    "expr": "pg_stat_user_tables_orders_n_dead_tup",
+                    "legendFormat": "dead_tuples"
+                }
+            ]
+        },
+        {
+            "title": "Max Wait Duration by State (seconds)",
+            "description": "Longest time a backend has been in each state",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 50
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "pg_stat_activity_states_max_duration_seconds",
+                    "legendFormat": "{{state}}"
+                }
+            ]
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 39,
+    "tags": [
+        "postgresql",
+        "wait-events",
+        "database"
+    ],
+    "templating": {
+        "list": [
+            {
+                "name": "datasource",
+                "type": "datasource",
+                "query": "prometheus",
+                "current": {
+                    "text": "Prometheus",
+                    "value": "Prometheus"
+                }
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "PostgreSQL - Wait Events & DB Load",
+    "uid": "pg-wait-events"
+}

@@ -8,49 +8,41 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>3.4.2</version>
         <relativePath/>
     </parent>
 
     <groupId>com.performance</groupId>
     <artifactId>java-springboot-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>JavaSpringBootApi</name>
-    <description>Simple Spring Boot MVC API</description>
+    <description>Spring Boot WebFlux + R2DBC reactive API</description>
 
     <properties>
         <java.version>21</java.version>
     </properties>
 
     <dependencies>
-        <!-- Web (Undertow instead of Tomcat for lower memory) -->
+        <!-- WebFlux (Netty-based, non-blocking) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
             <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- R2DBC (reactive, non-blocking database access) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
-        <!-- JDBC + HikariCP (bundled with Spring Boot) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <!-- PostgreSQL JDBC driver -->
+        <!-- R2DBC PostgreSQL driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>r2dbc-postgresql</artifactId>
         </dependency>
         <!-- Minimal logging -->
         <dependency>
@@ -64,9 +56,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
             </plugin>
         </plugins>
     </build>

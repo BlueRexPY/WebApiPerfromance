@@ -1,0 +1,388 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+        {
+            "title": "CPU Usage by API Service",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true,
+                        "axisSoftMin": 0
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"$service\"}[1m])",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "Memory Usage by API Service",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "bytes",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true,
+                        "axisSoftMin": 0
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"$service\"}",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "Network RX (Bytes/sec) by Service",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "Bps",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"$service\"}[1m])",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "Network TX (Bytes/sec) by Service",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 8
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "Bps",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10,
+                        "spanNulls": true
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"$service\"}[1m])",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "CPU Usage Comparison (All APIs)",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 16
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit",
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 0.5
+                            },
+                            {
+                                "color": "red",
+                                "value": 0.8
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "orientation": "horizontal",
+                "displayMode": "gradient",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"litestar|dotnetapi|dotnetapiaot|bunapi|fastapi|fastifyapi|rustactix|haskellservant|elixirphoenix|gofiber|javaspringboot|erlangcowboy|denoapi|swiftvapor|expressapi|rubyrails|djangoapi|cppdrogon|cmicrohttpd\"}[1m])",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "Memory Usage Comparison (All APIs)",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 24
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "bytes",
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 536870912
+                            },
+                            {
+                                "color": "red",
+                                "value": 858993459
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "orientation": "horizontal",
+                "displayMode": "gradient",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            },
+            "targets": [
+                {
+                    "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"litestar|dotnetapi|dotnetapiaot|bunapi|fastapi|fastifyapi|rustactix|haskellservant|elixirphoenix|gofiber|javaspringboot|erlangcowboy|denoapi|swiftvapor|expressapi|rubyrails|djangoapi|cppdrogon|cmicrohttpd\"}",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}"
+                }
+            ]
+        },
+        {
+            "title": "Container Restarts",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 32
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "textMode": "auto"
+            },
+            "targets": [
+                {
+                    "expr": "container_start_time_seconds{container_label_com_docker_compose_service=~\"$service\"} > 0",
+                    "legendFormat": "{{container_label_com_docker_compose_service}}",
+                    "instant": true
+                }
+            ]
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 39,
+    "tags": [
+        "api",
+        "performance",
+        "containers"
+    ],
+    "templating": {
+        "list": [
+            {
+                "name": "datasource",
+                "type": "datasource",
+                "query": "prometheus",
+                "current": {
+                    "text": "Prometheus",
+                    "value": "Prometheus"
+                }
+            },
+            {
+                "name": "service",
+                "type": "query",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${datasource}"
+                },
+                "query": "label_values(container_cpu_usage_seconds_total, container_label_com_docker_compose_service)",
+                "multi": true,
+                "includeAll": true,
+                "allValue": ".*",
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "refresh": 2
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "API Services - Resource Monitoring",
+    "uid": "api-services-resources"
+}

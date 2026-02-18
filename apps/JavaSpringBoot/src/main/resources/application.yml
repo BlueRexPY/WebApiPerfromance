@@ -1,20 +1,15 @@
 server:
   port: 8000
-  undertow:
-    threads:
-      io: 4
-      worker: 64
 
 spring:
-  datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/ordersdb}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 50
-      minimum-idle: 10
-      connection-timeout: 5000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+  r2dbc:
+    url: ${R2DBC_URL:r2dbc:postgresql://db:5432/ordersdb}
+    username: ${DB_USER:apiuser}
+    password: ${DB_PASSWORD:apipassword}
+    pool:
+      initial-size: 20
+      max-size: 50
+      max-idle-time: 30m
   main:
     banner-mode: off
   jackson:

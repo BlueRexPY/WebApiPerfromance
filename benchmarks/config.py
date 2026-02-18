@@ -100,6 +100,16 @@ SERVICES: dict[str, Service] = {
 }
 
 
+# ── Monitoring services ────────────────────────────────────────────────────
+# docker-compose service names that make up the monitoring stack.
+MONITORING_SERVICES: list[str] = [
+    "prometheus",
+    "postgres_exporter",
+    "cadvisor",
+    "grafana",
+]
+
+
 def result_path(service: Service, test_type: TestType) -> Path:
     """Return the markdown result file path for a service + test combo.
 

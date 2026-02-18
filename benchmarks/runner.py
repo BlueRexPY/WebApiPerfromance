@@ -17,6 +17,7 @@ from pathlib import Path
 from .config import (
     COMPOSE_FILE,
     DEFAULT_WRK,
+    MONITORING_SERVICES,
     SERVICES,
     TEST_TYPES,
     Service,
@@ -143,6 +144,38 @@ def stop_all_services() -> None:
         capture_output=True,
         text=True,
     )
+
+
+# ── Monitoring helpers ──────────────────────────────────────────────────────
+def start_monitoring() -> None:
+    """Start the monitoring stack (Prometheus, Grafana, cAdvisor, etc.)."""
+    cmd = _compose_cmd()
+    logger.info("Starting monitoring stack: %s", ", ".join(MONITORING_SERVICES))
+    subprocess.run(
+        [*cmd, "up", "-d", *MONITORING_SERVICES],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    logger.info("Monitoring is up — Grafana: http://localhost:3000  Prometheus: http://localhost:9090")
+
+
+def stop_monitoring() -> None:
+    """Stop the monitoring stack."""
+    cmd = _compose_cmd()
+    logger.info("Stopping monitoring stack...")
+    for svc in MONITORING_SERVICES:
+        subprocess.run(
+            [*cmd, "stop", svc],
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            [*cmd, "rm", "-f", svc],
+            capture_output=True,
+            text=True,
+        )
+    logger.info("Monitoring stack stopped")
 
 
 def restart_db() -> None:
@@ -399,6 +432,7 @@ def run_all(
     *,
     parallel: bool = False,
     max_workers: int = 0,
+    monitoring: bool = False,
 ) -> list[BenchmarkResult]:
     """Run benchmarks for multiple services and test types.
 
@@ -423,10 +457,17 @@ def run_all(
 
     ensure_db_up()
 
-    if parallel:
-        results = _run_parallel(svc_list, tt_list, wrk_config, max_workers)
-    else:
-        results = _run_sequential(svc_list, tt_list, wrk_config)
+    if monitoring:
+        start_monitoring()
+
+    try:
+        if parallel:
+            results = _run_parallel(svc_list, tt_list, wrk_config, max_workers)
+        else:
+            results = _run_sequential(svc_list, tt_list, wrk_config)
+    finally:
+        if monitoring:
+            stop_monitoring()
 
     # Generate summaries
     for tt in tt_list:

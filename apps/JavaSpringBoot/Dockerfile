@@ -12,8 +12,8 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests -B
 
-# Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+# Runtime stage — full JDK for C2 JIT compiler (critical for perf)
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
@@ -22,13 +22,8 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8000
 
-# Simple JVM settings: G1GC, bounded heap, leave room for OS and thread stacks
+# Optimized JVM settings for reactive workload under container limits
 ENTRYPOINT ["java", \
     "-server", \
-    "-Xms256m", \
-    "-Xmx640m", \
-    "-XX:+UseG1GC", \
-    "-XX:MaxGCPauseMillis=100", \
-    "-XX:MaxMetaspaceSize=96m", \
     "-jar", \
     "app.jar"]

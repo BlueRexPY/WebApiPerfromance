@@ -34,7 +34,7 @@ import sys
 
 from .config import DEFAULT_WRK, SERVICES, TEST_TYPES, WrkConfig
 from .formatter import write_summary
-from .runner import run_all, stop_all_services
+from .runner import run_all, start_monitoring, stop_all_services, stop_monitoring
 
 
 class _ColorFormatter(logging.Formatter):
@@ -124,6 +124,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         wrk_config,
         parallel=getattr(args, "parallel", False),
         max_workers=getattr(args, "max_workers", 0),
+        monitoring=getattr(args, "monitoring", False),
     )
 
     # Print summary
@@ -244,6 +245,13 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=20,
         help="Max concurrent wrk processes in parallel mode. 0 = unlimited, all at once (default: 20)",
+    )
+    run_parser.add_argument(
+        "--monitoring",
+        "-m",
+        action="store_true",
+        default=False,
+        help="Start monitoring stack (Prometheus, Grafana, cAdvisor) during benchmarks",
     )
 
     # ── list ──
