@@ -93,7 +93,13 @@ def _cmd_run(args: argparse.Namespace) -> int:
                 )
                 return 1
 
-    results = run_all(services, test_types, wrk_config)
+    results = run_all(
+        services,
+        test_types,
+        wrk_config,
+        parallel=getattr(args, "parallel", False),
+        max_workers=getattr(args, "max_workers", 4),
+    )
 
     # Print summary
     print("\n" + "═" * 70)
@@ -107,15 +113,19 @@ def _cmd_run(args: argparse.Namespace) -> int:
         print(f"\n  ✓ Passed: {len(succeeded)}")
         # Sort by req/sec descending
         succeeded.sort(key=lambda r: r.wrk_result.requests_per_sec, reverse=True)
-        print(f"  {'Service':<20} {'Test':<15} {'Req/sec':>12} {'Avg Latency':>12}")
-        print(f"  {'─'*20} {'─'*15} {'─'*12} {'─'*12}")
+        print(
+            f"  {'Service':<20} {'Test':<15} {'Req/sec':>12} {'Avg Latency':>12} {'Memory':>12}"
+        )
+        print(f"  {'─'*20} {'─'*15} {'─'*12} {'─'*12} {'─'*12}")
         for r in succeeded:
             rps = f"{r.wrk_result.requests_per_sec:,.2f}"
+            mem = r.memory.mem_usage if r.memory.mem_usage else "N/A"
             print(
                 f"  {r.service.display_name:<20} "
                 f"{r.test_type.label:<15} "
                 f"{rps:>12} "
-                f"{r.wrk_result.avg_latency:>12}"
+                f"{r.wrk_result.avg_latency:>12} "
+                f"{mem:>12}"
             )
 
     if failed:
@@ -196,6 +206,19 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=DEFAULT_WRK.duration_seconds,
         help=f"wrk duration seconds (default: {DEFAULT_WRK.duration_seconds})",
+    )
+    run_parser.add_argument(
+        "--parallel",
+        "-p",
+        action="store_true",
+        default=False,
+        help="Run service benchmarks in parallel (faster but may affect accuracy)",
+    )
+    run_parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=4,
+        help="Max concurrent services in parallel mode (default: 4)",
     )
 
     # ── list ──

@@ -10,6 +10,17 @@ from dataclasses import dataclass
 
 
 @dataclass
+class MemoryStats:
+    """Container memory usage stats from docker stats."""
+
+    mem_usage: str = ""  # e.g. "45.2MiB"
+    mem_limit: str = ""  # e.g. "1GiB"
+    mem_percent: str = ""  # e.g. "4.41%"
+    cpu_percent: str = ""  # e.g. "150.2%"
+    pids: int = 0
+
+
+@dataclass
 class WrkResult:
     """Parsed results from a single wrk run."""
 

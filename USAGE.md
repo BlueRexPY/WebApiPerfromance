@@ -1,0 +1,121 @@
+# Usage
+
+## Requirements
+
+- Docker + Docker Compose
+- Python 3.11+
+- `wrk` (`apt install wrk` / `brew install wrk`)
+
+## Install
+
+```bash
+pip install -e .
+```
+
+## Run
+
+```bash
+# All services, all tests
+python -m benchmarks run
+
+# One service
+python -m benchmarks run --service dotnetapiaot
+
+# One test type
+python -m benchmarks run --test hello_world
+
+# Both filters
+python -m benchmarks run --service rustactix --test orders
+
+# Custom wrk settings (defaults: -t 2 -c 120 -d 20)
+python -m benchmarks run --threads 4 --connections 200 --duration 30
+
+# Multiple services/tests (repeat the flag)
+python -m benchmarks run --service dotnetapi --service rustactix
+
+# Run all services in parallel (faster, may affect accuracy)
+python -m benchmarks run --parallel
+
+# Parallel with custom worker count (default: 4)
+python -m benchmarks run --parallel --max-workers 8
+```
+
+## Other Commands
+
+```bash
+# List all services and test types
+python -m benchmarks list
+
+# Regenerate summary markdown from existing results
+python -m benchmarks summary
+python -m benchmarks summary --test hello_world
+
+# Stop all running containers
+python -m benchmarks stop
+```
+
+## Pytest (VS Code Test Explorer)
+
+```bash
+# All
+pytest benchmarks/
+
+# Filter by service
+pytest benchmarks/ --service dotnetapiaot
+
+# Filter by test type
+pytest benchmarks/ --test-type hello_world
+
+# Run one specific combo
+pytest benchmarks/ -k "dotnetapiaot__hello_world"
+
+# Skip Docker (services already running)
+pytest benchmarks/ --no-docker
+
+# Custom wrk settings
+pytest benchmarks/ --wrk-threads 4 --wrk-connections 200 --wrk-duration 30
+```
+
+## Services
+
+| Name           | Port |
+| -------------- | ---- |
+| litestar       | 8000 |
+| dotnetapi      | 8001 |
+| bunapi         | 8002 |
+| fastifyapi     | 8003 |
+| fastapi        | 8004 |
+| rustactix      | 8005 |
+| haskellservant | 8006 |
+| elixirphoenix  | 8007 |
+| gofiber        | 8008 |
+| javaspringboot | 8009 |
+| erlangcowboy   | 8010 |
+| denoapi        | 8011 |
+| swiftvapor     | 8012 |
+| dotnetapiaot   | 8013 |
+| expressapi     | 8014 |
+| rubyrails      | 8015 |
+| djangoapi      | 8016 |
+| cppdrogon      | 8017 |
+
+## Test Types
+
+| Name        | Path      | Description              |
+| ----------- | --------- | ------------------------ |
+| hello_world | `/`       | Simple JSON, no database |
+| orders      | `/orders` | DB query, 100 rows       |
+
+## Results
+
+Written to `results/{ServiceDir}/{TestType}.md`.  
+Summaries: `results/Summary.HelloWorld.md`, `results/Summary.Orders.md`.
+
+## Add a Service
+
+1. Add a `Service(...)` entry to `SERVICES` in [benchmarks/config.py](benchmarks/config.py).
+2. Add the service to [docker-compose.yml](docker-compose.yml).
+
+## Add a Test Type
+
+Add a `TestType(...)` entry to `TEST_TYPES` in [benchmarks/config.py](benchmarks/config.py).

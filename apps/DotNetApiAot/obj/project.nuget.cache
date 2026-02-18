@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6csDNvm7t/8=",
+  "dgSpecHash": "BpldrBmCS5M=",
   "success": true,
-  "projectFilePath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApiAot/DotNetApiAot.csproj",
+  "projectFilePath": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApiAot/DotNetApiAot.csproj",
   "expectedPackageFiles": [
     "/home/admin/.nuget/packages/microsoft.dotnet.ilcompiler/9.0.4/microsoft.dotnet.ilcompiler.9.0.4.nupkg.sha512",
     "/home/admin/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",

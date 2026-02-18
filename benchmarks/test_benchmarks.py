@@ -66,7 +66,7 @@ def test_benchmark(
     1. Ensures the service is running (via session-scoped manager)
     2. Warms up the endpoint
     3. Runs wrk
-    4. Saves the result to results/{Service}.{TestType}.md
+    4. Saves the result to results/{ServiceDir}/{TestType}.md
     5. Asserts requests_per_sec > 0
     """
     service_manager.ensure_started(service)

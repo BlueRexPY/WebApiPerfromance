@@ -18,7 +18,7 @@ from .config import (
     WrkConfig,
     result_path,
 )
-from .parser import WrkResult
+from .parser import MemoryStats, WrkResult
 
 
 def _ensure_results_dir() -> None:
@@ -30,10 +30,12 @@ def write_result(
     test_type: TestType,
     wrk_result: WrkResult,
     wrk_config: WrkConfig = DEFAULT_WRK,
+    memory: MemoryStats | None = None,
 ) -> Path:
     """Write a single benchmark result to its markdown file."""
     _ensure_results_dir()
     path = result_path(service, test_type)
+    path.parent.mkdir(parents=True, exist_ok=True)
 
     error_note = ""
     if wrk_result.has_errors:
@@ -42,6 +44,20 @@ def write_result(
     rps = f"{wrk_result.requests_per_sec:,.2f}"
     if wrk_result.has_errors:
         rps += "\\*"
+
+    mem_section = ""
+    if memory and memory.mem_usage:
+        mem_section = f"""
+## Resource Usage
+
+| Metric | Value |
+| --- | --- |
+| Memory Usage | {memory.mem_usage} |
+| Memory Limit | {memory.mem_limit} |
+| Memory % | {memory.mem_percent} |
+| CPU % | {memory.cpu_percent} |
+| PIDs | {memory.pids} |
+"""
 
     content = f"""# {service.display_name} — {test_type.label} Benchmark
 
@@ -65,7 +81,7 @@ def write_result(
 | --- | --- | --- | --- | --- |
 | Latency | {wrk_result.avg_latency} | {wrk_result.stdev_latency} | {wrk_result.max_latency} | {wrk_result.latency_pct} |
 | Req/Sec | {wrk_result.avg_req_sec} | {wrk_result.stdev_req_sec} | {wrk_result.max_req_sec} | {wrk_result.req_sec_pct} |
-
+{mem_section}
 ## Raw Output
 
 ```
@@ -105,6 +121,7 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
             max_lat_match = re.search(r"Max Latency\s*\|\s*([^\|]+)", content)
             total_match = re.search(r"Total Requests\s*\|\s*([^\|]+)", content)
             transfer_match = re.search(r"Transfer/sec\s*\|\s*([^\|]+)", content)
+            mem_match = re.search(r"Memory Usage\s*\|\s*([^\|]+)", content)
 
             rps_str = rps_match.group(1).strip() if rps_match else "N/A"
             rps_val = float(
@@ -114,8 +131,9 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
             max_lat = max_lat_match.group(1).strip() if max_lat_match else "N/A"
             total = total_match.group(1).strip() if total_match else "N/A"
             transfer = transfer_match.group(1).strip() if transfer_match else "N/A"
+            mem = mem_match.group(1).strip() if mem_match else "N/A"
 
-            row = f"| {svc.display_name} | {svc.port} | {rps_str} | {lat} | {max_lat} | {total} | {transfer} |"
+            row = f"| {svc.display_name} | {svc.port} | {rps_str} | {lat} | {max_lat} | {total} | {transfer} | {mem} |"
             rows.append((rps_val, row))
 
         # Sort descending by req/sec
@@ -137,8 +155,8 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
 
 ## Results
 
-| Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec |
-| --- | --- | --- | --- | --- | --- | --- |
+| Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 {table_rows}
 
 **Note**: \\* = Non-2xx or 3xx responses occurred during the test

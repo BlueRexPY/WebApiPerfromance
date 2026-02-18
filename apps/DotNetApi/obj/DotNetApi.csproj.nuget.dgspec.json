@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/DotNetApi.csproj": {}
+    "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApi/DotNetApi.csproj": {}
   },
   "projects": {
-    "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/DotNetApi.csproj": {
+    "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApi/DotNetApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/DotNetApi.csproj",
+        "projectUniqueName": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApi/DotNetApi.csproj",
         "projectName": "DotNetApi",
-        "projectPath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/DotNetApi.csproj",
+        "projectPath": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApi/DotNetApi.csproj",
         "packagesPath": "/home/admin/.nuget/packages/",
-        "outputPath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApi/obj/",
+        "outputPath": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/admin/.nuget/NuGet/NuGet.Config"

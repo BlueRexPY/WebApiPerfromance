@@ -284,11 +284,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/admin/Projects/python/WebApiPerfromance/DotNetApiAot/DotNetApiAot.csproj",
+      "projectUniqueName": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApiAot/DotNetApiAot.csproj",
       "projectName": "DotNetApiAot",
-      "projectPath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApiAot/DotNetApiAot.csproj",
+      "projectPath": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApiAot/DotNetApiAot.csproj",
       "packagesPath": "/home/admin/.nuget/packages/",
-      "outputPath": "/home/admin/Projects/python/WebApiPerfromance/DotNetApiAot/obj/",
+      "outputPath": "/home/admin/Projects/python/WebApiPerfromance/apps/DotNetApiAot/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/admin/.nuget/NuGet/NuGet.Config"

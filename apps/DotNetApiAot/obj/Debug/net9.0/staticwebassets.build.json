@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "Hw0hY4XsyZZ+WMvN/2vsO42DrtTg6iCYrnwKAoYVVHA=",
+  "Source": "DotNetApiAot",
+  "BasePath": "_content/DotNetApiAot",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

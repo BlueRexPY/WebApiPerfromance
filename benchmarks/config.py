@@ -23,6 +23,7 @@ class Service:
     name: str  # docker-compose service name
     port: int  # host port
     display_name: str  # human-readable label for reports
+    dir_name: str = ""  # results subdirectory name (e.g. "PythonLitestar")
 
 
 @dataclass(frozen=True)
@@ -76,24 +77,24 @@ TEST_TYPES: dict[str, TestType] = {
 SERVICES: dict[str, Service] = {
     s.name: s
     for s in [
-        Service("litestar", 8000, "Python Litestar"),
-        Service("dotnetapi", 8001, ".NET API"),
-        Service("bunapi", 8002, "Bun API"),
-        Service("fastifyapi", 8003, "Fastify API"),
-        Service("fastapi", 8004, "Python FastAPI"),
-        Service("rustactix", 8005, "Rust Actix"),
-        Service("haskellservant", 8006, "Haskell Servant"),
-        Service("elixirphoenix", 8007, "Elixir Phoenix"),
-        Service("gofiber", 8008, "Go Fiber"),
-        Service("javaspringboot", 8009, "Java Spring Boot"),
-        Service("erlangcowboy", 8010, "Erlang Cowboy"),
-        Service("denoapi", 8011, "Deno API"),
-        Service("swiftvapor", 8012, "Swift Vapor"),
-        Service("dotnetapiaot", 8013, ".NET AOT"),
-        Service("expressapi", 8014, "Express API"),
-        Service("rubyrails", 8015, "Ruby Rails"),
-        Service("djangoapi", 8016, "Django API"),
-        Service("cppdrogon", 8017, "C++ Drogon"),
+        Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
+        Service("dotnetapi", 8001, ".NET API", "DotNetApi"),
+        Service("bunapi", 8002, "Bun API", "BunApi"),
+        Service("fastifyapi", 8003, "Fastify API", "FastifyApi"),
+        Service("fastapi", 8004, "Python FastAPI", "PythonFastApi"),
+        Service("rustactix", 8005, "Rust Actix", "RustActix"),
+        Service("haskellservant", 8006, "Haskell Servant", "HaskellServant"),
+        Service("elixirphoenix", 8007, "Elixir Phoenix", "ElixirPhoenix"),
+        Service("gofiber", 8008, "Go Fiber", "GoFiber"),
+        Service("javaspringboot", 8009, "Java Spring Boot", "JavaSpringBoot"),
+        Service("erlangcowboy", 8010, "Erlang Cowboy", "ErlangCowboy"),
+        Service("denoapi", 8011, "Deno API", "DenoApi"),
+        Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
+        Service("dotnetapiaot", 8013, ".NET AOT", "DotNetApiAot"),
+        Service("expressapi", 8014, "Express API", "ExpressApi"),
+        Service("rubyrails", 8015, "Ruby Rails", "RubyRails"),
+        Service("djangoapi", 8016, "Django API", "DjangoApi"),
+        Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
     ]
 }
 
@@ -101,11 +102,7 @@ SERVICES: dict[str, Service] = {
 def result_path(service: Service, test_type: TestType) -> Path:
     """Return the markdown result file path for a service + test combo.
 
-    Example: results/DotNetApiAot.HelloWorld.md
+    Example: results/PythonLitestar/HelloWorld.md
     """
-    # Convert display name to PascalCase-ish filename segment
-    svc_part = (
-        service.display_name.replace(" ", "").replace(".", "").replace("+", "Plus")
-    )
     test_part = test_type.label.replace(" ", "")
-    return RESULTS_DIR / f"{svc_part}.{test_part}.md"
+    return RESULTS_DIR / service.dir_name / f"{test_part}.md"

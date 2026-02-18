@@ -10,7 +10,8 @@ import logging
 import shutil
 import subprocess
 import time
-from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from .config import (
@@ -23,7 +24,7 @@ from .config import (
     WrkConfig,
 )
 from .formatter import write_result, write_summary
-from .parser import WrkResult, parse_wrk_output
+from .parser import MemoryStats, WrkResult, parse_wrk_output
 
 logger = logging.getLogger(__name__)
 
@@ -201,6 +202,65 @@ def warmup(service: Service, test_type: TestType) -> None:
 
 
 # ── wrk execution ─────────────────────────────────────────────────────────────
+def get_container_name(service: Service) -> str:
+    """Get the running container name for a docker-compose service."""
+    cmd = _compose_cmd()
+    r = subprocess.run(
+        [*cmd, "ps", "-q", service.name],
+        capture_output=True,
+        text=True,
+    )
+    container_id = r.stdout.strip().splitlines()[0] if r.stdout.strip() else ""
+    if not container_id:
+        return ""
+    # Get the container name from the ID
+    r2 = subprocess.run(
+        ["docker", "inspect", "--format", "{{.Name}}", container_id],
+        capture_output=True,
+        text=True,
+    )
+    name = r2.stdout.strip().lstrip("/")
+    return name or container_id
+
+
+def get_memory_stats(service: Service) -> MemoryStats:
+    """Get memory/CPU usage of a running service container via docker stats."""
+    container = get_container_name(service)
+    if not container:
+        logger.warning("Could not find container for %s", service.name)
+        return MemoryStats()
+
+    r = subprocess.run(
+        [
+            "docker",
+            "stats",
+            "--no-stream",
+            "--format",
+            "{{.MemUsage}}|{{.MemPerc}}|{{.CPUPerc}}|{{.PIDs}}",
+            container,
+        ],
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+    if r.returncode != 0 or not r.stdout.strip():
+        logger.warning("docker stats failed for %s: %s", service.name, r.stderr)
+        return MemoryStats()
+
+    parts = r.stdout.strip().split("|")
+    if len(parts) < 4:
+        return MemoryStats()
+
+    mem_usage_parts = parts[0].split("/")
+    return MemoryStats(
+        mem_usage=mem_usage_parts[0].strip() if len(mem_usage_parts) > 0 else "",
+        mem_limit=mem_usage_parts[1].strip() if len(mem_usage_parts) > 1 else "",
+        mem_percent=parts[1].strip(),
+        cpu_percent=parts[2].strip(),
+        pids=int(parts[3].strip()) if parts[3].strip().isdigit() else 0,
+    )
+
+
 def run_wrk(
     service: Service,
     test_type: TestType,
@@ -251,6 +311,7 @@ class BenchmarkResult:
     result_path: Path
     success: bool
     error: str = ""
+    memory: MemoryStats = field(default_factory=MemoryStats)
 
 
 def run_benchmark(
@@ -275,8 +336,16 @@ def run_benchmark(
 
         wait_for_service(service)
         warmup(service, test_type)
+
+        # Capture memory before benchmark
+        mem_before = get_memory_stats(service)
         wrk_result = run_wrk(service, test_type, wrk_config)
-        path = write_result(service, test_type, wrk_result, wrk_config)
+        # Capture memory after benchmark (peak usage)
+        mem_after = get_memory_stats(service)
+        # Use whichever shows higher usage
+        memory = mem_after if mem_after.mem_usage else mem_before
+
+        path = write_result(service, test_type, wrk_result, wrk_config, memory)
 
         logger.info(
             "✓ %s / %s — %.2f req/s → %s",
@@ -292,6 +361,7 @@ def run_benchmark(
             wrk_result=wrk_result,
             result_path=path,
             success=True,
+            memory=memory,
         )
 
     except Exception as e:
@@ -314,18 +384,23 @@ def run_all(
     test_types: list[str] | None = None,
     wrk_config: WrkConfig = DEFAULT_WRK,
     *,
-    parallel_services: bool = False,
+    parallel: bool = False,
+    max_workers: int = 4,
 ) -> list[BenchmarkResult]:
     """Run benchmarks for multiple services and test types.
 
-    Services are tested sequentially (one at a time) to avoid resource
-    contention. Each service is started, all its tests run, then stopped.
+    In sequential mode (default), services are tested one at a time to
+    avoid resource contention.
+
+    In parallel mode, multiple services are started and benchmarked
+    concurrently using a thread pool.
 
     Args:
         services: List of service names. None = all services.
         test_types: List of test type names. None = all test types.
         wrk_config: wrk parameters.
-        parallel_services: Unused, reserved for future parallel mode.
+        parallel: If True, run service benchmarks concurrently.
+        max_workers: Max concurrent services in parallel mode.
 
     Returns:
         List of all benchmark results.
@@ -338,6 +413,28 @@ def run_all(
     current = 0
 
     ensure_db_up()
+
+    if parallel:
+        results = _run_parallel(svc_list, tt_list, wrk_config, max_workers)
+    else:
+        results = _run_sequential(svc_list, tt_list, wrk_config)
+
+    # Generate summaries
+    for tt in tt_list:
+        write_summary(tt.name)
+
+    return results
+
+
+def _run_sequential(
+    svc_list: list[Service],
+    tt_list: list[TestType],
+    wrk_config: WrkConfig,
+) -> list[BenchmarkResult]:
+    """Run benchmarks sequentially, one service at a time."""
+    results: list[BenchmarkResult] = []
+    total = len(svc_list) * len(tt_list)
+    current = 0
 
     for svc in svc_list:
         try:
@@ -373,8 +470,77 @@ def run_all(
         finally:
             stop_service(svc)
 
-    # Generate summaries
-    for tt in tt_list:
-        write_summary(tt.name)
+    return results
+
+
+def _bench_service(
+    svc: Service,
+    tt_list: list[TestType],
+    wrk_config: WrkConfig,
+) -> list[BenchmarkResult]:
+    """Benchmark one service across all test types (used by parallel runner)."""
+    results: list[BenchmarkResult] = []
+    try:
+        start_service(svc)
+        wait_for_service(svc)
+        for tt in tt_list:
+            logger.info("Benchmarking %s — %s", svc.display_name, tt.label)
+            result = run_benchmark(svc, tt, wrk_config, manage_docker=False)
+            results.append(result)
+    except Exception as e:
+        logger.error("Failed to start %s: %s", svc.name, e)
+        for tt in tt_list:
+            results.append(
+                BenchmarkResult(
+                    service=svc,
+                    test_type=tt,
+                    wrk_result=WrkResult(),
+                    result_path=Path(),
+                    success=False,
+                    error=str(e),
+                )
+            )
+    finally:
+        stop_service(svc)
+    return results
+
+
+def _run_parallel(
+    svc_list: list[Service],
+    tt_list: list[TestType],
+    wrk_config: WrkConfig,
+    max_workers: int,
+) -> list[BenchmarkResult]:
+    """Run benchmarks in parallel using a thread pool."""
+    results: list[BenchmarkResult] = []
+    logger.info(
+        "Running %d services in parallel (max %d workers)",
+        len(svc_list),
+        max_workers,
+    )
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {
+            executor.submit(_bench_service, svc, tt_list, wrk_config): svc
+            for svc in svc_list
+        }
+        for future in as_completed(futures):
+            svc = futures[future]
+            try:
+                svc_results = future.result()
+                results.extend(svc_results)
+            except Exception as e:
+                logger.error("Parallel task failed for %s: %s", svc.name, e)
+                for tt in tt_list:
+                    results.append(
+                        BenchmarkResult(
+                            service=svc,
+                            test_type=tt,
+                            wrk_result=WrkResult(),
+                            result_path=Path(),
+                            success=False,
+                            error=str(e),
+                        )
+                    )
 
     return results
