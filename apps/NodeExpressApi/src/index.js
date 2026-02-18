@@ -7,7 +7,7 @@ const DATABASE_URL =
 
 // Create PostgreSQL connection with pooling
 const sql = postgres(DATABASE_URL, {
-  max: 90,
+  max: 120,
   idle_timeout: 20,
   connect_timeout: 10,
   prepare: true,

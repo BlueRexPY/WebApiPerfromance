@@ -7,7 +7,7 @@
 #include <libpq-fe.h>
 
 #define PORT          8000
-#define POOL_SIZE     50
+#define POOL_SIZE     120
 #define THREAD_POOL   8
 #define ORDERS_BUF    (256 * 1024)  /* 256 KB initial buffer for /orders JSON */
 
@@ -84,9 +84,9 @@ static size_t json_escape(char *dst, size_t cap, const char *src)
 
 static enum MHD_Result handle_hello(struct MHD_Connection *conn)
 {
-    static const char body[] = "{\"message\":\"Hello, World!\"}";
+    const char body[] = "{\"message\":\"Hello, World!\"}";
     struct MHD_Response *resp = MHD_create_response_from_buffer(
-        sizeof(body) - 1, (void *)body, MHD_RESPMEM_PERSISTENT);
+        sizeof(body) - 1, (void *)body, MHD_RESPMEM_MUST_COPY);
     MHD_add_response_header(resp, "Content-Type", "application/json");
     enum MHD_Result r = MHD_queue_response(conn, MHD_HTTP_OK, resp);
     MHD_destroy_response(resp);
@@ -113,9 +113,9 @@ static enum MHD_Result handle_orders(struct MHD_Connection *conn)
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         fprintf(stderr, "Query error: %s\n", PQresultErrorMessage(res));
         PQclear(res);
-        static const char err[] = "{\"error\":\"query failed\"}";
+        const char err[] = "{\"error\":\"query failed\"}";
         struct MHD_Response *resp = MHD_create_response_from_buffer(
-            sizeof(err) - 1, (void *)err, MHD_RESPMEM_PERSISTENT);
+            sizeof(err) - 1, (void *)err, MHD_RESPMEM_MUST_COPY);
         MHD_add_response_header(resp, "Content-Type", "application/json");
         enum MHD_Result r = MHD_queue_response(conn, MHD_HTTP_INTERNAL_SERVER_ERROR, resp);
         MHD_destroy_response(resp);
@@ -190,9 +190,9 @@ static enum MHD_Result request_handler(
     if (strcmp(url, "/orders") == 0)
         return handle_orders(connection);
 
-    static const char not_found[] = "{\"error\":\"not found\"}";
+    const char not_found[] = "{\"error\":\"not found\"}";
     struct MHD_Response *resp = MHD_create_response_from_buffer(
-        sizeof(not_found) - 1, (void *)not_found, MHD_RESPMEM_PERSISTENT);
+        sizeof(not_found) - 1, (void *)not_found, MHD_RESPMEM_MUST_COPY);
     MHD_add_response_header(resp, "Content-Type", "application/json");
     enum MHD_Result r = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
     MHD_destroy_response(resp);

@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:15-alpine
+    command: postgres -c max_connections=300 -c shared_buffers=256MB -c effective_cache_size=512MB
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-apiuser}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
@@ -72,7 +73,7 @@ services:
     ports:
       - "8001:8000"
     environment:
-      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
     depends_on:
       db:
@@ -93,7 +94,7 @@ services:
     ports:
       - "8013:8000"
     environment:
-      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=90;Multiplexing=true
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
     depends_on:
       db:
@@ -350,7 +351,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       RAILS_ENV: production
       WEB_CONCURRENCY: 4
-      RAILS_MAX_THREADS: 90
+      RAILS_MAX_THREADS: 120
       SECRET_KEY_BASE: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     depends_on:
       db:
@@ -447,7 +448,7 @@ services:
     networks:
       - webapi-network
 
-  # ── Monitoring Stack ────────────────────────────────────────────────────────
+  #── Monitoring Stack ────────────────────────────────────────────────────────
 
   prometheus:
     image: prom/prometheus:v2.51.0

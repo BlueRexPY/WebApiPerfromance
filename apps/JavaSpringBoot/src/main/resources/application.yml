@@ -8,7 +8,7 @@ spring:
     password: ${DB_PASSWORD:apipassword}
     pool:
       initial-size: 20
-      max-size: 50
+      max-size: 120
       max-idle-time: 30m
   main:
     banner-mode: off

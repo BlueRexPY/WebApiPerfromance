@@ -41,7 +41,8 @@ async fn get_orders(data: web::Data<AppState>) -> impl Responder {
         .prepare_cached(
             "SELECT id, customer_id, total_cents, status, created_at 
              FROM orders 
-             LIMIT $1",
+             LIMIT $1
+             OFFSET $2",
         )
         .await
     {
@@ -49,7 +50,7 @@ async fn get_orders(data: web::Data<AppState>) -> impl Responder {
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };
 
-    let rows = match client.query(&stmt, &[&100i64]).await {
+    let rows = match client.query(&stmt, &[&100i64, &1000i64]).await {
         Ok(rows) => rows,
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };
@@ -83,7 +84,7 @@ async fn main() -> std::io::Result<()> {
     cfg.manager = Some(ManagerConfig {
         recycling_method: RecyclingMethod::Fast,
     });
-    cfg.pool = Some(deadpool_postgres::PoolConfig::new(90));
+    cfg.pool = Some(deadpool_postgres::PoolConfig::new(120));
 
     let pool = cfg
         .create_pool(Some(Runtime::Tokio1), NoTls)

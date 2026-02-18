@@ -1,7 +1,7 @@
 -module(db_pool).
 -export([start/0, query/2, query/3]).
 
--define(POOL_SIZE, 90).
+-define(POOL_SIZE, 120).
 
 start() ->
     DatabaseUrl = os:getenv("DATABASE_URL", "postgresql://apiuser:apipassword@db:5432/ordersdb"),

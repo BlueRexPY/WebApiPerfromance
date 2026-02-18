@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class ApiController {
 
     private final DatabaseClient db;
-    private static final Mono<HelloResponse> HELLO = Mono.just(new HelloResponse());
 
     public ApiController(DatabaseClient db) {
         this.db = db;
@@ -22,7 +21,7 @@ public class ApiController {
 
     @GetMapping("/")
     public Mono<HelloResponse> hello() {
-        return HELLO;
+        return Mono.just(new HelloResponse());
     }
 
     @GetMapping("/orders")

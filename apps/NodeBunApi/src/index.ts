@@ -6,7 +6,7 @@ const DATABASE_URL =
 
 // Create PostgreSQL connection with pooling
 const sql = postgres(DATABASE_URL, {
-  max: 90,
+  max: 120,
   idle_timeout: 20,
   connect_timeout: 10,
   prepare: true,
@@ -60,7 +60,7 @@ const server = Bun.serve({
           {
             status: 500,
             headers: { "Content-Type": "application/json" },
-          }
+          },
         );
       }
     }
@@ -71,7 +71,7 @@ const server = Bun.serve({
 });
 
 console.log(
-  `🚀 Bun server running at http://${server.hostname}:${server.port}`
+  `🚀 Bun server running at http://${server.hostname}:${server.port}`,
 );
 
 // Graceful shutdown

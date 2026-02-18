@@ -1,35 +1,35 @@
 # Bun API — Orders Benchmark
 
-**Tested**: 2026-02-18 03:21:00 UTC
+**Tested**: 2026-02-18 04:21:38 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8002/orders`
 
 ## Summary
 
-| Metric | Value |
-| --- | --- |
-| Requests/sec | 12,079.60 |
-| Avg Latency | 9.93ms |
-| Max Latency | 29.31ms |
-| Total Requests | 241,671 |
-| Transfer/sec | 128.91MB |
-| Port | 8002 |
+| Metric         | Value    |
+| -------------- | -------- |
+| Requests/sec   | 3,715.43 |
+| Avg Latency    | 36.24ms  |
+| Max Latency    | 613.93ms |
+| Total Requests | 74,328   |
+| Transfer/sec   | 39.65MB  |
+| Port           | 8002     |
 
 ## Thread Stats
 
-| Stat | Avg | Stdev | Max | +/- Stdev |
-| --- | --- | --- | --- | --- |
-| Latency | 9.93ms | 1.04ms | 29.31ms | 89.88% |
-| Req/Sec | 6.07k | 338.52 | 6.79k | 70.75% |
+| Stat    | Avg     | Stdev   | Max      | +/- Stdev |
+| ------- | ------- | ------- | -------- | --------- |
+| Latency | 36.24ms | 37.71ms | 613.93ms | 97.91%    |
+| Req/Sec | 1.87k   | 315.94  | 2.24k    | 94.25%    |
 
 ## Resource Usage
 
-| Metric | Value |
-| --- | --- |
-| Memory Usage | 19.44MiB |
-| Memory Limit | 1GiB |
-| Memory % | 1.90% |
-| CPU % | 1.40% |
-| PIDs | 15 |
+| Metric       | Value    |
+| ------------ | -------- |
+| Memory Usage | 49.88MiB |
+| Memory Limit | 1GiB     |
+| Memory %     | 4.87%    |
+| CPU %        | 2.43%    |
+| PIDs         | 18       |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8002/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     9.93ms    1.04ms  29.31ms   89.88%
-    Req/Sec     6.07k   338.52     6.79k    70.75%
-  241671 requests in 20.01s, 2.52GB read
-Requests/sec:  12079.60
-Transfer/sec:    128.91MB
+    Latency    36.24ms   37.71ms 613.93ms   97.91%
+    Req/Sec     1.87k   315.94     2.24k    94.25%
+  74328 requests in 20.01s, 793.20MB read
+Requests/sec:   3715.43
+Transfer/sec:     39.65MB
 ```

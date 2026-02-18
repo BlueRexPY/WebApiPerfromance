@@ -68,8 +68,8 @@ async def on_startup() -> None:
     global pool
     pool = AsyncConnectionPool(
         conninfo=get_database_connection_string(),
-        min_size=5,
-        max_size=15,
+        min_size=10,
+        max_size=120,
         timeout=5,
         max_idle=300,
         max_lifetime=3600,

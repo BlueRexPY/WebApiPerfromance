@@ -53,8 +53,8 @@ async def lifespan(app: FastAPI):
     global pool
     pool = AsyncConnectionPool(
         conninfo=get_database_connection_string(),
-        min_size=2,
-        max_size=20,
+        min_size=10,
+        max_size=120,
     )
     yield
     await pool.close()

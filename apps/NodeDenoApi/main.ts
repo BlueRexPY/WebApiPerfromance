@@ -12,7 +12,7 @@ const DATABASE_URL = Deno.env.get("DATABASE_URL") || "";
 const PORT = 8000;
 
 // Fix: Properly configure the pool with connection string parsing
-const pool = new Pool(DATABASE_URL, 20, true);
+const pool = new Pool(DATABASE_URL, 120, true);
 
 const ORDERS_QUERY = `
   SELECT id, customer_id, total_cents, status, created_at

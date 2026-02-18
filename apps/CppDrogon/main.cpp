@@ -37,13 +37,13 @@ void parseAndConfigureDatabase() {
         database,
         user,
         password,
-        40,  // connection pool size
-        "",  // filename (not used for postgresql)
+        120,  // connection pool size
+        "",   // filename (not used for postgresql)
         "default",
-        false,  // isFast
+        false, // isFast=false: DB client created before app().run(), event loops not yet alive
         "utf8",  // characterSet
-        10.0,   // timeout
-        true    // autoBatch
+        10.0,    // timeout
+        false    // autoBatch - disabled: causes integer parameter encoding errors
     );
 }
 
@@ -72,7 +72,7 @@ int main() {
             auto dbClient = app().getDbClient();
             
             dbClient->execSqlAsync(
-                "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",
+                "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000",
                 [callback](const orm::Result& result) {
                     Json::Value ordersArray(Json::arrayValue);
                     
@@ -95,9 +95,7 @@ int main() {
                     auto resp = HttpResponse::newHttpJsonResponse(error);
                     resp->setStatusCode(k500InternalServerError);
                     callback(resp);
-                },
-                100,  // limit
-                1000  // offset
+                }
             );
         },
         {Get}

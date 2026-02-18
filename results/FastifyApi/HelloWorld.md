@@ -1,31 +1,31 @@
 # Fastify API — Hello World Benchmark
 
-**Tested**: 2026-02-18 03:21:48 UTC
+**Tested**: 2026-02-18 04:22:25 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8003/`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 77,541.28 |
-| Avg Latency | 1.95ms |
-| Max Latency | 250.10ms |
-| Total Requests | 1,551,078 |
-| Transfer/sec | 14.64MB |
+| Requests/sec | 78,952.91 |
+| Avg Latency | 1.88ms |
+| Max Latency | 231.46ms |
+| Total Requests | 1,579,112 |
+| Transfer/sec | 14.91MB |
 | Port | 8003 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 1.95ms | 6.46ms | 250.10ms | 99.51% |
-| Req/Sec | 38.98k | 7.47k | 48.95k | 78.50% |
+| Latency | 1.88ms | 5.84ms | 231.46ms | 99.53% |
+| Req/Sec | 39.69k | 7.49k | 49.62k | 77.50% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 27.5MiB |
+| Memory Usage | 27.55MiB |
 | Memory Limit | 1GiB |
 | Memory % | 2.69% |
 | CPU % | 0.01% |
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8003/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     1.95ms    6.46ms 250.10ms   99.51%
-    Req/Sec    38.98k     7.47k   48.95k    78.50%
-  1551078 requests in 20.00s, 292.89MB read
-Requests/sec:  77541.28
-Transfer/sec:     14.64MB
+    Latency     1.88ms    5.84ms 231.46ms   99.53%
+    Req/Sec    39.69k     7.49k   49.62k    77.50%
+  1579112 requests in 20.00s, 298.18MB read
+Requests/sec:  78952.91
+Transfer/sec:     14.91MB
 ```

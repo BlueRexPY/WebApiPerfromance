@@ -4,6 +4,10 @@ import NIOCore
 import NIOPosix
 import NIOConcurrencyHelpers
 
+struct HelloResponse: Content {
+    let message: String
+}
+
 struct Order: Content {
     let id: Int
     let customer_id: Int
@@ -18,7 +22,7 @@ final class PostgresPool {
     private let logger: Logger
     private var connections: [PostgresConnection] = []
     private let lock = NIOLock()
-    private let maxConnections = 50
+    private let maxConnections = 120
     
     init(config: PostgresConnection.Configuration, eventLoopGroup: EventLoopGroup, logger: Logger) {
         self.config = config
@@ -105,8 +109,8 @@ struct Main {
         app.http.server.configuration.port = 8000
         
         // Routes
-        app.get { req -> String in
-            "Hello, World!"
+        app.get { req -> HelloResponse in
+            HelloResponse(message: "Hello, World!")
         }
         
         app.get("orders") { req async throws -> [Order] in

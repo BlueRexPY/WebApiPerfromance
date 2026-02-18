@@ -9,5 +9,5 @@ if config_env() == :prod do
 
   config :elixir_phoenix_api, ElixirPhoenixApi.Repo,
     url: database_url,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "90")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "120")
 end

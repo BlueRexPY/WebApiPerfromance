@@ -41,7 +41,7 @@ func main() {
 		log.Fatalf("Unable to parse DATABASE_URL: %v", err)
 	}
 
-	config.MaxConns = 90
+	config.MaxConns = 120
 	config.MinConns = 10
 
 	pool, err = pgxpool.NewWithConfig(context.Background(), config)

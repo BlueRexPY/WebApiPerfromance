@@ -86,7 +86,7 @@ parseConnectInfo _ =
 
 createConnectionPool :: ConnectInfo -> IO (Pool Connection)
 createConnectionPool connInfo = do
-  let poolConfig = defaultPoolConfig (connect connInfo) close 30.0 10
+  let poolConfig = defaultPoolConfig (connect connInfo) close 30.0 120
   newPool poolConfig
 
 -- Main

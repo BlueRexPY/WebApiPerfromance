@@ -1,33 +1,33 @@
 # Python Litestar — Orders Benchmark
 
-**Tested**: 2026-02-18 03:18:53 UTC
+**Tested**: 2026-02-18 04:19:32 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8000/orders`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 2,964.28 |
-| Avg Latency | 42.49ms |
-| Max Latency | 178.29ms |
-| Total Requests | 59,307 |
-| Transfer/sec | 32.25MB |
+| Requests/sec | 3,676.32 |
+| Avg Latency | 39.10ms |
+| Max Latency | 197.65ms |
+| Total Requests | 73,543 |
+| Transfer/sec | 39.99MB |
 | Port | 8000 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 42.49ms | 33.47ms | 178.29ms | 60.14% |
-| Req/Sec | 1.49k | 507.06 | 2.89k | 62.25% |
+| Latency | 39.10ms | 37.27ms | 197.65ms | 71.35% |
+| Req/Sec | 1.85k | 491.11 | 3.18k | 65.00% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 153.6MiB |
+| Memory Usage | 159.1MiB |
 | Memory Limit | 1GiB |
-| Memory % | 15.00% |
+| Memory % | 15.54% |
 | CPU % | 0.00% |
 | PIDs | 37 |
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8000/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    42.49ms   33.47ms 178.29ms   60.14%
-    Req/Sec     1.49k   507.06     2.89k    62.25%
-  59307 requests in 20.01s, 645.17MB read
-Requests/sec:   2964.28
-Transfer/sec:     32.25MB
+    Latency    39.10ms   37.27ms 197.65ms   71.35%
+    Req/Sec     1.85k   491.11     3.18k    65.00%
+  73543 requests in 20.00s, 800.04MB read
+Requests/sec:   3676.32
+Transfer/sec:     39.99MB
 ```

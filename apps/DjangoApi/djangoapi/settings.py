@@ -41,7 +41,7 @@ DATABASES = {
         "PASSWORD": DATABASE_URL.split("://")[1].split(":")[1].split("@")[0],
         "HOST": DATABASE_URL.split("@")[1].split(":")[0],
         "PORT": DATABASE_URL.split(":")[-1].split("/")[0],
-        "CONN_MAX_AGE": 600,
+        "CONN_MAX_AGE": None,  # persistent connections
         "OPTIONS": {
             "connect_timeout": 10,
             "options": "-c statement_timeout=10000",
