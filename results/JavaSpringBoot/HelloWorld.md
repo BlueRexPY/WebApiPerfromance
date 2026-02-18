@@ -1,34 +1,34 @@
 # Java Spring Boot — Hello World Benchmark
 
-**Tested**: 2026-02-18 03:39:57 UTC
+**Tested**: 2026-02-18 04:43:13 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8009/`
 
 ## Summary
 
 | Metric         | Value     |
 | -------------- | --------- |
-| Requests/sec   | 32,631.75 |
-| Avg Latency    | 12.44ms   |
-| Max Latency    | 241.28ms  |
-| Total Requests | 653,114   |
-| Transfer/sec   | 3.05MB    |
+| Requests/sec   | 31,265.68 |
+| Avg Latency    | 13.21ms   |
+| Max Latency    | 170.99ms  |
+| Total Requests | 625,607   |
+| Transfer/sec   | 2.92MB    |
 | Port           | 8009      |
 
 ## Thread Stats
 
 | Stat    | Avg     | Stdev   | Max      | +/- Stdev |
 | ------- | ------- | ------- | -------- | --------- |
-| Latency | 12.44ms | 17.91ms | 241.28ms | 81.88%    |
-| Req/Sec | 16.40k  | 9.47k   | 41.79k   | 66.75%    |
+| Latency | 13.21ms | 18.82ms | 170.99ms | 81.77%    |
+| Req/Sec | 15.73k  | 11.27k  | 43.16k   | 67.25%    |
 
 ## Resource Usage
 
 | Metric       | Value    |
 | ------------ | -------- |
-| Memory Usage | 140.5MiB |
+| Memory Usage | 144.2MiB |
 | Memory Limit | 1GiB     |
-| Memory %     | 13.72%   |
-| CPU %        | 0.08%    |
+| Memory %     | 14.08%   |
+| CPU %        | 0.06%    |
 | PIDs         | 21       |
 
 ## Raw Output
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8009/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    12.44ms   17.91ms 241.28ms   81.88%
-    Req/Sec    16.40k     9.47k   41.79k    66.75%
-  653114 requests in 20.01s, 61.04MB read
-Requests/sec:  32631.75
-Transfer/sec:      3.05MB
+    Latency    13.21ms   18.82ms 170.99ms   81.77%
+    Req/Sec    15.73k    11.27k   43.16k    67.25%
+  625607 requests in 20.01s, 58.47MB read
+Requests/sec:  31265.68
+Transfer/sec:      2.92MB
 ```

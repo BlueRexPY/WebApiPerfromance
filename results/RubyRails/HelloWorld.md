@@ -1,35 +1,35 @@
 # Ruby Rails — Hello World Benchmark
 
-**Tested**: 2026-02-18 03:34:54 UTC
+**Tested**: 2026-02-18 04:49:49 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8015/`
 
 ## Summary
 
-| Metric | Value |
-| --- | --- |
-| Requests/sec | 3,842.95 |
-| Avg Latency | 35.45ms |
-| Max Latency | 936.16ms |
-| Total Requests | 76,964 |
-| Transfer/sec | 1.05MB |
-| Port | 8015 |
+| Metric         | Value    |
+| -------------- | -------- |
+| Requests/sec   | 3,103.00 |
+| Avg Latency    | 44.47ms  |
+| Max Latency    | 1.16s    |
+| Total Requests | 62,156   |
+| Transfer/sec   | 869.69KB |
+| Port           | 8015     |
 
 ## Thread Stats
 
-| Stat | Avg | Stdev | Max | +/- Stdev |
-| --- | --- | --- | --- | --- |
-| Latency | 35.45ms | 44.47ms | 936.16ms | 97.12% |
-| Req/Sec | 1.93k | 305.83 | 2.38k | 74.00% |
+| Stat    | Avg     | Stdev   | Max   | +/- Stdev |
+| ------- | ------- | ------- | ----- | --------- |
+| Latency | 44.47ms | 64.01ms | 1.16s | 98.42%    |
+| Req/Sec | 1.56k   | 387.20  | 2.42k | 65.25%    |
 
 ## Resource Usage
 
-| Metric | Value |
-| --- | --- |
-| Memory Usage | 274.7MiB |
-| Memory Limit | 1GiB |
-| Memory % | 26.83% |
-| CPU % | 0.04% |
-| PIDs | 399 |
+| Metric       | Value    |
+| ------------ | -------- |
+| Memory Usage | 296.5MiB |
+| Memory Limit | 1GiB     |
+| Memory %     | 28.96%   |
+| CPU %        | 0.04%    |
+| PIDs         | 519      |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8015/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    35.45ms   44.47ms 936.16ms   97.12%
-    Req/Sec     1.93k   305.83     2.38k    74.00%
-  76964 requests in 20.03s, 21.07MB read
-Requests/sec:   3842.95
-Transfer/sec:      1.05MB
+    Latency    44.47ms   64.01ms   1.16s    98.42%
+    Req/Sec     1.56k   387.20     2.42k    65.25%
+  62156 requests in 20.03s, 17.01MB read
+Requests/sec:   3103.00
+Transfer/sec:    869.69KB
 ```

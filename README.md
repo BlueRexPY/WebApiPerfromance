@@ -1,6 +1,60 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), Erlang (Cowboy), and C++ (Drogon) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), Erlang (Cowboy), C++ (Drogon), and C (Microhttpd) with PostgreSQL database integration.
+
+## Benchmark Results
+
+**Test Configuration**: `wrk -t 2 -c 120 -d 20s` — 2 threads, 120 connections, 20 seconds  
+**Tested**: 2026-02-18 UTC  
+\* = Non-2xx/3xx responses or socket errors occurred
+
+### Hello World (`GET /`)
+
+| Framework        | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
+| ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ | -------- |
+| .NET API         | 8001 | 118,337.61 | 3.64ms      | 78.91ms     | 2,366,960      | 20.99MB      | 31.9MiB  |
+| Haskell Servant  | 8006 | 115,297.04 | 1.11ms      | 106.67ms    | 2,306,053      | 21.00MB      | 213.8MiB |
+| Rust Actix       | 8005 | 111,793.63 | 8.65ms      | 60.47ms     | 2,236,041      | 14.39MB      | 4.512MiB |
+| Bun API          | 8002 | 99,587.74  | 1.28ms      | 62.35ms     | 1,991,851      | 12.82MB      | 16.16MiB |
+| Deno API         | 8011 | 85,530.71  | 1.46ms      | 73.17ms     | 1,710,746      | 12.89MB      | 34.98MiB |
+| .NET AOT         | 8013 | 63,397.83  | 6.74ms      | 74.39ms     | 1,269,368      | 11.25MB      | 18.13MiB |
+| Go Fiber         | 8008 | 62,286.61  | 15.70ms     | 77.64ms     | 1,245,847      | 8.91MB       | 13.43MiB |
+| Erlang Cowboy    | 8010 | 56,637.99  | 2.23ms      | 94.27ms     | 1,132,835      | 8.16MB       | 96.49MiB |
+| C Microhttpd     | 8018 | 54,935.98  | 12.34ms     | 68.93ms     | 1,098,912      | 7.07MB       | 4.484MiB |
+| C++ Drogon       | 8017 | 52,921.37  | 13.04ms     | 70.24ms     | 1,058,558      | 8.68MB       | 10.98MiB |
+| Elixir Phoenix   | 8007 | 39,730.31  | 3.33ms      | 59.24ms     | 794,640        | 9.62MB       | 162.5MiB |
+| Fastify API      | 8003 | 32,725.09  | 10.49ms     | 1.04s       | 654,643        | 6.18MB       | 27.62MiB |
+| Java Spring Boot | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
+| Express API      | 8014 | 25,475.41  | 5.52ms      | 398.78ms    | 509,579        | 4.79MB       | 38.84MiB |
+| Swift Vapor      | 8012 | 24,274.85  | 4.99ms      | 60.93ms     | 485,537        | 4.03MB       | 4.625MiB |
+| Python Litestar  | 8000 | 21,524.36  | 17.53ms     | 77.84ms     | 430,889        | 3.12MB       | 148MiB   |
+| Python FastAPI   | 8004 | 20,748.27  | 12.73ms     | 61.11ms     | 414,988        | 3.01MB       | 192.3MiB |
+| Ruby Rails       | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
+| Django API       | 8016 | 1,417.66\* | 164.76ms    | 1.61s       | 28,376         | 418.07KB     | 421.4MiB |
+
+### Orders (`GET /orders`)
+
+| Framework        | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
+| ---------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ | -------- |
+| .NET API         | 8001 | 12,067.89 | 17.60ms     | 89.79ms     | 241,541        | 128.21MB     | 68.57MiB |
+| .NET AOT         | 8013 | 10,335.60 | 17.99ms     | 93.31ms     | 207,045        | 109.80MB     | 34.1MiB  |
+| Rust Actix       | 8005 | 9,376.94  | 25.56ms     | 287.83ms    | 187,772        | 101.86MB     | 15.56MiB |
+| Go Fiber         | 8008 | 8,051.70  | 28.15ms     | 516.70ms    | 161,447        | 88.24MB      | 60.96MiB |
+| Bun API          | 8002 | 5,845.62  | 20.60ms     | 84.61ms     | 116,956        | 62.38MB      | 22.58MiB |
+| C Microhttpd     | 8018 | 5,598.50  | 25.25ms     | 137.41ms    | 112,180        | 60.74MB      | 4.691MiB |
+| Python Litestar  | 8000 | 4,158.40  | 32.54ms     | 171.26ms    | 83,184         | 45.24MB      | 159.2MiB |
+| Elixir Phoenix   | 8007 | 3,411.77  | 35.18ms     | 110.29ms    | 68,284         | 37.45MB      | 187.7MiB |
+| Express API      | 8014 | 2,752.77  | 45.45ms     | 532.15ms    | 55,087         | 29.54MB      | 48.51MiB |
+| Erlang Cowboy    | 8010 | 2,240.62  | 53.50ms     | 168.07ms    | 44,832         | 22.88MB      | 162.1MiB |
+| C++ Drogon       | 8017 | 2,169.70  | 58.65ms     | 300.55ms    | 43,500         | 23.62MB      | 42.31MiB |
+| Python FastAPI   | 8004 | 1,912.48  | 62.77ms     | 194.96ms    | 38,260         | 20.81MB      | 202.2MiB |
+| Fastify API      | 8003 | 1,502.87  | 88.97ms     | 1.85s       | 30,077         | 16.13MB      | 45.64MiB |
+| Deno API         | 8011 | 1,135.43  | 105.51ms    | 317.83ms    | 22,736         | 12.14MB      | 104.5MiB |
+| Django API       | 8016 | 832.70\*  | 142.94ms    | 2.00s       | 16,674         | 9.18MB       | 396.6MiB |
+| Haskell Servant  | 8006 | 618.77\*  | 180.92ms    | 1.93s       | 12,397         | 6.74MB       | 248.4MiB |
+| Swift Vapor      | 8012 | 592.98    | 203.72ms    | 838.94ms    | 11,891         | 6.12MB       | 20.16MiB |
+| Java Spring Boot | 8009 | 571.97\*  | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
+| Ruby Rails       | 8015 | 423.29\*  | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
 
 ## Projects
 
@@ -220,6 +274,7 @@ The services will be available at:
 - **Ruby Rails API**: http://localhost:8015
 - **Django API**: http://localhost:8016
 - **C++ Drogon API**: http://localhost:8017
+- **C Microhttpd API**: http://localhost:8018
 - **PostgreSQL**: localhost:5432
 
 To run in detached mode:
@@ -791,6 +846,10 @@ curl http://localhost:8016/orders
 # C++ Drogon API
 curl http://localhost:8017/
 curl http://localhost:8017/orders
+
+# C Microhttpd API
+curl http://localhost:8018/
+curl http://localhost:8018/orders
 ```
 
 ## Performance Testing
@@ -817,4 +876,5 @@ wrk -t 2 -c 120 -d 20s http://localhost:8014/orders  # Express
 wrk -t 2 -c 120 -d 20s http://localhost:8015/orders  # Ruby Rails
 wrk -t 2 -c 120 -d 20s http://localhost:8016/orders  # Django
 wrk -t 2 -c 120 -d 20s http://localhost:8017/orders  # C++ Drogon
+wrk -t 2 -c 120 -d 20s http://localhost:8018/orders  # C Microhttpd
 ```

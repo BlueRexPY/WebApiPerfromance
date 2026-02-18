@@ -1,35 +1,35 @@
 # Go Fiber — Hello World Benchmark
 
-**Tested**: 2026-02-18 03:27:20 UTC
+**Tested**: 2026-02-18 04:42:07 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8008/`
 
 ## Summary
 
-| Metric | Value |
-| --- | --- |
-| Requests/sec | 44,459.89 |
-| Avg Latency | 16.73ms |
-| Max Latency | 80.90ms |
-| Total Requests | 890,398 |
-| Transfer/sec | 6.36MB |
-| Port | 8008 |
+| Metric         | Value     |
+| -------------- | --------- |
+| Requests/sec   | 62,286.61 |
+| Avg Latency    | 15.70ms   |
+| Max Latency    | 77.64ms   |
+| Total Requests | 1,245,847 |
+| Transfer/sec   | 8.91MB    |
+| Port           | 8008      |
 
 ## Thread Stats
 
-| Stat | Avg | Stdev | Max | +/- Stdev |
-| --- | --- | --- | --- | --- |
-| Latency | 16.73ms | 23.21ms | 80.90ms | 79.59% |
-| Req/Sec | 22.35k | 7.03k | 39.51k | 66.75% |
+| Stat    | Avg     | Stdev   | Max     | +/- Stdev |
+| ------- | ------- | ------- | ------- | --------- |
+| Latency | 15.70ms | 22.33ms | 77.64ms | 79.80%    |
+| Req/Sec | 31.31k  | 3.65k   | 47.12k  | 80.50%    |
 
 ## Resource Usage
 
-| Metric | Value |
-| --- | --- |
-| Memory Usage | 13.11MiB |
-| Memory Limit | 1GiB |
-| Memory % | 1.28% |
-| CPU % | 0.02% |
-| PIDs | 45 |
+| Metric       | Value    |
+| ------------ | -------- |
+| Memory Usage | 13.43MiB |
+| Memory Limit | 1GiB     |
+| Memory %     | 1.31%    |
+| CPU %        | 0.01%    |
+| PIDs         | 45       |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8008/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    16.73ms   23.21ms  80.90ms   79.59%
-    Req/Sec    22.35k     7.03k   39.51k    66.75%
-  890398 requests in 20.03s, 127.37MB read
-Requests/sec:  44459.89
-Transfer/sec:      6.36MB
+    Latency    15.70ms   22.33ms  77.64ms   79.80%
+    Req/Sec    31.31k     3.65k   47.12k    80.50%
+  1245847 requests in 20.00s, 178.22MB read
+Requests/sec:  62286.61
+Transfer/sec:      8.91MB
 ```
