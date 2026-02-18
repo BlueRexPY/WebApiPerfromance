@@ -16,18 +16,22 @@
     <artifactId>java-springboot-api</artifactId>
     <version>0.1.0</version>
     <name>JavaSpringBootApi</name>
-    <description>Performance focused Spring Boot WebFlux API</description>
+    <description>Simple Spring Boot MVC API</description>
 
     <properties>
         <java.version>21</java.version>
     </properties>
 
     <dependencies>
+        <!-- Web (Undertow instead of Tomcat for lower memory) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
-                <!-- Exclude default logging to reduce overhead -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
@@ -36,15 +40,17 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
+        <!-- JDBC + HikariCP (bundled with Spring Boot) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- PostgreSQL JDBC driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-pool</artifactId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <!-- Minimal logging -->
         <dependency>

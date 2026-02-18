@@ -1,16 +1,20 @@
 server:
   port: 8000
+  undertow:
+    threads:
+      io: 4
+      worker: 64
 
 spring:
-  r2dbc:
-    url: ${DATABASE_URL:r2dbc:postgresql://apiuser:apipassword@postgres:5432/ordersdb}
-    pool:
-      initial-size: 10
-      max-size: 50
-      max-idle-time: 10m
-      max-acquire-time: 5s
-      max-create-connection-time: 5s
-      validation-query: SELECT 1
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/ordersdb}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 5000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   main:
     banner-mode: off
   jackson:
@@ -19,6 +23,3 @@ spring:
 logging:
   level:
     root: ERROR
-    org.springframework: ERROR
-    io.r2dbc: ERROR
-    io.netty: ERROR

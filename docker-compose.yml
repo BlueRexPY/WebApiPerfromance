@@ -260,7 +260,7 @@ services:
     ports:
       - "8009:8000"
     environment:
-      DATABASE_URL: r2dbc:postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-ordersdb}?user=${POSTGRES_USER:-apiuser}&password=${POSTGRES_PASSWORD:-apipassword}
     depends_on:
       db:
         condition: service_healthy
@@ -409,6 +409,26 @@ services:
     build: ./apps/CppDrogon
     ports:
       - "8017:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  capi:
+    build: ./apps/CApi
+    ports:
+      - "8018:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:

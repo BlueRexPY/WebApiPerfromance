@@ -22,16 +22,13 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8000
 
-# Run with optimized JVM settings for performance and 1G container
+# Simple JVM settings: G1GC, bounded heap, leave room for OS and thread stacks
 ENTRYPOINT ["java", \
     "-server", \
-    "-Xms512m", \
-    "-Xmx896m", \
-    "-XX:+UseZGC", \
-    "-XX:+ZGenerational", \
-    "-XX:+UseStringDeduplication", \
-    "-XX:MaxMetaspaceSize=128m", \
-    "-Dreactor.netty.ioWorkerCount=8", \
-    "-Dreactor.netty.pool.maxConnections=500", \
+    "-Xms256m", \
+    "-Xmx640m", \
+    "-XX:+UseG1GC", \
+    "-XX:MaxGCPauseMillis=100", \
+    "-XX:MaxMetaspaceSize=96m", \
     "-jar", \
     "app.jar"]

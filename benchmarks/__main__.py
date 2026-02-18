@@ -217,8 +217,8 @@ def main(argv: list[str] | None = None) -> int:
     run_parser.add_argument(
         "--max-workers",
         type=int,
-        default=0,
-        help="Max concurrent wrk processes in parallel mode. 0 = unlimited, all at once (default: 0)",
+        default=20,
+        help="Max concurrent wrk processes in parallel mode. 0 = unlimited, all at once (default: 20)",
     )
 
     # ── list ──
