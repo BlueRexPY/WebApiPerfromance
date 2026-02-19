@@ -12,10 +12,10 @@ This repository contains performance-focused web API implementations in Python (
 
 | Framework        | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ---------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ | -------- |
-| .NET API         | 8001 | 118,337.61 | 3.64ms      | 78.91ms     | 2,366,960      | 20.99MB      | 31.9MiB  |
+| Bun API          | 8002 | 128,953.36 | 0.98ms      | 60.78ms     | 2,579,397      | 16.60MB      | 16.69MiB |
 | Haskell Servant  | 8006 | 115,297.04 | 1.11ms      | 106.67ms    | 2,306,053      | 21.00MB      | 213.8MiB |
 | Rust Actix       | 8005 | 111,793.63 | 8.65ms      | 60.47ms     | 2,236,041      | 14.39MB      | 4.512MiB |
-| Bun API          | 8002 | 99,587.74  | 1.28ms      | 62.35ms     | 1,991,851      | 12.82MB      | 16.16MiB |
+| .NET API         | 8001 | 91,950.13  | 5.24ms      | 78.81ms     | 1,839,891      | 16.31MB      | 30.78MiB |
 | Deno API         | 8011 | 85,530.71  | 1.46ms      | 73.17ms     | 1,710,746      | 12.89MB      | 34.98MiB |
 | .NET AOT         | 8013 | 63,397.83  | 6.74ms      | 74.39ms     | 1,269,368      | 11.25MB      | 18.13MiB |
 | Go Fiber         | 8008 | 62,286.61  | 15.70ms     | 77.64ms     | 1,245,847      | 8.91MB       | 13.43MiB |
@@ -27,8 +27,8 @@ This repository contains performance-focused web API implementations in Python (
 | Java Spring Boot | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
 | Express API      | 8014 | 25,475.41  | 5.52ms      | 398.78ms    | 509,579        | 4.79MB       | 38.84MiB |
 | Swift Vapor      | 8012 | 24,274.85  | 4.99ms      | 60.93ms     | 485,537        | 4.03MB       | 4.625MiB |
-| Python Litestar  | 8000 | 21,524.36  | 17.53ms     | 77.84ms     | 430,889        | 3.12MB       | 148MiB   |
 | Python FastAPI   | 8004 | 20,748.27  | 12.73ms     | 61.11ms     | 414,988        | 3.01MB       | 192.3MiB |
+| Python Litestar  | 8000 | 13,671.14  | 19.49ms     | 77.36ms     | 274,003        | 1.98MB       | 147.9MiB |
 | Ruby Rails       | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
 | Django API       | 8016 | 1,417.66\* | 164.76ms    | 1.61s       | 28,376         | 418.07KB     | 421.4MiB |
 
@@ -36,14 +36,14 @@ This repository contains performance-focused web API implementations in Python (
 
 | Framework        | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ---------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ | -------- |
-| .NET API         | 8001 | 12,067.89 | 17.60ms     | 89.79ms     | 241,541        | 128.21MB     | 68.57MiB |
+| Bun API          | 8002 | 13,926.52 | 8.61ms      | 25.04ms     | 278,570        | 148.62MB     | 22.21MiB |
+| .NET API         | 8001 | 10,455.90 | 18.60ms     | 91.05ms     | 209,504        | 111.08MB     | 59.81MiB |
 | .NET AOT         | 8013 | 10,335.60 | 17.99ms     | 93.31ms     | 207,045        | 109.80MB     | 34.1MiB  |
 | Rust Actix       | 8005 | 9,376.94  | 25.56ms     | 287.83ms    | 187,772        | 101.86MB     | 15.56MiB |
 | Go Fiber         | 8008 | 8,051.70  | 28.15ms     | 516.70ms    | 161,447        | 88.24MB      | 60.96MiB |
-| Bun API          | 8002 | 5,845.62  | 20.60ms     | 84.61ms     | 116,956        | 62.38MB      | 22.58MiB |
 | C Microhttpd     | 8018 | 5,598.50  | 25.25ms     | 137.41ms    | 112,180        | 60.74MB      | 4.691MiB |
-| Python Litestar  | 8000 | 4,158.40  | 32.54ms     | 171.26ms    | 83,184         | 45.24MB      | 159.2MiB |
 | Elixir Phoenix   | 8007 | 3,411.77  | 35.18ms     | 110.29ms    | 68,284         | 37.45MB      | 187.7MiB |
+| Python Litestar  | 8000 | 3,275.96  | 38.73ms     | 180.56ms    | 65,554         | 35.64MB      | 159.9MiB |
 | Express API      | 8014 | 2,752.77  | 45.45ms     | 532.15ms    | 55,087         | 29.54MB      | 48.51MiB |
 | Erlang Cowboy    | 8010 | 2,240.62  | 53.50ms     | 168.07ms    | 44,832         | 22.88MB      | 162.1MiB |
 | C++ Drogon       | 8017 | 2,169.70  | 58.65ms     | 300.55ms    | 43,500         | 23.62MB      | 42.31MiB |
@@ -65,7 +65,7 @@ This repository contains performance-focused web API implementations in Python (
 - **Serialization**: msgspec
 - **Event Loop**: uvloop
 - **Workers**: 4 (matching FastAPI for fair comparison)
-- **Connection Pool**: 15 per worker (60 total)
+- **Connection Pool**: 30 per worker (120 total)
 - **HTTP**: HTTP/1 only for maximum performance
 - **Backlog**: 4096 connections
 
@@ -73,7 +73,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: FastAPI with Uvicorn ASGI server
 - **Database**: PostgreSQL with Psycopg3 and connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 - **Event Loop**: uvloop
 
 ### DotNetApi
@@ -95,21 +95,21 @@ This repository contains performance-focused web API implementations in Python (
 - **Runtime**: Bun (ultra-fast JavaScript runtime)
 - **Framework**: Bun's native HTTP server (zero overhead)
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 
 ### NodeFastifyApi
 
 - **Runtime**: Node.js 22
 - **Framework**: Fastify (fastest Node.js web framework)
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 
 ### NodeExpressApi
 
 - **Runtime**: Node.js 22
 - **Framework**: Express (most popular Node.js web framework)
 - **Database**: PostgreSQL with `postgres` driver and connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 - **Optimizations**: Disabled unnecessary middleware (x-powered-by, etag)
 
 ### NodeDenoApi
@@ -117,14 +117,14 @@ This repository contains performance-focused web API implementations in Python (
 - **Runtime**: Deno 2.1 (secure TypeScript/JavaScript runtime)
 - **Framework**: Deno's native HTTP server
 - **Database**: PostgreSQL with deno-postgres driver and connection pooling
-- **Connection Pool**: 90 connections
+- **Connection Pool**: 120 connections
 - **Security**: Secure by default with explicit permissions
 
 ### RustActix
 
 - **Framework**: Actix-web 4.9 (blazing fast Rust web framework)
 - **Database**: PostgreSQL with tokio-postgres and deadpool connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 - **Workers**: 14
 - **Compilation**: Release build with LTO and optimizations
 
@@ -132,7 +132,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Servant with Warp web server
 - **Database**: PostgreSQL with postgresql-simple and resource-pool
-- **Connection Pool**: 90 connections
+- **Connection Pool**: 120 connections
 - **Runtime**: GHC with threaded runtime (-N14)
 - **Compilation**: Optimized build (-O2)
 
@@ -140,7 +140,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Phoenix 1.7 with Cowboy web server
 - **Database**: PostgreSQL with Ecto and Postgrex
-- **Connection Pool**: 90 connections with queue management
+- **Connection Pool**: 120 connections with queue management
 - **Concurrency**: BEAM VM with lightweight processes
 - **Runtime**: Erlang/OTP for fault tolerance and scalability
 - **Compilation**: Production release build with optimizations
@@ -149,7 +149,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Fiber (Express-inspired Go web framework)
 - **Database**: PostgreSQL with pgx/v5 driver and connection pooling
-- **Connection Pool**: 90 max connections, 10 min connections
+- **Connection Pool**: 120 max connections, 10 min connections
 - **Runtime**: Go 1.23 with goroutines
 - **Compilation**: Static binary with size optimization
 
@@ -166,7 +166,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Cowboy 2.12 (high-performance HTTP server)
 - **Database**: PostgreSQL with epgsql driver
-- **Connection Pool**: Custom pool with 90 connections
+- **Connection Pool**: Custom pool with 120 connections
 - **Concurrency**: BEAM VM with lightweight processes
 - **Runtime**: Erlang/OTP 26 for fault tolerance and scalability
 
@@ -174,7 +174,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Vapor 4.99 (Swift web framework)
 - **Database**: PostgreSQL with PostgresNIO and connection pooling
-- **Connection Pool**: 90 connections per event loop
+- **Connection Pool**: 120 connections per event loop
 - **Runtime**: Swift 5.9 with async/await
 - **Compilation**: Release build with static Swift stdlib
 
@@ -182,7 +182,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Ruby on Rails 7.1 (API-only mode)
 - **Database**: PostgreSQL with pg gem and connection pooling
-- **Connection Pool**: 90 connections with prepared statements
+- **Connection Pool**: 120 connections with prepared statements
 - **Server**: Puma with 4 workers
 - **Runtime**: Ruby 3.3.0
 - **JSON**: Oj for fast JSON serialization
@@ -202,7 +202,7 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Framework**: Drogon 1.9 (high-performance C++ web framework)
 - **Database**: PostgreSQL with libpq and connection pooling
-- **Connection Pool**: 90 connections
+- **Connection Pool**: 120 connections
 - **Workers**: 14 threads
 - **Compilation**: Release build with -O3 optimizations
 - **Runtime**: Native compiled binary
@@ -609,7 +609,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 
 ### Python Litestar
 
-- Connection pool size: 15 per worker (60 total with 4 workers)
+- Connection pool size: 30 per worker (120 total with 4 workers)
 - Workers: 4
 - Blocking threads: 1 (minimal overhead)
 - HTTP/1 only (no auto-negotiation overhead)
@@ -623,7 +623,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 
 ### Python FastAPI
 
-- Connection pool size: 90
+- Connection pool size: 120
 - Workers: 4 (uvicorn)
 - uvloop for async performance
 - Prepared statements enabled
@@ -631,7 +631,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### .NET API
 
 - Raw SQL with Npgsql (no ORM overhead)
-- Connection pool size: 90
+- Connection pool size: 120
 - Connection multiplexing enabled
 - Prepared statements for queries
 - Minimal API for reduced overhead
@@ -647,14 +647,14 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Bun API
 
 - Bun's native HTTP server (fastest JS runtime)
-- Connection pool size: 90
+- Connection pool size: 120
 - Prepared statements enabled
 - Zero-overhead native performance
 
 ### Fastify API
 
 - Fastify (fastest Node.js framework)
-- Connection pool size: 90
+- Connection pool size: 120
 - Prepared statements enabled
 - Logging disabled for max performance
 - Node.js 22 with latest V8 optimizations
@@ -662,7 +662,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Express API
 
 - Express (most popular Node.js framework)
-- Connection pool size: 90
+- Connection pool size: 120
 - Prepared statements enabled
 - Middleware optimizations (disabled x-powered-by, etag)
 - Node.js 22 with latest V8 optimizations
@@ -670,7 +670,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Node Deno API
 
 - Deno's native HTTP server (Rust-based performance)
-- Connection pool size: 90
+- Connection pool size: 120
 - TypeScript with V8 engine optimizations
 - Secure by default with minimal runtime overhead
 - No node_modules, cached dependencies
@@ -678,7 +678,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Rust Actix API
 
 - Actix-web with tokio async runtime
-- Connection pool size: 90
+- Connection pool size: 120
 - Workers: 14
 - Prepared statements with statement caching
 - Release build with LTO and codegen optimizations
@@ -687,7 +687,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Haskell Servant API
 
 - Warp web server (high-performance HTTP)
-- Connection pool size: 90
+- Connection pool size: 120
 - Threaded runtime with 14 capabilities (-N14)
 - GHC optimizations (-O2)
 - Lazy evaluation and type safety
@@ -696,7 +696,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Elixir Phoenix API
 
 - Phoenix framework with Cowboy HTTP server
-- Connection pool size: 90 connections
+- Connection pool size: 120 connections
 - Queue target: 50ms, Queue interval: 1000ms
 - BEAM VM concurrency model with lightweight processes
 - Production release build with compilation optimizations
@@ -706,7 +706,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Go Fiber API
 
 - Fiber framework
-- Connection pool: 90 max, 10 min connections
+- Connection pool: 120 max, 10 min connections
 - Goroutines for concurrency
 - pgx/v5 driver with prepared statements
 - Static binary with optimizations
@@ -714,7 +714,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Java Spring Boot API
 
 - Spring Boot WebFlux (reactive/non-blocking)
-- R2DBC connection pool: 100 max, 20 initial connections
+- R2DBC connection pool: 120 max, 30 initial connections
 - Project Reactor for reactive streams
 - ZGC with generational mode for low-latency GC
 - Java 21 with virtual threads support
@@ -725,7 +725,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Erlang Cowboy API
 
 - Cowboy HTTP server (battle-tested performance)
-- Connection pool: 90 connections
+- Connection pool: 120 connections
 - BEAM VM lightweight processes
 - 100 acceptors for concurrent connections
 - OTP supervision tree for fault tolerance
@@ -733,7 +733,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### Swift Vapor API
 
 - Vapor framework with non-blocking I/O
-- PostgresNIO connection pool: 90 connections per event loop
+- PostgresNIO connection pool: 120 connections per event loop
 - Swift 5.9 with async/await concurrency
 - Release build with static Swift stdlib
 - NIO event loop for high performance
@@ -743,7 +743,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 
 - Rails 7.1 API-only mode for minimal overhead
 - Puma web server with 4 workers
-- Connection pool: 90 connections with prepared statements
+- Connection pool: 120 connections with prepared statements
 - Oj for high-performance JSON serialization
 - Bootsnap for faster boot times
 - Direct SQL queries (bypassing ActiveRecord for reads)
@@ -763,7 +763,7 @@ docker run -p 8000:8000 --env-file .env cpp-drogon-api
 ### C++ Drogon API
 
 - Drogon framework (one of the fastest C++ web frameworks)
-- Connection pool size: 90
+- Connection pool size: 120
 - Worker threads: 14
 - Native compiled binary with -O3 optimizations
 - libpq for PostgreSQL connectivity

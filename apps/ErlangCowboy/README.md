@@ -6,7 +6,7 @@ High-performance REST API built with Erlang/OTP and Cowboy HTTP server.
 
 - Cowboy 2.12 HTTP server
 - epgsql PostgreSQL driver
-- Poolboy connection pooling (90 connections)
+- Poolboy connection pooling (120 connections)
 - 100 acceptors for concurrent connections
 - BEAM VM lightweight processes
 - OTP supervision tree
