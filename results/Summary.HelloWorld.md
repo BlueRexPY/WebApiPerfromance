@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-19 06:52:32 UTC
+**Generated**: 2026-02-19 07:02:18 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -14,7 +14,7 @@
 
 | Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Bun API | 8002 | 126,392.37 | 1.04ms | 72.27ms | 2,528,213 | 16.27MB | 35.07MiB |
+| Bun API | 8002 | 128,571.02 | 0.98ms | 57.59ms | 2,571,616 | 16.55MB | 35.58MiB |
 | Haskell Servant | 8006 | 115,297.04 | 1.11ms | 106.67ms | 2,306,053 | 21.00MB | 213.8MiB |
 | Rust Actix | 8005 | 111,793.63 | 8.65ms | 60.47ms | 2,236,041 | 14.39MB | 4.512MiB |
 | .NET API | 8001 | 86,498.38 | 5.63ms | 81.89ms | 1,731,992 | 15.34MB | 35.76MiB |
