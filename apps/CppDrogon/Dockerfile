@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     libjsoncpp-dev \
     uuid-dev \
     libbrotli-dev \
+    libmongoc-dev \
+    libbson-dev \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,14 +30,14 @@ RUN git config --global http.sslVerify false && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release \
-          -DBUILD_EXAMPLES=OFF \
-          -DBUILD_CTL=OFF \
-          -DBUILD_ORM=ON \
-          -DBUILD_POSTGRESQL=ON \
-          -DBUILD_MYSQL=OFF \
-          -DBUILD_SQLITE=OFF \
-          -DBUILD_REDIS=OFF \
-          .. && \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_CTL=OFF \
+    -DBUILD_ORM=ON \
+    -DBUILD_POSTGRESQL=ON \
+    -DBUILD_MYSQL=OFF \
+    -DBUILD_SQLITE=OFF \
+    -DBUILD_REDIS=OFF \
+    .. && \
     make -j$(nproc) && \
     make install
 
@@ -63,6 +65,7 @@ RUN apt-get update && apt-get install -y \
     libjsoncpp25 \
     libuuid1 \
     libbrotli1 \
+    libmongoc-1.0-0 \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 

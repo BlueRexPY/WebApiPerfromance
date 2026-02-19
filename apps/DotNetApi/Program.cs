@@ -1,3 +1,6 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 using Npgsql;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -13,11 +16,16 @@ NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSingleton(dataSource);
 
+string mongoUrl = Environment.GetEnvironmentVariable("MONGO_URL") ?? "mongodb://mongodb:27017";
+MongoClient mongoClient = new MongoClient(mongoUrl);
+IMongoDatabase mongoDatabase = mongoClient.GetDatabase("ordersdb");
+builder.Services.AddSingleton(mongoDatabase);
+
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => new HelloResponse { Message = "Hello, World!" });
 app.MapGet(
-    "/orders",
+    "/postgresql/orders",
     async (NpgsqlDataSource dataSource) =>
     {
         const string sql =
@@ -54,6 +62,22 @@ app.MapGet(
     }
 );
 
+app.MapGet(
+    "/mongodb/orders",
+    async (IMongoDatabase mongoDatabase) =>
+    {
+        IMongoCollection<Order> collection = mongoDatabase.GetCollection<Order>("orders");
+        List<Order> orders = await collection
+            .Find(FilterDefinition<Order>.Empty)
+            .Skip(1000)
+            .Limit(100)
+            .Project(Builders<Order>.Projection.Exclude("_id"))
+            .As<Order>()
+            .ToListAsync();
+        return orders;
+    }
+);
+
 app.Run();
 
 public record HelloResponse
@@ -61,11 +85,21 @@ public record HelloResponse
     public string Message { get; init; } = "Hello, World!";
 }
 
+[BsonIgnoreExtraElements]
 public class Order
 {
+    [BsonElement("id")]
     public int Id { get; set; }
+
+    [BsonElement("customer_id")]
     public int CustomerId { get; set; }
+
+    [BsonElement("total_cents")]
     public int TotalCents { get; set; }
+
+    [BsonElement("status")]
     public string Status { get; set; } = string.Empty;
+
+    [BsonElement("created_at")]
     public DateTime CreatedAt { get; set; }
 }

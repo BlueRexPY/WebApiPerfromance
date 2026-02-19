@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 #include <pthread.h>
 #include <microhttpd.h>
 #include <libpq-fe.h>
+#include <mongoc/mongoc.h>
 
 #define PORT          8000
 #define POOL_SIZE     120
@@ -18,7 +20,9 @@ static int              g_free[POOL_SIZE];
 static pthread_mutex_t  g_mu  = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t   g_cv  = PTHREAD_COND_INITIALIZER;
 static char             g_conninfo[512];
+/* ── MongoDB pool ───────────────────────────────────────────────────── */
 
+static mongoc_client_pool_t *g_mongo_pool;
 static void pool_init(void)
 {
     for (int i = 0; i < POOL_SIZE; i++) {
@@ -80,7 +84,114 @@ static size_t json_escape(char *dst, size_t cap, const char *src)
     return n;
 }
 
-/* ── Route: GET / ─────────────────────────────────────────────────────────── */
+/* ── Route: GET /mongodb/orders ─────────────────────────────────────────── */
+
+static void mongo_doc_append(char *buf, size_t cap, size_t *pos, const bson_t *doc)
+{
+    bson_iter_t it;
+    if (!bson_iter_init(&it, doc)) return;
+
+    buf[(*pos)++] = '{';
+    int first = 1;
+
+    while (bson_iter_next(&it)) {
+        const char *key = bson_iter_key(&it);
+        if (strcmp(key, "_id") == 0) continue;
+        if (!first) buf[(*pos)++] = ',';
+        first = 0;
+
+        *pos += (size_t)snprintf(buf + *pos, cap - *pos, "\"%s\":", key);
+
+        bson_type_t t = bson_iter_type(&it);
+        if (t == BSON_TYPE_INT32) {
+            *pos += (size_t)snprintf(buf + *pos, cap - *pos, "%d",
+                                     bson_iter_int32(&it));
+        } else if (t == BSON_TYPE_INT64) {
+            *pos += (size_t)snprintf(buf + *pos, cap - *pos, "%lld",
+                                     (long long)bson_iter_int64(&it));
+        } else if (t == BSON_TYPE_UTF8) {
+            uint32_t len;
+            const char *val = bson_iter_utf8(&it, &len);
+            char esc[512];
+            json_escape(esc, sizeof(esc), val);
+            *pos += (size_t)snprintf(buf + *pos, cap - *pos, "\"%s\"", esc);
+        } else if (t == BSON_TYPE_DATE_TIME) {
+            int64_t ms  = bson_iter_date_time(&it);
+            time_t  sec = (time_t)(ms / 1000);
+            struct tm tm_val;
+            gmtime_r(&sec, &tm_val);
+            *pos += (size_t)snprintf(buf + *pos, cap - *pos,
+                "\"%04d-%02d-%02dT%02d:%02d:%02dZ\"",
+                tm_val.tm_year + 1900, tm_val.tm_mon + 1, tm_val.tm_mday,
+                tm_val.tm_hour, tm_val.tm_min, tm_val.tm_sec);
+        } else {
+            *pos += (size_t)snprintf(buf + *pos, cap - *pos, "null");
+        }
+    }
+    buf[(*pos)++] = '}';
+}
+
+static enum MHD_Result handle_mongo_orders(struct MHD_Connection *conn)
+{
+    mongoc_client_t     *client;
+    mongoc_collection_t *coll;
+    mongoc_cursor_t     *cursor;
+    bson_t              *filter;
+    bson_t              *opts;
+    const bson_t        *doc;
+
+    client = mongoc_client_pool_pop(g_mongo_pool);
+    coll   = mongoc_client_get_collection(client, "ordersdb", "orders");
+
+    filter = bson_new();
+    opts   = BCON_NEW(
+        "skip",  BCON_INT64(1000),
+        "limit", BCON_INT64(100),
+        "projection", "{",
+            "_id", BCON_INT32(0),
+        "}"
+    );
+
+    cursor = mongoc_collection_find_with_opts(coll, filter, opts, NULL);
+
+    size_t cap = 16 + 100 * 220;
+    char  *buf = malloc(cap);
+    if (!buf) {
+        mongoc_cursor_destroy(cursor);
+        bson_destroy(opts);
+        bson_destroy(filter);
+        mongoc_collection_destroy(coll);
+        mongoc_client_pool_push(g_mongo_pool, client);
+        return MHD_NO;
+    }
+
+    size_t pos = 0;
+    buf[pos++] = '[';
+    int first = 1;
+
+    while (mongoc_cursor_next(cursor, &doc)) {
+        if (!first) buf[pos++] = ',';
+        first = 0;
+        mongo_doc_append(buf, cap, &pos, doc);
+    }
+
+    buf[pos++] = ']';
+
+    mongoc_cursor_destroy(cursor);
+    bson_destroy(opts);
+    bson_destroy(filter);
+    mongoc_collection_destroy(coll);
+    mongoc_client_pool_push(g_mongo_pool, client);
+
+    struct MHD_Response *resp = MHD_create_response_from_buffer(
+        pos, buf, MHD_RESPMEM_MUST_FREE);
+    MHD_add_response_header(resp, "Content-Type", "application/json");
+    enum MHD_Result r = MHD_queue_response(conn, MHD_HTTP_OK, resp);
+    MHD_destroy_response(resp);
+    return r;
+}
+
+/* ── Route: GET / ───────────────────────────────────────────────────── */
 
 static enum MHD_Result handle_hello(struct MHD_Connection *conn)
 {
@@ -187,8 +298,11 @@ static enum MHD_Result request_handler(
     if (strcmp(url, "/") == 0)
         return handle_hello(connection);
 
-    if (strcmp(url, "/orders") == 0)
+    if (strcmp(url, "/postgresql/orders") == 0)
         return handle_orders(connection);
+
+    if (strcmp(url, "/mongodb/orders") == 0)
+        return handle_mongo_orders(connection);
 
     const char not_found[] = "{\"error\":\"not found\"}";
     struct MHD_Response *resp = MHD_create_response_from_buffer(
@@ -274,6 +388,16 @@ int main(void)
 
     pool_init();
     fprintf(stderr, "Pool ready (%d connections)\n", POOL_SIZE);
+
+    /* Initialize MongoDB */
+    mongoc_init();
+    const char *mongo_url = getenv("MONGO_URL");
+    if (!mongo_url) mongo_url = "mongodb://mongodb:27017";
+    mongoc_uri_t *muri = mongoc_uri_new(mongo_url);
+    g_mongo_pool = mongoc_client_pool_new(muri);
+    mongoc_client_pool_set_max_pool_size(g_mongo_pool, (uint32_t)POOL_SIZE);
+    mongoc_uri_destroy(muri);
+    fprintf(stderr, "MongoDB pool ready\n");
 
     struct MHD_Daemon *daemon = MHD_start_daemon(
         MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_ERROR_LOG,

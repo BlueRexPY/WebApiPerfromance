@@ -24,7 +24,8 @@ defmodule ElixirPhoenixApi.MixProject do
       {:plug_cowboy, "~> 2.7"},
       {:jason, "~> 1.4"},
       {:postgrex, "~> 0.19"},
-      {:ecto_sql, "~> 3.12"}
+      {:ecto_sql, "~> 3.12"},
+      {:mongodb_driver, "~> 1.4"}
     ]
   end
 end

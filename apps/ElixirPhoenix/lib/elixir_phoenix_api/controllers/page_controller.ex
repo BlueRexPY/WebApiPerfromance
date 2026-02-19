@@ -24,4 +24,16 @@ defmodule ElixirPhoenixApi.PageController do
 
     json(conn, orders)
   end
+
+  def mongodb_orders(conn, _params) do
+    docs =
+      Mongo.find(:mongo, "orders", %{},
+        skip: 1000,
+        limit: 100,
+        projection: %{"_id" => 0}
+      )
+      |> Enum.to_list()
+
+    json(conn, docs)
+  end
 end

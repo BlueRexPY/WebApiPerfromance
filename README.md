@@ -1,6 +1,6 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), Erlang (Cowboy), C++ (Drogon), and C (Microhttpd) with PostgreSQL database integration.
+This repository contains performance-focused web API implementations in Python (Litestar), Python (FastAPI), Python (Django), .NET (ASP.NET Core), Node.js (Bun), Node.js (Fastify), Node.js (Express), Deno, Rust (Actix-web), Haskell (Servant), Elixir (Phoenix), Go (Fiber), Java (Spring Boot WebFlux), Swift (Vapor), Ruby (Rails), Erlang (Cowboy), C++ (Drogon), and C (Microhttpd) with PostgreSQL and MongoDB database integration.
 
 ## Benchmark Results
 
@@ -32,7 +32,7 @@ This repository contains performance-focused web API implementations in Python (
 | Ruby Rails       | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
 | Django API       | 8016 | 1,417.66\* | 164.76ms    | 1.61s       | 28,376         | 418.07KB     | 421.4MiB |
 
-### Orders (`GET /orders`)
+### PostgreSQL Orders (`GET /postgresql/orders`)
 
 | Framework        | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ---------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ | -------- |
@@ -56,12 +56,38 @@ This repository contains performance-focused web API implementations in Python (
 | Java Spring Boot | 8009 | 571.97\*  | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
 | Ruby Rails       | 8015 | 423.29\*  | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
 
+### MongoDB Orders (`GET /mongodb/orders`)
+
+> Results pending — run `python -m benchmarks run --test mongodb_orders` to populate.
+
+| Framework        | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
+| ---------------- | ---- | ------- | ----------- | ----------- | -------------- | ------------ | ------ |
+| Bun API          | 8002 | —       | —           | —           | —              | —            | —      |
+| .NET API         | 8001 | —       | —           | —           | —              | —            | —      |
+| .NET AOT         | 8013 | —       | —           | —           | —              | —            | —      |
+| Rust Actix       | 8005 | —       | —           | —           | —              | —            | —      |
+| Go Fiber         | 8008 | —       | —           | —           | —              | —            | —      |
+| C Microhttpd     | 8018 | —       | —           | —           | —              | —            | —      |
+| Elixir Phoenix   | 8007 | —       | —           | —           | —              | —            | —      |
+| Python Litestar  | 8000 | —       | —           | —           | —              | —            | —      |
+| Express API      | 8014 | —       | —           | —           | —              | —            | —      |
+| Erlang Cowboy    | 8010 | —       | —           | —           | —              | —            | —      |
+| C++ Drogon       | 8017 | —       | —           | —           | —              | —            | —      |
+| Python FastAPI   | 8004 | —       | —           | —           | —              | —            | —      |
+| Fastify API      | 8003 | —       | —           | —           | —              | —            | —      |
+| Deno API         | 8011 | —       | —           | —           | —              | —            | —      |
+| Django API       | 8016 | —       | —           | —           | —              | —            | —      |
+| Haskell Servant  | 8006 | —       | —           | —           | —              | —            | —      |
+| Swift Vapor      | 8012 | —       | —           | —           | —              | —            | —      |
+| Java Spring Boot | 8009 | —       | —           | —           | —              | —            | —      |
+| Ruby Rails       | 8015 | —       | —           | —           | —              | —            | —      |
+
 ## Projects
 
 ### PythonLightStar
 
 - **Framework**: Litestar with Granian ASGI server
-- **Database**: PostgreSQL with Psycopg3 and connection pooling
+- **Database**: PostgreSQL with Psycopg3 and connection pooling; MongoDB with Motor (async)
 - **Serialization**: msgspec
 - **Event Loop**: uvloop
 - **Workers**: 4 (matching FastAPI for fair comparison)
@@ -72,20 +98,20 @@ This repository contains performance-focused web API implementations in Python (
 ### PythonFastApi
 
 - **Framework**: FastAPI with Uvicorn ASGI server
-- **Database**: PostgreSQL with Psycopg3 and connection pooling
+- **Database**: PostgreSQL with Psycopg3 and connection pooling; MongoDB with Motor (async)
 - **Connection Pool**: 120 connections with prepared statements
 - **Event Loop**: uvloop
 
 ### DotNetApi
 
 - **Framework**: ASP.NET Core 9.0 (Minimal APIs)
-- **Database**: PostgreSQL with Npgsql (raw SQL, no ORM)
+- **Database**: PostgreSQL with Npgsql (raw SQL, no ORM); MongoDB with MongoDB.Driver 3.1
 - **Connection Pooling**: NpgsqlDataSource with multiplexing
 
 ### DotNetApiAot
 
 - **Framework**: ASP.NET Core 9.0 (Minimal APIs, Native AOT)
-- **Database**: PostgreSQL with Npgsql (raw SQL, no ORM)
+- **Database**: PostgreSQL with Npgsql (raw SQL, no ORM); MongoDB with MongoDB.Driver 3.1 (AOT-safe serializer)
 - **Connection Pooling**: NpgsqlDataSource with multiplexing
 - **Compilation**: Native AOT for ultra-fast startup and low memory footprint
 - **Optimizations**: Speed-optimized AOT, no reflection, minimal runtime
@@ -94,21 +120,21 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Runtime**: Bun (ultra-fast JavaScript runtime)
 - **Framework**: Bun's native HTTP server (zero overhead)
-- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Database**: PostgreSQL with `postgres` driver and connection pooling; MongoDB with official Node.js driver
 - **Connection Pool**: 120 connections with prepared statements
 
 ### NodeFastifyApi
 
 - **Runtime**: Node.js 22
 - **Framework**: Fastify (fastest Node.js web framework)
-- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Database**: PostgreSQL with `postgres` driver and connection pooling; MongoDB with official Node.js driver
 - **Connection Pool**: 120 connections with prepared statements
 
 ### NodeExpressApi
 
 - **Runtime**: Node.js 22
 - **Framework**: Express (most popular Node.js web framework)
-- **Database**: PostgreSQL with `postgres` driver and connection pooling
+- **Database**: PostgreSQL with `postgres` driver and connection pooling; MongoDB with official Node.js driver
 - **Connection Pool**: 120 connections with prepared statements
 - **Optimizations**: Disabled unnecessary middleware (x-powered-by, etag)
 
@@ -116,14 +142,14 @@ This repository contains performance-focused web API implementations in Python (
 
 - **Runtime**: Deno 2.1 (secure TypeScript/JavaScript runtime)
 - **Framework**: Deno's native HTTP server
-- **Database**: PostgreSQL with deno-postgres driver and connection pooling
+- **Database**: PostgreSQL with deno-postgres driver and connection pooling; MongoDB with `npm:mongodb@6`
 - **Connection Pool**: 120 connections
 - **Security**: Secure by default with explicit permissions
 
 ### RustActix
 
 - **Framework**: Actix-web 4.9 (blazing fast Rust web framework)
-- **Database**: PostgreSQL with tokio-postgres and deadpool connection pooling
+- **Database**: PostgreSQL with tokio-postgres and deadpool connection pooling; MongoDB with mongodb crate 3.x
 - **Connection Pool**: 120 connections with prepared statements
 - **Workers**: 14
 - **Compilation**: Release build with LTO and optimizations
@@ -131,7 +157,7 @@ This repository contains performance-focused web API implementations in Python (
 ### HaskellServant
 
 - **Framework**: Servant with Warp web server
-- **Database**: PostgreSQL with postgresql-simple and resource-pool
+- **Database**: PostgreSQL with postgresql-simple and resource-pool; MongoDB with mongoDB (Hackage)
 - **Connection Pool**: 120 connections
 - **Runtime**: GHC with threaded runtime (-N14)
 - **Compilation**: Optimized build (-O2)
@@ -139,7 +165,7 @@ This repository contains performance-focused web API implementations in Python (
 ### ElixirPhoenix
 
 - **Framework**: Phoenix 1.7 with Cowboy web server
-- **Database**: PostgreSQL with Ecto and Postgrex
+- **Database**: PostgreSQL with Ecto and Postgrex; MongoDB with mongodb_driver ~> 1.4
 - **Connection Pool**: 120 connections with queue management
 - **Concurrency**: BEAM VM with lightweight processes
 - **Runtime**: Erlang/OTP for fault tolerance and scalability
@@ -148,7 +174,7 @@ This repository contains performance-focused web API implementations in Python (
 ### GoFiber
 
 - **Framework**: Fiber (Express-inspired Go web framework)
-- **Database**: PostgreSQL with pgx/v5 driver and connection pooling
+- **Database**: PostgreSQL with pgx/v5 driver and connection pooling; MongoDB with mongo-driver 1.17
 - **Connection Pool**: 120 max connections, 10 min connections
 - **Runtime**: Go 1.23 with goroutines
 - **Compilation**: Static binary with size optimization
@@ -156,7 +182,7 @@ This repository contains performance-focused web API implementations in Python (
 ### JavaSpringBoot
 
 - **Framework**: Spring Boot 3.2 with WebFlux (reactive)
-- **Database**: PostgreSQL with R2DBC and connection pooling
+- **Database**: PostgreSQL with R2DBC and connection pooling; MongoDB with Spring Data MongoDB Reactive
 - **Connection Pool**: 120 max connections, 30 initial connections
 - **Runtime**: Java 21 with ZGC (low-latency garbage collector)
 - **Reactive**: Project Reactor for non-blocking operations
@@ -165,7 +191,7 @@ This repository contains performance-focused web API implementations in Python (
 ### ErlangCowboy
 
 - **Framework**: Cowboy 2.12 (high-performance HTTP server)
-- **Database**: PostgreSQL with epgsql driver
+- **Database**: PostgreSQL with epgsql driver; MongoDB with mongodb 3.0.2 (hex)
 - **Connection Pool**: Custom pool with 120 connections
 - **Concurrency**: BEAM VM with lightweight processes
 - **Runtime**: Erlang/OTP 26 for fault tolerance and scalability
@@ -173,7 +199,7 @@ This repository contains performance-focused web API implementations in Python (
 ### SwiftVapor
 
 - **Framework**: Vapor 4.99 (Swift web framework)
-- **Database**: PostgreSQL with PostgresNIO and connection pooling
+- **Database**: PostgreSQL with PostgresNIO and connection pooling; MongoDB with MongoKitten 7.9
 - **Connection Pool**: 120 connections per event loop
 - **Runtime**: Swift 5.9 with async/await
 - **Compilation**: Release build with static Swift stdlib
@@ -181,7 +207,7 @@ This repository contains performance-focused web API implementations in Python (
 ### RubyRails
 
 - **Framework**: Ruby on Rails 7.1 (API-only mode)
-- **Database**: PostgreSQL with pg gem and connection pooling
+- **Database**: PostgreSQL with pg gem and connection pooling; MongoDB with mongo gem 2.21
 - **Connection Pool**: 120 connections with prepared statements
 - **Server**: Puma with 4 workers
 - **Runtime**: Ruby 3.3.0
@@ -191,7 +217,7 @@ This repository contains performance-focused web API implementations in Python (
 ### DjangoApi
 
 - **Framework**: Django 5.0 with Django REST Framework
-- **Database**: PostgreSQL with psycopg3 and persistent connections
+- **Database**: PostgreSQL with psycopg3 and persistent connections; MongoDB with pymongo 4.10
 - **Connection Pool**: Persistent connections with health checks
 - **Server**: Gunicorn with 4 workers and 4 threads per worker
 - **Runtime**: Python 3.11
@@ -201,10 +227,19 @@ This repository contains performance-focused web API implementations in Python (
 ### CppDrogon
 
 - **Framework**: Drogon 1.9 (high-performance C++ web framework)
-- **Database**: PostgreSQL with libpq and connection pooling
+- **Database**: PostgreSQL with libpq and connection pooling; MongoDB with libmongoc-1.0
 - **Connection Pool**: 120 connections
 - **Workers**: 14 threads
 - **Compilation**: Release build with -O3 optimizations
+- **Runtime**: Native compiled binary
+
+### CMicrohttpd
+
+- **Framework**: GNU libmicrohttpd (lightweight C HTTP server)
+- **Database**: PostgreSQL with libpq and connection pooling; MongoDB with libmongoc-1.0
+- **Connection Pool**: 120 PostgreSQL connections; MongoDB client pool (120)
+- **Workers**: Threaded mode with internal thread pool
+- **Compilation**: Release build with -O2 optimizations
 - **Runtime**: Native compiled binary
 
 ## Endpoints
@@ -212,7 +247,8 @@ This repository contains performance-focused web API implementations in Python (
 All APIs implement the same endpoints:
 
 - `GET /` - Returns a simple "Hello, World!" message
-- `GET /orders` - Returns 100 orders from the database (offset 1000, limit 100)
+- `GET /postgresql/orders` - Returns 100 orders from PostgreSQL (offset 1000, limit 100)
+- `GET /mongodb/orders` - Returns 100 orders from MongoDB (skip 1000, limit 100)
 
 ## Prerequisites
 
@@ -232,10 +268,13 @@ All APIs implement the same endpoints:
 - Erlang/OTP 26+ and rebar3 (for local Erlang development)
 - C++ compiler with C++17 support, CMake 3.16+, and Drogon framework (for local C++ development)
 - PostgreSQL 15+
+- MongoDB 7.0+
 
 ## Database Setup
 
-Both applications expect a PostgreSQL database with an `orders` table:
+### PostgreSQL
+
+All applications connect to a PostgreSQL database with an `orders` table:
 
 ```sql
 CREATE TABLE orders (
@@ -246,6 +285,23 @@ CREATE TABLE orders (
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 ```
+
+### MongoDB
+
+All applications also connect to MongoDB (`ordersdb` database, `orders` collection) seeded with 10,000 documents:
+
+```js
+// document shape
+{
+  id: NumberInt,
+  customer_id: NumberInt,
+  total_cents: NumberInt,
+  status: String,
+  created_at: Date
+}
+```
+
+The seed script (`database/mongo-seed.js`) is loaded automatically by the MongoDB container via `/docker-entrypoint-initdb.d/`.
 
 ## Quick Start with Docker Compose
 
@@ -276,6 +332,7 @@ The services will be available at:
 - **C++ Drogon API**: http://localhost:8017
 - **C Microhttpd API**: http://localhost:8018
 - **PostgreSQL**: localhost:5432
+- **MongoDB**: localhost:27017
 
 To run in detached mode:
 
@@ -301,6 +358,7 @@ docker-compose down -v
 
 ```env
 DATABASE_URL=postgresql://apiuser:apipassword@localhost:5432/ordersdb
+MONGO_URL=mongodb://mongodb:27017
 ```
 
 ## Running Locally
@@ -777,79 +835,98 @@ Test the endpoints:
 ```bash
 # Python Litestar API
 curl http://localhost:8000/
-curl http://localhost:8000/orders
+curl http://localhost:8000/postgresql/orders
+curl http://localhost:8000/mongodb/orders
 
 # .NET API
 curl http://localhost:8001/
-curl http://localhost:8001/orders
+curl http://localhost:8001/postgresql/orders
+curl http://localhost:8001/mongodb/orders
 
 # Bun API
 curl http://localhost:8002/
-curl http://localhost:8002/orders
+curl http://localhost:8002/postgresql/orders
+curl http://localhost:8002/mongodb/orders
 
 # Fastify API
 curl http://localhost:8003/
-curl http://localhost:8003/orders
-
-# Express API
-curl http://localhost:8014/
-curl http://localhost:8014/orders
+curl http://localhost:8003/postgresql/orders
+curl http://localhost:8003/mongodb/orders
 
 # Python FastAPI
 curl http://localhost:8004/
-curl http://localhost:8004/orders
+curl http://localhost:8004/postgresql/orders
+curl http://localhost:8004/mongodb/orders
 
 # Rust Actix API
 curl http://localhost:8005/
-curl http://localhost:8005/orders
+curl http://localhost:8005/postgresql/orders
+curl http://localhost:8005/mongodb/orders
 
 # Haskell Servant API
-curl http://localhost:8006/hello
-curl http://localhost:8006/orders
+curl http://localhost:8006/
+curl http://localhost:8006/postgresql/orders
+curl http://localhost:8006/mongodb/orders
 
 # Elixir Phoenix API
 curl http://localhost:8007/
-curl http://localhost:8007/orders
+curl http://localhost:8007/postgresql/orders
+curl http://localhost:8007/mongodb/orders
 
 # Go Fiber API
 curl http://localhost:8008/
-curl http://localhost:8008/orders
+curl http://localhost:8008/postgresql/orders
+curl http://localhost:8008/mongodb/orders
 
 # Java Spring Boot API
 curl http://localhost:8009/
-curl http://localhost:8009/orders
+curl http://localhost:8009/postgresql/orders
+curl http://localhost:8009/mongodb/orders
 
 # Erlang Cowboy API
 curl http://localhost:8010/
-curl http://localhost:8010/orders
+curl http://localhost:8010/postgresql/orders
+curl http://localhost:8010/mongodb/orders
 
 # Deno API
 curl http://localhost:8011/
-curl http://localhost:8011/orders
+curl http://localhost:8011/postgresql/orders
+curl http://localhost:8011/mongodb/orders
 
 # Swift Vapor API
 curl http://localhost:8012/
-curl http://localhost:8012/orders
+curl http://localhost:8012/postgresql/orders
+curl http://localhost:8012/mongodb/orders
 
 # .NET AOT API
 curl http://localhost:8013/
-curl http://localhost:8013/orders
+curl http://localhost:8013/postgresql/orders
+curl http://localhost:8013/mongodb/orders
+
+# Express API
+curl http://localhost:8014/
+curl http://localhost:8014/postgresql/orders
+curl http://localhost:8014/mongodb/orders
 
 # Ruby Rails API
 curl http://localhost:8015/
-curl http://localhost:8015/orders
+curl http://localhost:8015/postgresql/orders
+curl http://localhost:8015/mongodb/orders
 
 # Django API
 curl http://localhost:8016/
-curl http://localhost:8016/orders
+curl http://localhost:8016/postgresql/orders
+curl http://localhost:8016/mongodb/orders
 
 # C++ Drogon API
 curl http://localhost:8017/
-curl http://localhost:8017/orders
+curl http://localhost:8017/postgresql/orders
+curl http://localhost:8017/mongodb/orders
 
 # C Microhttpd API
 curl http://localhost:8018/
-curl http://localhost:8018/orders
+curl http://localhost:8018/postgresql/orders
+curl http://localhost:8018/mongodb/orders
 ```
 
 ## Performance Testing
@@ -857,24 +934,58 @@ curl http://localhost:8018/orders
 You can use tools like `wrk`, `ab` (Apache Bench), or `k6` to benchmark all APIs:
 
 ```bash
-# Example with wrk
-wrk -t 2 -c 120 -d 20s http://localhost:8000/orders  # Litestar
-wrk -t 2 -c 120 -d 20s http://localhost:8001/orders  # .NET
-wrk -t 2 -c 120 -d 20s http://localhost:8002/orders  # Bun
-wrk -t 2 -c 120 -d 20s http://localhost:8003/orders  # Fastify
-wrk -t 2 -c 120 -d 20s http://localhost:8004/orders  # FastAPI
-wrk -t 2 -c 120 -d 20s http://localhost:8005/orders  # Rust Actix
-wrk -t 2 -c 120 -d 20s http://localhost:8006/orders  # Haskell Servant
-wrk -t 2 -c 120 -d 20s http://localhost:8007/orders  # Elixir Phoenix
-wrk -t 2 -c 120 -d 20s http://localhost:8008/orders  # Go Fiber
-wrk -t 2 -c 120 -d 20s http://localhost:8009/orders  # Java Spring Boot
-wrk -t 2 -c 120 -d 20s http://localhost:8010/orders  # Erlang Cowboy
-wrk -t 2 -c 120 -d 20s http://localhost:8011/orders  # Deno
-wrk -t 2 -c 120 -d 20s http://localhost:8012/orders  # Swift Vapor
-wrk -t 2 -c 120 -d 20s http://localhost:8013/orders  # .NET AOT
-wrk -t 2 -c 120 -d 20s http://localhost:8014/orders  # Express
-wrk -t 2 -c 120 -d 20s http://localhost:8015/orders  # Ruby Rails
-wrk -t 2 -c 120 -d 20s http://localhost:8016/orders  # Django
-wrk -t 2 -c 120 -d 20s http://localhost:8017/orders  # C++ Drogon
-wrk -t 2 -c 120 -d 20s http://localhost:8018/orders  # C Microhttpd
+# PostgreSQL orders endpoint
+wrk -t 2 -c 120 -d 20s http://localhost:8000/postgresql/orders  # Litestar
+wrk -t 2 -c 120 -d 20s http://localhost:8001/postgresql/orders  # .NET
+wrk -t 2 -c 120 -d 20s http://localhost:8002/postgresql/orders  # Bun
+wrk -t 2 -c 120 -d 20s http://localhost:8003/postgresql/orders  # Fastify
+wrk -t 2 -c 120 -d 20s http://localhost:8004/postgresql/orders  # FastAPI
+wrk -t 2 -c 120 -d 20s http://localhost:8005/postgresql/orders  # Rust Actix
+wrk -t 2 -c 120 -d 20s http://localhost:8006/postgresql/orders  # Haskell Servant
+wrk -t 2 -c 120 -d 20s http://localhost:8007/postgresql/orders  # Elixir Phoenix
+wrk -t 2 -c 120 -d 20s http://localhost:8008/postgresql/orders  # Go Fiber
+wrk -t 2 -c 120 -d 20s http://localhost:8009/postgresql/orders  # Java Spring Boot
+wrk -t 2 -c 120 -d 20s http://localhost:8010/postgresql/orders  # Erlang Cowboy
+wrk -t 2 -c 120 -d 20s http://localhost:8011/postgresql/orders  # Deno
+wrk -t 2 -c 120 -d 20s http://localhost:8012/postgresql/orders  # Swift Vapor
+wrk -t 2 -c 120 -d 20s http://localhost:8013/postgresql/orders  # .NET AOT
+wrk -t 2 -c 120 -d 20s http://localhost:8014/postgresql/orders  # Express
+wrk -t 2 -c 120 -d 20s http://localhost:8015/postgresql/orders  # Ruby Rails
+wrk -t 2 -c 120 -d 20s http://localhost:8016/postgresql/orders  # Django
+wrk -t 2 -c 120 -d 20s http://localhost:8017/postgresql/orders  # C++ Drogon
+wrk -t 2 -c 120 -d 20s http://localhost:8018/postgresql/orders  # C Microhttpd
+
+# MongoDB orders endpoint
+wrk -t 2 -c 120 -d 20s http://localhost:8000/mongodb/orders  # Litestar
+wrk -t 2 -c 120 -d 20s http://localhost:8001/mongodb/orders  # .NET
+wrk -t 2 -c 120 -d 20s http://localhost:8002/mongodb/orders  # Bun
+wrk -t 2 -c 120 -d 20s http://localhost:8003/mongodb/orders  # Fastify
+wrk -t 2 -c 120 -d 20s http://localhost:8004/mongodb/orders  # FastAPI
+wrk -t 2 -c 120 -d 20s http://localhost:8005/mongodb/orders  # Rust Actix
+wrk -t 2 -c 120 -d 20s http://localhost:8006/mongodb/orders  # Haskell Servant
+wrk -t 2 -c 120 -d 20s http://localhost:8007/mongodb/orders  # Elixir Phoenix
+wrk -t 2 -c 120 -d 20s http://localhost:8008/mongodb/orders  # Go Fiber
+wrk -t 2 -c 120 -d 20s http://localhost:8009/mongodb/orders  # Java Spring Boot
+wrk -t 2 -c 120 -d 20s http://localhost:8010/mongodb/orders  # Erlang Cowboy
+wrk -t 2 -c 120 -d 20s http://localhost:8011/mongodb/orders  # Deno
+wrk -t 2 -c 120 -d 20s http://localhost:8012/mongodb/orders  # Swift Vapor
+wrk -t 2 -c 120 -d 20s http://localhost:8013/mongodb/orders  # .NET AOT
+wrk -t 2 -c 120 -d 20s http://localhost:8014/mongodb/orders  # Express
+wrk -t 2 -c 120 -d 20s http://localhost:8015/mongodb/orders  # Ruby Rails
+wrk -t 2 -c 120 -d 20s http://localhost:8016/mongodb/orders  # Django
+wrk -t 2 -c 120 -d 20s http://localhost:8017/mongodb/orders  # C++ Drogon
+wrk -t 2 -c 120 -d 20s http://localhost:8018/mongodb/orders  # C Microhttpd
+```
+
+Or use the built-in benchmark runner:
+
+```bash
+# Run all services, all test types (hello_world + postgresql_orders + mongodb_orders)
+python -m benchmarks run
+
+# Run only MongoDB orders benchmark
+python -m benchmarks run --test mongodb_orders
+
+# Run only PostgreSQL orders benchmark
+python -m benchmarks run --test postgresql_orders
 ```

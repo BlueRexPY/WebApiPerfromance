@@ -32,14 +32,41 @@ services:
     networks:
       - webapi-network
 
+  mongodb:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./database/mongo-seed.js:/docker-entrypoint-initdb.d/01-seed.js
+    healthcheck:
+      test:
+        ["CMD", "mongosh", "--eval", "db.adminCommand('ping').ok", "--quiet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
   litestar:
     build: ./apps/PythonLightStar
     ports:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     volumes:
       - ./apps/PythonLightStar:/app
@@ -75,8 +102,11 @@ services:
     environment:
       DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -96,8 +126,11 @@ services:
     environment:
       DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -116,8 +149,11 @@ services:
       - "8002:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -136,8 +172,11 @@ services:
       - "8004:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -157,8 +196,11 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       NODE_ENV: production
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -177,8 +219,11 @@ services:
       - "8005:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -201,8 +246,11 @@ services:
       PGUSER: ${POSTGRES_USER:-apiuser}
       PGPASSWORD: ${POSTGRES_PASSWORD:-apipassword}
       PGDATABASE: ${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -222,8 +270,11 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       MIX_ENV: prod
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -242,8 +293,11 @@ services:
       - "8008:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -264,8 +318,11 @@ services:
       R2DBC_URL: r2dbc:postgresql://db:5432/${POSTGRES_DB:-ordersdb}
       DB_USER: ${POSTGRES_USER:-apiuser}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ordersdb
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -284,8 +341,11 @@ services:
       - "8011:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -308,8 +368,11 @@ services:
       DB_USER: ${POSTGRES_USER:-apiuser}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
       DB_NAME: ${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -329,8 +392,11 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       NODE_ENV: production
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -353,8 +419,11 @@ services:
       WEB_CONCURRENCY: 4
       RAILS_MAX_THREADS: 120
       SECRET_KEY_BASE: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -374,8 +443,11 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       DJANGO_SETTINGS_MODULE: djangoapi.settings
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -394,8 +466,11 @@ services:
       - "8010:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -414,8 +489,11 @@ services:
       - "8017:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -434,8 +512,11 @@ services:
       - "8018:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MONGO_URL: mongodb://mongodb:27017
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     deploy:
       resources:
@@ -449,6 +530,19 @@ services:
       - webapi-network
 
   #── Monitoring Stack ────────────────────────────────────────────────────────
+
+  mongodb_exporter:
+    image: percona/mongodb_exporter:0.40
+    ports:
+      - "9216:9216"
+    command:
+      - "--mongodb.uri=mongodb://mongodb:27017"
+      - "--collect-all"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - webapi-network
 
   prometheus:
     image: prom/prometheus:v2.51.0
@@ -518,6 +612,7 @@ services:
 
 volumes:
   postgres_data:
+  mongodb_data:
   prometheus_data:
   grafana_data:
 

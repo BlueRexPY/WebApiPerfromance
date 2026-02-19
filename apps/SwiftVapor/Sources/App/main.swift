@@ -1,8 +1,9 @@
-import Vapor
-import PostgresNIO
+import MongoKitten
+import NIOConcurrencyHelpers
 import NIOCore
 import NIOPosix
-import NIOConcurrencyHelpers
+import PostgresNIO
+import Vapor
 
 struct HelloResponse: Content {
     let message: String
@@ -104,6 +105,10 @@ struct Main {
             eventLoopGroup: app.eventLoopGroup,
             logger: app.logger
         )
+
+        // MongoDB connection
+        let mongoUrl = Environment.get("MONGO_URL") ?? "mongodb://mongodb:27017"
+        let mongoDb = try await MongoDatabase.connect(to: mongoUrl + "/ordersdb")
         
         app.http.server.configuration.hostname = "0.0.0.0"
         app.http.server.configuration.port = 8000
@@ -113,7 +118,7 @@ struct Main {
             HelloResponse(message: "Hello, World!")
         }
         
-        app.get("orders") { req async throws -> [Order] in
+        app.get("postgresql", "orders") { req async throws -> [Order] in
             try await pool.withConnection { connection in
                 let rows = try await connection.query(
                     """
@@ -140,6 +145,28 @@ struct Main {
             }
         }
         
+        app.get("mongodb", "orders") { req async throws -> [Order] in
+            let collection = mongoDb["orders"]
+            var orders: [Order] = []
+            let cursor = try await collection.find().skip(1000).limit(100)
+            for try await doc in cursor {
+                if let id = doc["id"] as? Int,
+                   let customerId = doc["customer_id"] as? Int,
+                   let totalCents = doc["total_cents"] as? Int,
+                   let status = doc["status"] as? String,
+                   let createdAt = doc["created_at"] as? Date {
+                    orders.append(Order(
+                        id: id,
+                        customer_id: customerId,
+                        total_cents: totalCents,
+                        status: status,
+                        created_at: createdAt
+                    ))
+                }
+            }
+            return orders
+        }
+        
         defer {
             Task {
                 await pool.shutdown()
@@ -148,5 +175,8 @@ struct Main {
         }
         
         try await app.execute()
+    }
+}
+
     }
 }

@@ -20,4 +20,14 @@ class ApiController < ApplicationController
     
     render json: orders
   end
+
+  def mongodb_orders
+    orders = MONGO_CLIENT["orders"]
+      .find({}, projection: { "_id" => 0 })
+      .skip(1000)
+      .limit(100)
+      .to_a
+
+    render json: orders
+  end
 end

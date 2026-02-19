@@ -10,6 +10,9 @@ spring:
       initial-size: 20
       max-size: 120
       max-idle-time: 30m
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://mongodb:27017/ordersdb}
   main:
     banner-mode: off
   jackson:

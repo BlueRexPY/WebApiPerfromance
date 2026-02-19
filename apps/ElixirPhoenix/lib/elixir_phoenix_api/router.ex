@@ -9,6 +9,7 @@ defmodule ElixirPhoenixApi.Router do
     pipe_through :api
 
     get "/", PageController, :hello
-    get "/orders", PageController, :orders
+    get "/postgresql/orders", PageController, :orders
+    get "/mongodb/orders", PageController, :mongodb_orders
   end
 end

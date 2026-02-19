@@ -62,11 +62,17 @@ TEST_TYPES: dict[str, TestType] = {
         label="Hello World",
         description="Simple JSON response, no database",
     ),
-    "orders": TestType(
-        name="orders",
-        path="/orders",
-        label="Orders",
-        description="Database query returning 100 orders with LIMIT/OFFSET",
+    "postgresql_orders": TestType(
+        name="postgresql_orders",
+        path="/postgresql/orders",
+        label="PostgreSQL Orders",
+        description="PostgreSQL query returning 100 orders with LIMIT/OFFSET",
+    ),
+    "mongodb_orders": TestType(
+        name="mongodb_orders",
+        path="/mongodb/orders",
+        label="MongoDB Orders",
+        description="MongoDB query returning 100 orders with skip/limit",
     ),
 }
 
@@ -105,6 +111,7 @@ SERVICES: dict[str, Service] = {
 MONITORING_SERVICES: list[str] = [
     "prometheus",
     "postgres_exporter",
+    "mongodb_exporter",
     "cadvisor",
     "grafana",
 ]

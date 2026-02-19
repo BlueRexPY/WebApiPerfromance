@@ -1,6 +1,10 @@
 #include <drogon/drogon.h>
 #include <json/json.h>
+#include <mongoc/mongoc.h>
+#include <bson/bson.h>
 #include <cstdlib>
+#include <ctime>
+#include <cstring>
 #include <string>
 #include <iostream>
 #include <regex>
@@ -64,9 +68,9 @@ int main() {
         {Get}
     );
     
-    // GET /orders - Returns orders from database
+    // GET /postgresql/orders - Returns orders from database
     app().registerHandler(
-        "/orders",
+        "/postgresql/orders",
         [](const HttpRequestPtr& req,
            std::function<void(const HttpResponsePtr&)>&& callback) {
             auto dbClient = app().getDbClient();
@@ -102,11 +106,85 @@ int main() {
     );
     
     std::cout << "Starting server on 0.0.0.0:8000" << std::endl;
-    
+
+    // Initialize MongoDB
+    mongoc_init();
+    const char* mongoUrlEnv = std::getenv("MONGO_URL");
+    std::string mongoUrl = mongoUrlEnv ? mongoUrlEnv : "mongodb://mongodb:27017";
+    mongoc_uri_t *mongoUri = mongoc_uri_new(mongoUrl.c_str());
+    mongoc_client_pool_t *mongoPool = mongoc_client_pool_new(mongoUri);
+    mongoc_client_pool_set_max_pool_size(mongoPool, 120);
+    mongoc_uri_destroy(mongoUri);
+
+    // GET /mongodb/orders
+    app().registerHandler(
+        "/mongodb/orders",
+        [mongoPool](const HttpRequestPtr& req,
+           std::function<void(const HttpResponsePtr&)>&& callback) {
+            mongoc_client_t *client = mongoc_client_pool_pop(mongoPool);
+            mongoc_collection_t *coll = mongoc_client_get_collection(client, "ordersdb", "orders");
+
+            bson_t *filter = bson_new();
+            bson_t *opts = BCON_NEW(
+                "skip",  BCON_INT64(1000),
+                "limit", BCON_INT64(100),
+                "projection", "{", "_id", BCON_INT32(0), "}"
+            );
+
+            mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(coll, filter, opts, NULL);
+
+            Json::Value ordersArray(Json::arrayValue);
+            const bson_t *doc;
+
+            while (mongoc_cursor_next(cursor, &doc)) {
+                Json::Value order;
+                bson_iter_t it;
+                if (bson_iter_init(&it, doc)) {
+                    while (bson_iter_next(&it)) {
+                        const char *key = bson_iter_key(&it);
+                        if (std::strcmp(key, "_id") == 0) continue;
+                        bson_type_t t = bson_iter_type(&it);
+                        if (t == BSON_TYPE_INT32) {
+                            order[key] = bson_iter_int32(&it);
+                        } else if (t == BSON_TYPE_INT64) {
+                            order[key] = static_cast<Json::Int64>(bson_iter_int64(&it));
+                        } else if (t == BSON_TYPE_UTF8) {
+                            uint32_t len;
+                            order[key] = bson_iter_utf8(&it, &len);
+                        } else if (t == BSON_TYPE_DATE_TIME) {
+                            int64_t ms = bson_iter_date_time(&it);
+                            time_t sec = static_cast<time_t>(ms / 1000);
+                            struct tm tm_val{};
+                            gmtime_r(&sec, &tm_val);
+                            char buf[32];
+                            std::snprintf(buf, sizeof(buf),
+                                "%04d-%02d-%02dT%02d:%02d:%02dZ",
+                                tm_val.tm_year + 1900, tm_val.tm_mon + 1, tm_val.tm_mday,
+                                tm_val.tm_hour, tm_val.tm_min, tm_val.tm_sec);
+                            order[key] = buf;
+                        }
+                    }
+                }
+                ordersArray.append(order);
+            }
+
+            mongoc_cursor_destroy(cursor);
+            bson_destroy(opts);
+            bson_destroy(filter);
+            mongoc_collection_destroy(coll);
+            mongoc_client_pool_push(mongoPool, client);
+
+            auto resp = HttpResponse::newHttpJsonResponse(ordersArray);
+            callback(resp);
+        },
+        {Get}
+    );
+
     app().setLogLevel(trantor::Logger::kWarn);
     app().addListener("0.0.0.0", 8000);
     app().setThreadNum(14);
     app().run();
-    
+
+    mongoc_cleanup();
     return 0;
 }

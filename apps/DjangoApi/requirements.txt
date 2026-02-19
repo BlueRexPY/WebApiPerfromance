@@ -4,3 +4,4 @@ psycopg[binary,pool]==3.2.12
 gunicorn==21.2.0
 python-dotenv==1.0.0
 orjson==3.9.15
+pymongo>=4.10

@@ -25,7 +25,7 @@ python -m benchmarks run --service dotnetapiaot
 python -m benchmarks run --test hello_world
 
 # Both filters
-python -m benchmarks run --service rustactix --test orders
+python -m benchmarks run --service rustactix --test postgresql_orders
 
 # Custom wrk settings (defaults: -t 2 -c 120 -d 20)
 python -m benchmarks run --threads 4 --connections 200 --duration 30
@@ -82,18 +82,20 @@ python -m benchmarks stop
 | rubyrails      | 8015 |
 | djangoapi      | 8016 |
 | cppdrogon      | 8017 |
+| cmicrohttpd    | 8018 |
 
 ## Test Types
 
-| Name        | Path      | Description              |
-| ----------- | --------- | ------------------------ |
-| hello_world | `/`       | Simple JSON, no database |
-| orders      | `/orders` | DB query, 100 rows       |
+| Name              | Path                 | Description                |
+| ----------------- | -------------------- | -------------------------- |
+| hello_world       | `/`                  | Simple JSON, no database   |
+| postgresql_orders | `/postgresql/orders` | PostgreSQL query, 100 rows |
+| mongodb_orders    | `/mongodb/orders`    | MongoDB query, 100 rows    |
 
 ## Results
 
 Written to `results/{ServiceDir}/{TestType}.md`.  
-Summaries: `results/Summary.HelloWorld.md`, `results/Summary.Orders.md`.
+Summaries: `results/Summary.HelloWorld.md`, `results/Summary.PostgresqlOrders.md`, `results/Summary.MongodbOrders.md`.
 
 ## Add a Service
 

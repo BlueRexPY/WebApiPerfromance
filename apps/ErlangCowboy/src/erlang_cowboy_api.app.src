@@ -1,5 +1,5 @@
 {application, erlang_cowboy_api,
- [{description, "High-performance Erlang Cowboy API with PostgreSQL"},
+ [{description, "High-performance Erlang Cowboy API with PostgreSQL and MongoDB"},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, {erlang_cowboy_api_app, []}},
@@ -9,7 +9,8 @@
     cowboy,
     jsx,
     epgsql,
-    poolboy
+    poolboy,
+    mongodb
    ]},
   {env,[]},
   {modules, []},

@@ -7,7 +7,8 @@ RUN apk add --no-cache \
     make \
     pkgconfig \
     libmicrohttpd-dev \
-    postgresql-dev
+    postgresql-dev \
+    mongo-c-driver-dev
 
 WORKDIR /app
 COPY CMakeLists.txt .
@@ -19,7 +20,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release . \
 # ── Runtime ───────────────────────────────────────────────────────────────────
 FROM alpine:3.19
 
-RUN apk add --no-cache libmicrohttpd libpq
+RUN apk add --no-cache libmicrohttpd libpq mongo-c-driver
 
 WORKDIR /app
 COPY --from=builder /app/capi .

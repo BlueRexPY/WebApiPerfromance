@@ -1,8 +1,11 @@
+import { MongoClient } from "mongodb";
 import postgres from "postgres";
 
 const DATABASE_URL =
   process.env.DATABASE_URL ||
   "postgresql://apiuser:apipassword@localhost:5432/ordersdb";
+
+const MONGO_URL = process.env.MONGO_URL || "mongodb://mongodb:27017";
 
 // Create PostgreSQL connection with pooling
 const sql = postgres(DATABASE_URL, {
@@ -11,6 +14,11 @@ const sql = postgres(DATABASE_URL, {
   connect_timeout: 10,
   prepare: true,
 });
+
+// Create MongoDB client
+const mongoClient = new MongoClient(MONGO_URL, { maxPoolSize: 120 });
+await mongoClient.connect();
+const mongoDb = mongoClient.db("ordersdb");
 
 interface Order {
   id: number;
@@ -46,8 +54,8 @@ const server = Bun.serve({
       });
     }
 
-    // GET /orders
-    if (url.pathname === "/orders") {
+    // GET /postgresql/orders
+    if (url.pathname === "/postgresql/orders") {
       try {
         const orders = await getOrdersQuery;
         return new Response(JSON.stringify(orders), {
@@ -55,6 +63,30 @@ const server = Bun.serve({
         });
       } catch (error) {
         console.error("Database error:", error);
+        return new Response(
+          JSON.stringify({ error: "Internal server error" }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // GET /mongodb/orders
+    if (url.pathname === "/mongodb/orders") {
+      try {
+        const orders = await mongoDb
+          .collection("orders")
+          .find({}, { projection: { _id: 0 } })
+          .skip(1000)
+          .limit(100)
+          .toArray();
+        return new Response(JSON.stringify(orders), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        console.error("MongoDB error:", error);
         return new Response(
           JSON.stringify({ error: "Internal server error" }),
           {
@@ -78,5 +110,6 @@ console.log(
 process.on("SIGINT", async () => {
   console.log("\n🛑 Shutting down gracefully...");
   await sql.end();
+  await mongoClient.close();
   process.exit(0);
 });

@@ -1,6 +1,6 @@
 name: haskell-servant-api
 version: 0.1.0.0
-synopsis: Performance focused Servant API with PostgreSQL
+synopsis: Performance focused Servant API with PostgreSQL and MongoDB
 category: Web
 author: Performance Team
 maintainer: team@example.com
@@ -19,6 +19,8 @@ dependencies:
   - http-types
   - deepseq
   - dotenv
+  - mongoDB
+  - bson
 
 executables:
   haskell-servant-api:

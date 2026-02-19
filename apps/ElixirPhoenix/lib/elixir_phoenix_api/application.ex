@@ -3,10 +3,17 @@ defmodule ElixirPhoenixApi.Application do
 
   @impl true
   def start(_type, _args) do
+    mongo_url = System.get_env("MONGO_URL") || "mongodb://mongodb:27017"
+
     children = [
       ElixirPhoenixApi.Repo,
       {Phoenix.PubSub, name: ElixirPhoenixApi.PubSub},
-      ElixirPhoenixApi.Endpoint
+      ElixirPhoenixApi.Endpoint,
+      {Mongo,
+       name: :mongo,
+       url: mongo_url,
+       database: "ordersdb",
+       pool_size: 90}
     ]
 
     opts = [strategy: :one_for_one, name: ElixirPhoenixApi.Supervisor]

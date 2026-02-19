@@ -1,6 +1,8 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use chrono::NaiveDateTime;
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use futures::TryStreamExt;
+use mongodb::{bson::doc, options::FindOptions, Client as MongoClient, Database};
 use serde::{Deserialize, Serialize};
 use std::env;
 use tokio_postgres::NoTls;
@@ -21,6 +23,7 @@ struct Order {
 
 struct AppState {
     pool: Pool,
+    mongo_db: Database,
 }
 
 #[get("/")]
@@ -30,7 +33,7 @@ async fn hello() -> impl Responder {
     })
 }
 
-#[get("/orders")]
+#[get("/postgresql/orders")]
 async fn get_orders(data: web::Data<AppState>) -> impl Responder {
     let client = match data.pool.get().await {
         Ok(client) => client,
@@ -69,6 +72,29 @@ async fn get_orders(data: web::Data<AppState>) -> impl Responder {
     HttpResponse::Ok().json(orders)
 }
 
+#[get("/mongodb/orders")]
+async fn get_mongo_orders(data: web::Data<AppState>) -> impl Responder {
+    let collection = data.mongo_db.collection::<Order>("orders");
+
+    let opts = FindOptions::builder()
+        .projection(doc! { "_id": 0 })
+        .skip(1000u64)
+        .limit(100i64)
+        .build();
+
+    let cursor = match collection.find(doc! {}).with_options(opts).await {
+        Ok(cursor) => cursor,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
+
+    let orders: Vec<Order> = match cursor.try_collect().await {
+        Ok(orders) => orders,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
+
+    HttpResponse::Ok().json(orders)
+}
+
 fn get_database_url() -> String {
     env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
@@ -95,7 +121,14 @@ async fn main() -> std::io::Result<()> {
         let _ = pool.get().await;
     }
 
-    let app_state = web::Data::new(AppState { pool });
+    // Create MongoDB client
+    let mongo_url = env::var("MONGO_URL").unwrap_or_else(|_| "mongodb://mongodb:27017".to_string());
+    let mongo_client = MongoClient::with_uri_str(&mongo_url)
+        .await
+        .expect("Failed to connect to MongoDB");
+    let mongo_db = mongo_client.database("ordersdb");
+
+    let app_state = web::Data::new(AppState { pool, mongo_db });
 
     println!("Starting server on 0.0.0.0:8000");
 
@@ -104,6 +137,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(app_state.clone())
             .service(hello)
             .service(get_orders)
+            .service(get_mongo_orders)
     })
     .bind("0.0.0.0:8000")?
     .workers(14)

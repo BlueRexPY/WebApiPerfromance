@@ -4,6 +4,7 @@
     "type": "module",
     "dependencies": {
         "fastify": "5.2.0",
-        "postgres": "3.4.4"
+        "postgres": "3.4.4",
+        "mongodb": "^6.12.0"
     }
 }

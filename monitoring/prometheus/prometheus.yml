@@ -15,11 +15,18 @@ scrape_configs:
         labels:
           instance: "ordersdb"
 
+  # ── MongoDB exporter ────────────────────────────────────────────────────────
+  - job_name: "mongodb"
+    static_configs:
+      - targets: ["mongodb_exporter:9216"]
+        labels:
+          instance: "ordersdb_mongo"
+
   # ── Container metrics (cAdvisor) ────────────────────────────────────────────
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
     metric_relabel_configs:
       - source_labels: [container_label_com_docker_compose_service]
-        regex: "(litestar|dotnetapi|dotnetapiaot|bunapi|fastapi|fastifyapi|rustactix|haskellservant|elixirphoenix|gofiber|javaspringboot|erlangcowboy|denoapi|swiftvapor|expressapi|rubyrails|djangoapi|cppdrogon|cmicrohttpd|db)"
+        regex: "(litestar|dotnetapi|dotnetapiaot|bunapi|fastapi|fastifyapi|rustactix|haskellservant|elixirphoenix|gofiber|javaspringboot|erlangcowboy|denoapi|swiftvapor|expressapi|rubyrails|djangoapi|cppdrogon|cmicrohttpd|db|mongodb)"
         action: keep

@@ -1,14 +1,15 @@
 {
     "name": "node-bun-api",
     "version": "0.1.0",
-    "description": "Performance focused Bun API with PostgreSQL",
+    "description": "Performance focused Bun API with PostgreSQL and MongoDB",
     "type": "module",
     "scripts": {
         "dev": "bun run src/index.ts",
         "start": "bun run src/index.ts"
     },
     "dependencies": {
-        "postgres": "^3.4.4"
+        "postgres": "^3.4.4",
+        "mongodb": "^6.12.0"
     },
     "devDependencies": {
         "@types/bun": "latest"
