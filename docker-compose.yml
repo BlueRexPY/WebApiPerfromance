@@ -38,7 +38,7 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-      - ./database/mongo-seed.js:/docker-entrypoint-initdb.d/01-seed.js
+      - ./database/MongoDB/seed.js:/docker-entrypoint-initdb.d/01-seed.js
     healthcheck:
       test:
         ["CMD", "mongosh", "--eval", "db.adminCommand('ping').ok", "--quiet"]

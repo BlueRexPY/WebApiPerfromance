@@ -1,37 +1,37 @@
 # .NET API — MongoDB Orders Benchmark
 
-**Tested**: 2026-02-19 06:36:26 UTC
+**Tested**: 2026-02-19 06:47:45 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8001/mongodb/orders`
 
 > **Warning**: Non-2xx/3xx responses or socket errors occurred during this test.
 
 ## Summary
 
-| Metric         | Value      |
-| -------------- | ---------- |
-| Requests/sec   | 2,902.20\* |
-| Avg Latency    | 42.08ms    |
-| Max Latency    | 209.74ms   |
-| Total Requests | 58,182     |
-| Transfer/sec   | 314.59KB   |
-| Port           | 8001       |
+| Metric | Value |
+| --- | --- |
+| Requests/sec | 3,927.45\* |
+| Avg Latency | 32.01ms |
+| Max Latency | 193.26ms |
+| Total Requests | 78,668 |
+| Transfer/sec | 425.73KB |
+| Port | 8001 |
 
 ## Thread Stats
 
-| Stat    | Avg     | Stdev   | Max      | +/- Stdev |
-| ------- | ------- | ------- | -------- | --------- |
-| Latency | 42.08ms | 28.51ms | 209.74ms | 65.15%    |
-| Req/Sec | 1.46k   | 349.40  | 3.24k    | 77.00%    |
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | 32.01ms | 20.01ms | 193.26ms | 74.88% |
+| Req/Sec | 1.97k | 513.98 | 3.18k | 65.00% |
 
 ## Resource Usage
 
-| Metric       | Value    |
-| ------------ | -------- |
-| Memory Usage | 88.54MiB |
-| Memory Limit | 1GiB     |
-| Memory %     | 8.65%    |
-| CPU %        | 0.02%    |
-| PIDs         | 26       |
+| Metric | Value |
+| --- | --- |
+| Memory Usage | 86.09MiB |
+| Memory Limit | 1GiB |
+| Memory % | 8.41% |
+| CPU % | 0.01% |
+| PIDs | 26 |
 
 ## Raw Output
 
@@ -39,10 +39,10 @@
 Running 20s test @ http://127.0.0.1:8001/mongodb/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    42.08ms   28.51ms 209.74ms   65.15%
-    Req/Sec     1.46k   349.40     3.24k    77.00%
-  58182 requests in 20.05s, 6.16MB read
-  Non-2xx or 3xx responses: 58182
-Requests/sec:   2902.20
-Transfer/sec:    314.59KB
+    Latency    32.01ms   20.01ms 193.26ms   74.88%
+    Req/Sec     1.97k   513.98     3.18k    65.00%
+  78668 requests in 20.03s, 8.33MB read
+  Non-2xx or 3xx responses: 78668
+Requests/sec:   3927.45
+Transfer/sec:    425.73KB
 ```

@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-19 06:38:21 UTC
+**Generated**: 2026-02-19 06:52:32 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -14,12 +14,12 @@
 
 | Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Bun API | 8002 | 120,061.48 | 1.03ms | 52.13ms | 2,401,538 | 15.46MB | 62MiB |
+| Bun API | 8002 | 126,392.37 | 1.04ms | 72.27ms | 2,528,213 | 16.27MB | 35.07MiB |
 | Haskell Servant | 8006 | 115,297.04 | 1.11ms | 106.67ms | 2,306,053 | 21.00MB | 213.8MiB |
 | Rust Actix | 8005 | 111,793.63 | 8.65ms | 60.47ms | 2,236,041 | 14.39MB | 4.512MiB |
+| .NET API | 8001 | 86,498.38 | 5.63ms | 81.89ms | 1,731,992 | 15.34MB | 35.76MiB |
 | Deno API | 8011 | 85,530.71 | 1.46ms | 73.17ms | 1,710,746 | 12.89MB | 34.98MiB |
 | .NET AOT | 8013 | 63,397.83 | 6.74ms | 74.39ms | 1,269,368 | 11.25MB | 18.13MiB |
-| .NET API | 8001 | 63,037.56 | 7.47ms | 80.43ms | 1,262,021 | 11.18MB | 46.05MiB |
 | Go Fiber | 8008 | 62,286.61 | 15.70ms | 77.64ms | 1,245,847 | 8.91MB | 13.43MiB |
 | Erlang Cowboy | 8010 | 56,637.99 | 2.23ms | 94.27ms | 1,132,835 | 8.16MB | 96.49MiB |
 | C Microhttpd | 8018 | 54,935.98 | 12.34ms | 68.93ms | 1,098,912 | 7.07MB | 4.484MiB |

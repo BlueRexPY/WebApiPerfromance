@@ -16,11 +16,11 @@ const now = new Date().getTime();
 const year = 365 * 24 * 60 * 60 * 1000;
 
 const orders = [];
-for (let i = 1; i <= 10000; i++) {
+for (let i = 1; i <= 10_000; i++) {
   orders.push({
     id: NumberInt(i),
     customer_id: NumberInt(Math.floor(Math.random() * 1000) + 1),
-    total_cents: NumberInt(Math.floor(Math.random() * 99900) + 100),
+    total_cents: NumberInt(Math.floor(Math.random() * 99_900) + 100),
     status: statuses[Math.floor(Math.random() * statuses.length)],
     created_at: new Date(now - Math.random() * year),
   });
