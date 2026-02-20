@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-20 03:30:46 UTC
+**Generated**: 2026-02-20 03:34:48 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -21,7 +21,7 @@
 | Rust Actix       | 8005 | 8,495.25  | 28.42ms     | 453.51ms    | 170,393        | 92.28MB      | 18.82MiB |
 | F# .NET API      | 8019 | 8,281.61  | 22.79ms     | 103.14ms    | 165,899        | 87.98MB      | 59.96MiB |
 | C# .NET API      | 8001 | 8,193.76  | 21.65ms     | 102.03ms    | 164,048        | 87.05MB      | 61.7MiB  |
-| C Microhttpd     | 8018 | 5,598.50  | 25.25ms     | 137.41ms    | 112,180        | 60.74MB      | 4.691MiB |
+| C Microhttpd     | 8018 | 5,580.41  | 25.67ms     | 94.12ms     | 111,624        | 60.55MB      | 12.16MiB |
 | Go Fiber         | 8008 | 4,414.08  | 40.54ms     | 953.34ms    | 88,421         | 48.38MB      | 69.99MiB |
 | Elixir Phoenix   | 8007 | 3,411.77  | 35.18ms     | 110.29ms    | 68,284         | 37.45MB      | 187.7MiB |
 | Python Litestar  | 8000 | 3,275.96  | 38.73ms     | 180.56ms    | 65,554         | 35.64MB      | 159.9MiB |

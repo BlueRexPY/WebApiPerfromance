@@ -1,35 +1,35 @@
 # C Microhttpd — Hello World Benchmark
 
-**Tested**: 2026-02-18 04:53:03 UTC
+**Tested**: 2026-02-20 03:34:21 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8018/`
 
 ## Summary
 
-| Metric         | Value     |
-| -------------- | --------- |
-| Requests/sec   | 54,935.98 |
-| Avg Latency    | 12.34ms   |
-| Max Latency    | 68.93ms   |
-| Total Requests | 1,098,912 |
-| Transfer/sec   | 7.07MB    |
-| Port           | 8018      |
+| Metric | Value |
+| --- | --- |
+| Requests/sec | 59,634.69 |
+| Avg Latency | 12.47ms |
+| Max Latency | 70.84ms |
+| Total Requests | 1,194,125 |
+| Transfer/sec | 7.68MB |
+| Port | 8018 |
 
 ## Thread Stats
 
-| Stat    | Avg     | Stdev   | Max     | +/- Stdev |
-| ------- | ------- | ------- | ------- | --------- |
-| Latency | 12.34ms | 18.36ms | 68.93ms | 80.61%    |
-| Req/Sec | 27.61k  | 12.18k  | 74.94k  | 83.00%    |
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | 12.47ms | 18.63ms | 70.84ms | 80.59% |
+| Req/Sec | 29.98k | 16.53k | 77.41k | 80.50% |
 
 ## Resource Usage
 
-| Metric       | Value    |
-| ------------ | -------- |
-| Memory Usage | 4.484MiB |
-| Memory Limit | 1GiB     |
-| Memory %     | 0.44%    |
-| CPU %        | 0.00%    |
-| PIDs         | 9        |
+| Metric | Value |
+| --- | --- |
+| Memory Usage | 11.93MiB |
+| Memory Limit | 1GiB |
+| Memory % | 1.17% |
+| CPU % | 0.00% |
+| PIDs | 9 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8018/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    12.34ms   18.36ms  68.93ms   80.61%
-    Req/Sec    27.61k    12.18k   74.94k    83.00%
-  1098912 requests in 20.00s, 141.48MB read
-Requests/sec:  54935.98
-Transfer/sec:      7.07MB
+    Latency    12.47ms   18.63ms  70.84ms   80.59%
+    Req/Sec    29.98k    16.53k   77.41k    80.50%
+  1194125 requests in 20.02s, 153.74MB read
+Requests/sec:  59634.69
+Transfer/sec:      7.68MB
 ```
