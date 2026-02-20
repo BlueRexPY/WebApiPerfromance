@@ -83,24 +83,24 @@ TEST_TYPES: dict[str, TestType] = {
 SERVICES: dict[str, Service] = {
     s.name: s
     for s in [
-        Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
+        # Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
         Service("dotnetapi", 8001, ".NET API", "DotNetApi"),
         Service("bunapi", 8002, "Bun API", "BunApi"),
         Service("fastifyapi", 8003, "Fastify API", "FastifyApi"),
         Service("fastapi", 8004, "Python FastAPI", "PythonFastApi"),
         Service("rustactix", 8005, "Rust Actix", "RustActix"),
-        Service("haskellservant", 8006, "Haskell Servant", "HaskellServant"),
+        # Service("haskellservant", 8006, "Haskell Servant", "HaskellServant"),
         Service("elixirphoenix", 8007, "Elixir Phoenix", "ElixirPhoenix"),
         Service("gofiber", 8008, "Go Fiber", "GoFiber"),
         Service("javaspringboot", 8009, "Java Spring Boot", "JavaSpringBoot"),
         Service("erlangcowboy", 8010, "Erlang Cowboy", "ErlangCowboy"),
-        Service("denoapi", 8011, "Deno API", "DenoApi"),
-        Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
+        # Service("denoapi", 8011, "Deno API", "DenoApi"),
+        # Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
         Service("dotnetapiaot", 8013, ".NET AOT", "DotNetApiAot"),
         Service("expressapi", 8014, "Express API", "ExpressApi"),
         Service("rubyrails", 8015, "Ruby Rails", "RubyRails"),
-        Service("djangoapi", 8016, "Django API", "DjangoApi"),
-        Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
+        # Service("djangoapi", 8016, "Django API", "DjangoApi"),
+        # Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
         Service("cmicrohttpd", 8018, "C Microhttpd", "CMicrohttpd"),
     ]
 }

@@ -1,6 +1,6 @@
 # MongoDB Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-19 07:02:18 UTC
+**Generated**: 2026-02-19 07:07:36 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/mongodb/orders`
 
 **Test Configuration**:
@@ -15,6 +15,6 @@
 | Framework | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | .NET API | 8001 | 3,927.45\* | 32.01ms | 193.26ms | 78,668 | 425.73KB | 86.09MiB |
-| Bun API | 8002 | 607.25 | 224.14ms | 1.60s | 12,151 | 6.45MB | 93.6MiB |
+| Bun API | 8002 | 3,081.45 | 38.89ms | 108.18ms | 61,659 | 32.75MB | 82.46MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

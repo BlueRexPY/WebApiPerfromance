@@ -73,8 +73,34 @@ def _has_compose_v2() -> bool:
         return False
 
 
+def _wait_for_compose_service_healthy(
+    compose_name: str, label: str, timeout: int = SERVICE_START_TIMEOUT
+) -> None:
+    """Poll docker compose ps until *compose_name* reports a healthy state."""
+    cmd = _compose_cmd()
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        r = subprocess.run(
+            [*cmd, "ps", "--format", "json", compose_name],
+            capture_output=True,
+            text=True,
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            try:
+                for line in r.stdout.strip().splitlines():
+                    info = json.loads(line)
+                    health = info.get("Health", info.get("State", ""))
+                    if "healthy" in health.lower():
+                        logger.info("%s is healthy", label)
+                        return
+            except (json.JSONDecodeError, KeyError):
+                pass
+        time.sleep(HEALTH_CHECK_INTERVAL)
+    raise ServiceStartError(f"{label} did not become healthy in time")
+
+
 def ensure_db_up() -> None:
-    """Start the database service and wait for it to be healthy."""
+    """Start the PostgreSQL service and wait for it to be healthy."""
     cmd = _compose_cmd()
     logger.info("Starting database service...")
     subprocess.run(
@@ -83,32 +109,49 @@ def ensure_db_up() -> None:
         capture_output=True,
         text=True,
     )
-    # Wait for healthy
-    deadline = time.monotonic() + SERVICE_START_TIMEOUT
-    while time.monotonic() < deadline:
-        r = subprocess.run(
-            [*cmd, "ps", "--format", "json", "db"],
+    _wait_for_compose_service_healthy("db", "Database")
+
+
+def ensure_mongodb_up() -> None:
+    """Start the MongoDB service and wait for it to be healthy."""
+    cmd = _compose_cmd()
+    logger.info("Starting MongoDB service...")
+    subprocess.run(
+        [*cmd, "up", "-d", "mongodb"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    _wait_for_compose_service_healthy("mongodb", "MongoDB")
+
+
+def _restart_service_safe(name: str) -> None:
+    """Restart a compose service; fall back to stop+up if restart fails."""
+    cmd = _compose_cmd()
+    r = subprocess.run(
+        [*cmd, "restart", name],
+        capture_output=True,
+        text=True,
+    )
+    if r.returncode != 0:
+        logger.warning(
+            "Could not restart %s (exit %d); falling back to stop+up...",
+            name,
+            r.returncode,
+        )
+        subprocess.run([*cmd, "stop", name], capture_output=True, text=True)
+        subprocess.run(
+            [*cmd, "up", "-d", name],
+            check=True,
             capture_output=True,
             text=True,
         )
-        if r.returncode == 0 and r.stdout.strip():
-            try:
-                # docker compose v2 outputs JSON
-                for line in r.stdout.strip().splitlines():
-                    info = json.loads(line)
-                    health = info.get("Health", info.get("State", ""))
-                    if "healthy" in health.lower():
-                        logger.info("Database is healthy")
-                        return
-            except (json.JSONDecodeError, KeyError):
-                pass
-        time.sleep(HEALTH_CHECK_INTERVAL)
-    raise ServiceStartError("Database did not become healthy in time")
 
 
 def start_service(service: Service) -> None:
-    """Start a specific docker-compose service (and db dependency)."""
+    """Start a specific docker-compose service (and db/mongodb dependencies)."""
     ensure_db_up()
+    ensure_mongodb_up()
     cmd = _compose_cmd()
     logger.info("Starting service: %s", service.name)
     subprocess.run(
@@ -181,16 +224,12 @@ def stop_monitoring() -> None:
 
 
 def restart_db() -> None:
-    """Restart the DB container to flush all stale connections."""
-    cmd = _compose_cmd()
-    logger.info("Restarting database to clear stale connections...")
-    subprocess.run(
-        [*cmd, "restart", "db"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    """Restart DB containers to flush all stale connections."""
+    logger.info("Restarting databases to clear stale connections...")
+    _restart_service_safe("db")
+    _restart_service_safe("mongodb")
     ensure_db_up()
+    ensure_mongodb_up()
 
 
 # ── Health check ───────────────────────────────────────────────────────────────
@@ -458,6 +497,7 @@ def run_all(
     tt_list = [TEST_TYPES[t] for t in (test_types or TEST_TYPES.keys())]
 
     ensure_db_up()
+    ensure_mongodb_up()
 
     if monitoring:
         start_monitoring()
@@ -493,8 +533,8 @@ def _run_sequential(
     current = 0
 
     for i, svc in enumerate(svc_list):
-        # Restart DB between services to clear stale connections.
-        # Skip on the first iteration — run_all already called ensure_db_up().
+        # Restart databases between services to clear stale connections.
+        # Skip on the first iteration — run_all already called ensure_db_up/ensure_mongodb_up.
         if i > 0:
             restart_db()
 
