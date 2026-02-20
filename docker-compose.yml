@@ -490,6 +490,28 @@ services:
     networks:
       - webapi-network
 
+  javaquarkus:
+    build: ./apps/JavaQuarkus
+    ports:
+      - "8021:8000"
+    environment:
+      QUARKUS_DATASOURCE_REACTIVE_URL: vertx-reactive:postgresql://db:5432/${POSTGRES_DB:-ordersdb}
+      QUARKUS_DATASOURCE_USERNAME: ${POSTGRES_USER:-apiuser}
+      QUARKUS_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-apipassword}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
   #── Monitoring Stack ────────────────────────────────────────────────────────
 
   prometheus:

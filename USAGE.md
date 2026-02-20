@@ -82,6 +82,10 @@ python -m benchmarks stop
 | rubyrails      | 8015 |
 | djangoapi      | 8016 |
 | cppdrogon      | 8017 |
+| cmicrohttpd    | 8018 |
+| fsharpapi      | 8019 |
+| fsharpapiaot   | 8020 |
+| javaquarkus    | 8021 |
 
 ## Test Types
 

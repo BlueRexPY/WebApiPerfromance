@@ -78,9 +78,9 @@ SERVICES: dict[str, Service] = {
     s.name: s
     for s in [
         Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
-        Service("dotnetapi", 8001, ".NET API", "DotNetApi"),
-        Service("bunapi", 8002, "Bun API", "BunApi"),
-        Service("fastifyapi", 8003, "Fastify API", "FastifyApi"),
+        Service("dotnetapi", 8001, "C# .NET API", "DotNetApi"),
+        Service("bunapi", 8002, "JS Bun", "BunApi"),
+        Service("fastifyapi", 8003, "JS Fastify", "FastifyApi"),
         Service("fastapi", 8004, "Python FastAPI", "PythonFastApi"),
         Service("rustactix", 8005, "Rust Actix", "RustActix"),
         Service("haskellservant", 8006, "Haskell Servant", "HaskellServant"),
@@ -88,16 +88,17 @@ SERVICES: dict[str, Service] = {
         Service("gofiber", 8008, "Go Fiber", "GoFiber"),
         Service("javaspringboot", 8009, "Java Spring Boot", "JavaSpringBoot"),
         Service("erlangcowboy", 8010, "Erlang Cowboy", "ErlangCowboy"),
-        Service("denoapi", 8011, "Deno API", "DenoApi"),
+        Service("denoapi", 8011, "JS Deno", "DenoApi"),
         Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
-        Service("dotnetapiaot", 8013, ".NET AOT", "DotNetApiAot"),
-        Service("expressapi", 8014, "Express API", "ExpressApi"),
+        Service("dotnetapiaot", 8013, "C# .NET AOT", "DotNetApiAot"),
+        Service("expressapi", 8014, "JS Express", "ExpressApi"),
         Service("rubyrails", 8015, "Ruby Rails", "RubyRails"),
-        Service("djangoapi", 8016, "Django API", "DjangoApi"),
+        Service("djangoapi", 8016, "Python Django", "DjangoApi"),
         Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
         Service("cmicrohttpd", 8018, "C Microhttpd", "CMicrohttpd"),
-        Service("fsharpapi", 8019, "F# API", "FSharpApi"),
-        Service("fsharpapiaot", 8020, "F# AOT", "FSharpApiAot"),
+        Service("fsharpapi", 8019, "F# .NET API", "FSharpApi"),
+        Service("fsharpapiaot", 8020, "F# .NET AOT", "FSharpApiAot"),
+        Service("javaquarkus", 8021, "Java Quarkus", "JavaQuarkus"),
     ]
 }
 
