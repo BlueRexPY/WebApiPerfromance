@@ -86,6 +86,13 @@ python -m benchmarks stop
 | fsharpapi      | 8019 |
 | fsharpapiaot   | 8020 |
 | javaquarkus    | 8021 |
+| rustaxum       | 8022 |
+| gochi          | 8023 |
+| zigzap         | 8024 |
+| nimhttpbeast   | 8025 |
+| javamicronaut  | 8026 |
+| kotlinktor     | 8027 |
+| phpswoole      | 8028 |
 
 ## Test Types
 

@@ -1,0 +1,20 @@
+micronaut:
+  server:
+    port: 8000
+    netty:
+      worker:
+        threads: 16
+      max-content-length: 1048576
+
+r2dbc:
+  datasources:
+    default:
+      url: ${R2DBC_URL:`r2dbc:postgresql://db:5432/ordersdb`}
+      username: ${DB_USER:apiuser}
+      password: ${DB_PASSWORD:apipassword}
+      maximum-pool-size: 120
+      initial-pool-size: 10
+
+logger:
+  root:
+    level: ERROR

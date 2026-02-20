@@ -99,6 +99,13 @@ SERVICES: dict[str, Service] = {
         Service("fsharpapi", 8019, "F# .NET API", "FSharpApi"),
         Service("fsharpapiaot", 8020, "F# .NET AOT", "FSharpApiAot"),
         Service("javaquarkus", 8021, "Java Quarkus", "JavaQuarkus"),
+        Service("rustaxum", 8022, "Rust Axum", "RustAxum"),
+        Service("gochi", 8023, "Go Chi", "GoChi"),
+        Service("zigzap", 8024, "Zig zap", "ZigZap"),
+        Service("nimhttpbeast", 8025, "Nim httpbeast", "NimHttpbeast"),
+        Service("javamicronaut", 8026, "Java Micronaut", "JavaMicronaut"),
+        Service("kotlinktor", 8027, "Kotlin Ktor", "KotlinKtor"),
+        Service("phpswoole", 8028, "PHP Swoole", "PhpSwoole"),
     ]
 }
 
