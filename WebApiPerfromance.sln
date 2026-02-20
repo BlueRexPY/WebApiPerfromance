@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApiAot", "apps\DotNet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetApi", "apps\DotNetApi\DotNetApi.csproj", "{BC3EE6D0-E41C-BF0E-4420-29B150471772}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpApi", "apps\FSharpApi\FSharpApi.fsproj", "{EBFCA42D-27A4-4341-9EF9-A60A4DFB8826}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpApiAot", "apps\FSharpApiAot\FSharpApiAot.fsproj", "{A8D0A8EC-D74C-45B2-8A07-F8EB1CC773C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{BC3EE6D0-E41C-BF0E-4420-29B150471772}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC3EE6D0-E41C-BF0E-4420-29B150471772}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC3EE6D0-E41C-BF0E-4420-29B150471772}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBFCA42D-27A4-4341-9EF9-A60A4DFB8826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBFCA42D-27A4-4341-9EF9-A60A4DFB8826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBFCA42D-27A4-4341-9EF9-A60A4DFB8826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBFCA42D-27A4-4341-9EF9-A60A4DFB8826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D0A8EC-D74C-45B2-8A07-F8EB1CC773C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D0A8EC-D74C-45B2-8A07-F8EB1CC773C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D0A8EC-D74C-45B2-8A07-F8EB1CC773C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D0A8EC-D74C-45B2-8A07-F8EB1CC773C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

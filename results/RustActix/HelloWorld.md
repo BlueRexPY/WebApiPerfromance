@@ -1,35 +1,35 @@
 # Rust Actix — Hello World Benchmark
 
-**Tested**: 2026-02-18 04:38:49 UTC
+**Tested**: 2026-02-20 03:19:13 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8005/`
 
 ## Summary
 
-| Metric         | Value      |
-| -------------- | ---------- |
-| Requests/sec   | 111,793.63 |
-| Avg Latency    | 8.65ms     |
-| Max Latency    | 60.47ms    |
-| Total Requests | 2,236,041  |
-| Transfer/sec   | 14.39MB    |
-| Port           | 8005       |
+| Metric | Value |
+| --- | --- |
+| Requests/sec | 53,865.99 |
+| Avg Latency | 11.64ms |
+| Max Latency | 66.69ms |
+| Total Requests | 1,077,485 |
+| Transfer/sec | 6.94MB |
+| Port | 8005 |
 
 ## Thread Stats
 
-| Stat    | Avg    | Stdev   | Max     | +/- Stdev |
-| ------- | ------ | ------- | ------- | --------- |
-| Latency | 8.65ms | 14.42ms | 60.47ms | 82.10%    |
-| Req/Sec | 56.20k | 8.45k   | 85.84k  | 72.50%    |
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | 11.64ms | 17.51ms | 66.69ms | 80.79% |
+| Req/Sec | 27.06k | 15.90k | 87.33k | 88.75% |
 
 ## Resource Usage
 
-| Metric       | Value    |
-| ------------ | -------- |
-| Memory Usage | 4.512MiB |
-| Memory Limit | 1GiB     |
-| Memory %     | 0.44%    |
-| CPU %        | 0.16%    |
-| PIDs         | 16       |
+| Metric | Value |
+| --- | --- |
+| Memory Usage | 7.629MiB |
+| Memory Limit | 1GiB |
+| Memory % | 0.75% |
+| CPU % | 0.40% |
+| PIDs | 16 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8005/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     8.65ms   14.42ms  60.47ms   82.10%
-    Req/Sec    56.20k     8.45k   85.84k    72.50%
-  2236041 requests in 20.00s, 287.88MB read
-Requests/sec: 111793.63
-Transfer/sec:     14.39MB
+    Latency    11.64ms   17.51ms  66.69ms   80.79%
+    Req/Sec    27.06k    15.90k   87.33k    88.75%
+  1077485 requests in 20.00s, 138.72MB read
+Requests/sec:  53865.99
+Transfer/sec:      6.94MB
 ```

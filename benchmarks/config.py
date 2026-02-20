@@ -96,6 +96,8 @@ SERVICES: dict[str, Service] = {
         Service("djangoapi", 8016, "Django API", "DjangoApi"),
         Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
         Service("cmicrohttpd", 8018, "C Microhttpd", "CMicrohttpd"),
+        Service("fsharpapi", 8019, "F# API", "FSharpApi"),
+        Service("fsharpapiaot", 8020, "F# AOT", "FSharpApiAot"),
     ]
 }
 

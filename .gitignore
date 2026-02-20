@@ -13,7 +13,6 @@ dist/
 build/
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -74,3 +73,16 @@ deno.lock
 DerivedData/
 .DS_Store
 Package.resolved
+
+
+# .Net
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+*.dbmdl
+*.bak   

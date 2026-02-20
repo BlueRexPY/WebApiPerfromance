@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-18 05:01:14 UTC
+**Generated**: 2026-02-20 03:21:12 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -15,9 +15,11 @@
 | Framework        | Port | Req/sec   | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ---------------- | ---- | --------- | ----------- | ----------- | -------------- | ------------ | -------- |
 | Bun API          | 8002 | 13,926.52 | 8.61ms      | 25.04ms     | 278,570        | 148.62MB     | 22.21MiB |
-| .NET API         | 8001 | 10,455.90 | 18.60ms     | 91.05ms     | 209,504        | 111.08MB     | 59.81MiB |
-| .NET AOT         | 8013 | 10,335.60 | 17.99ms     | 93.31ms     | 207,045        | 109.80MB     | 34.1MiB  |
-| Rust Actix       | 8005 | 9,376.94  | 25.56ms     | 287.83ms    | 187,772        | 101.86MB     | 15.56MiB |
+| .NET AOT         | 8013 | 8,970.70  | 19.63ms     | 96.22ms     | 179,745        | 95.30MB      | 35.16MiB |
+| F# AOT           | 8020 | 8,718.01  | 18.82ms     | 97.55ms     | 174,505        | 93.45MB      | 51.04MiB |
+| Rust Actix       | 8005 | 8,495.25  | 28.42ms     | 453.51ms    | 170,393        | 92.28MB      | 18.82MiB |
+| F# API           | 8019 | 8,281.61  | 22.79ms     | 103.14ms    | 165,899        | 87.98MB      | 59.96MiB |
+| .NET API         | 8001 | 8,193.76  | 21.65ms     | 102.03ms    | 164,048        | 87.05MB      | 61.7MiB  |
 | Go Fiber         | 8008 | 8,051.70  | 28.15ms     | 516.70ms    | 161,447        | 88.24MB      | 60.96MiB |
 | C Microhttpd     | 8018 | 5,598.50  | 25.25ms     | 137.41ms    | 112,180        | 60.74MB      | 4.691MiB |
 | Elixir Phoenix   | 8007 | 3,411.77  | 35.18ms     | 110.29ms    | 68,284         | 37.45MB      | 187.7MiB |

@@ -1,0 +1,6 @@
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+  <Application>
+    <!-- Preserve all types in our assembly for DI and route handler binding -->
+    <Assembly Name="FSharpApiAot" Dynamic="Required All" />
+  </Application>
+</Directives>
