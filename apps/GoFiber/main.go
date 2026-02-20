@@ -100,7 +100,7 @@ func ordersHandler(c *fiber.Ctx) error {
 			&order.CustomerID,
 			&order.TotalCents,
 			&order.Status,
-			&order.CreatedAt,
+			&order.CreatedAt
 		)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

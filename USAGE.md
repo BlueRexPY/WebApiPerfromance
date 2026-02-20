@@ -62,36 +62,44 @@ python -m benchmarks stop
 
 ## Services
 
-| Name           | Port |
-| -------------- | ---- |
-| litestar       | 8000 |
-| dotnetapi      | 8001 |
-| bunapi         | 8002 |
-| fastifyapi     | 8003 |
-| fastapi        | 8004 |
-| rustactix      | 8005 |
-| haskellservant | 8006 |
-| elixirphoenix  | 8007 |
-| gofiber        | 8008 |
-| javaspringboot | 8009 |
-| erlangcowboy   | 8010 |
-| denoapi        | 8011 |
-| swiftvapor     | 8012 |
-| dotnetapiaot   | 8013 |
-| expressapi     | 8014 |
-| rubyrails      | 8015 |
-| djangoapi      | 8016 |
-| cppdrogon      | 8017 |
-| cmicrohttpd    | 8018 |
-| fsharpapi      | 8019 |
-| fsharpapiaot   | 8020 |
-| javaquarkus    | 8021 |
-| rustaxum       | 8022 |
-| gochi          | 8023 |
-| zigzap         | 8024 |
-| javamicronaut  | 8026 |
-| kotlinktor     | 8027 |
-| phpswoole      | 8028 |
+| Name            | Port |
+| --------------- | ---- |
+| litestar        | 8000 |
+| dotnetapi       | 8001 |
+| bunapi          | 8002 |
+| fastifyapi      | 8003 |
+| fastapi         | 8004 |
+| rustactix       | 8005 |
+| haskellservant  | 8006 |
+| elixirphoenix   | 8007 |
+| gofiber         | 8008 |
+| javaspringboot  | 8009 |
+| erlangcowboy    | 8010 |
+| denoapi         | 8011 |
+| swiftvapor      | 8012 |
+| dotnetapiaot    | 8013 |
+| expressapi      | 8014 |
+| rubyrails       | 8015 |
+| djangoapi       | 8016 |
+| cppdrogon       | 8017 |
+| cmicrohttpd     | 8018 |
+| fsharpapi       | 8019 |
+| fsharpapiaot    | 8020 |
+| javaquarkus     | 8021 |
+| rustaxum        | 8022 |
+| gochi           | 8023 |
+| zigzap          | 8024 |
+| javamicronaut   | 8026 |
+| kotlinktor      | 8027 |
+| phpswoole       | 8028 |
+| nestjsexpress   | 8029 |
+| nestjsfastify   | 8030 |
+| clibuv          | 8031 |
+| gonethttp       | 8032 |
+| rubysinatra     | 8033 |
+| elixirplug      | 8034 |
+| dotnetcarter    | 8035 |
+| dotnetcarteraot | 8036 |
 
 ## Test Types
 

@@ -105,6 +105,14 @@ SERVICES: dict[str, Service] = {
         Service("javamicronaut", 8026, "Java Micronaut", "JavaMicronaut"),
         Service("kotlinktor", 8027, "Kotlin Ktor", "KotlinKtor"),
         Service("phpswoole", 8028, "PHP Swoole", "PhpSwoole"),
+        Service("nestjsexpress", 8029, "JS NestJS Express", "NestJsExpress"),
+        Service("nestjsfastify", 8030, "JS NestJS Fastify", "NestJsFastify"),
+        Service("clibuv", 8031, "C libuv", "CLibuv"),
+        Service("gonethttp", 8032, "Go net/http", "GoNetHttp"),
+        Service("rubysinatra", 8033, "Ruby Sinatra", "RubySinatra"),
+        Service("elixirplug", 8034, "Elixir Plug", "ElixirPlug"),
+        Service("dotnetcarter", 8035, "C# Carter", "DotNetCarter"),
+        Service("dotnetcarteraot", 8036, "C# Carter AOT", "DotNetCarterAot"),
     ]
 }
 

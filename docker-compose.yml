@@ -634,6 +634,172 @@ services:
     networks:
       - webapi-network
 
+  nestjsexpress:
+    build: ./apps/NodeNestExpressApi
+    ports:
+      - "8029:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  nestjsfastify:
+    build: ./apps/NodeNestFastifyApi
+    ports:
+      - "8030:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  clibuv:
+    build: ./apps/CLibuv
+    ports:
+      - "8031:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+        reservations:
+          cpus: "1.0"
+          memory: 128M
+    networks:
+      - webapi-network
+
+  gonethttp:
+    build: ./apps/GoNetHttp
+    ports:
+      - "8032:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+        reservations:
+          cpus: "1.0"
+          memory: 128M
+    networks:
+      - webapi-network
+
+  rubysinatra:
+    build: ./apps/RubySinatra
+    ports:
+      - "8033:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      RACK_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  elixirplug:
+    build: ./apps/ElixirPlug
+    ports:
+      - "8034:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      MIX_ENV: prod
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarter:
+    build: ./apps/DotNetCarter
+    ports:
+      - "8035:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarteraot:
+    build: ./apps/DotNetCarterAot
+    ports:
+      - "8036:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
   #── Monitoring Stack ────────────────────────────────────────────────────────
 
   prometheus:
