@@ -6,14 +6,17 @@ micronaut:
         threads: 16
       max-content-length: 1048576
 
-r2dbc:
-  datasources:
-    default:
-      url: ${R2DBC_URL:`r2dbc:postgresql://db:5432/ordersdb`}
-      username: ${DB_USER:apiuser}
-      password: ${DB_PASSWORD:apipassword}
-      maximum-pool-size: 120
-      initial-pool-size: 10
+datasources:
+  default:
+    url: ${DATASOURCES_DEFAULT_URL:jdbc:postgresql://db:5432/ordersdb}
+    username: ${DATASOURCES_DEFAULT_USERNAME:apiuser}
+    password: ${DATASOURCES_DEFAULT_PASSWORD:apipassword}
+    maximum-pool-size: 120
+    minimum-idle: 10
+    driver-class-name: org.postgresql.Driver
+
+jackson:
+  property-naming-strategy: SNAKE_CASE
 
 logger:
   root:

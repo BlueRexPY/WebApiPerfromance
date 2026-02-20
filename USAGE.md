@@ -89,7 +89,6 @@ python -m benchmarks stop
 | rustaxum       | 8022 |
 | gochi          | 8023 |
 | zigzap         | 8024 |
-| nimhttpbeast   | 8025 |
 | javamicronaut  | 8026 |
 | kotlinktor     | 8027 |
 | phpswoole      | 8028 |

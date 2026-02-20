@@ -102,7 +102,6 @@ SERVICES: dict[str, Service] = {
         Service("rustaxum", 8022, "Rust Axum", "RustAxum"),
         Service("gochi", 8023, "Go Chi", "GoChi"),
         Service("zigzap", 8024, "Zig zap", "ZigZap"),
-        Service("nimhttpbeast", 8025, "Nim httpbeast", "NimHttpbeast"),
         Service("javamicronaut", 8026, "Java Micronaut", "JavaMicronaut"),
         Service("kotlinktor", 8027, "Kotlin Ktor", "KotlinKtor"),
         Service("phpswoole", 8028, "PHP Swoole", "PhpSwoole"),

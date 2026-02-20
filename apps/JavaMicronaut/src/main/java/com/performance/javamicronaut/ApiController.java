@@ -2,21 +2,23 @@ package com.performance.javamicronaut;
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.r2dbc.annotation.R2dbcRepository;
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactory;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class ApiController {
 
     @Inject
-    ConnectionFactory connectionFactory;
+    DataSource dataSource;
 
     @Get("/")
     public HelloResponse hello() {
@@ -24,24 +26,24 @@ public class ApiController {
     }
 
     @Get("/orders")
-    public Mono<List<Order>> orders() {
-        return Mono.from(connectionFactory.create())
-                .flatMapMany(conn ->
-                        Flux.from(conn.createStatement(
-                                        "SELECT id, customer_id, total_cents, status, created_at" +
-                                        " FROM orders LIMIT 100 OFFSET 1000")
-                                .execute())
-                                .flatMap(result -> result.map((row, meta) ->
-                                        new Order(
-                                                row.get("id", Integer.class),
-                                                row.get("customer_id", Integer.class),
-                                                row.get("total_cents", Integer.class),
-                                                row.get("status", String.class),
-                                                row.get("created_at", LocalDateTime.class)
-                                        )))
-                                .collectList()
-                                .doFinally(s -> Mono.from(conn.close()).subscribe())
-                )
-                .next();
+    @ExecuteOn(TaskExecutors.IO)
+    public List<Order> orders() throws SQLException {
+        List<Order> result = new ArrayList<>(100);
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT id, customer_id, total_cents, status, created_at" +
+                     " FROM orders LIMIT 100 OFFSET 1000");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                result.add(new Order(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getTimestamp(5).toLocalDateTime()
+                ));
+            }
+        }
+        return result;
     }
 }

@@ -84,7 +84,6 @@
         "Millis",
         "msgspec",
         "netty",
-        "nimhttpbeast",
         "Npgsql",
         "nrows",
         "ordersdb",

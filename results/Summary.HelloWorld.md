@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-20 05:05:10 UTC
+**Generated**: 2026-02-20 05:32:09 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -32,6 +32,8 @@
 | Go Fiber | 8008 | 35,962.46 | 18.89ms | 155.80ms | 721,358 | 5.14MB | 21.54MiB |
 | JS Fastify | 8003 | 32,725.09 | 10.49ms | 1.04s | 654,643 | 6.18MB | 27.62MiB |
 | Java Spring Boot | 8009 | 31,265.68 | 13.21ms | 170.99ms | 625,607 | 2.92MB | 144.2MiB |
+| Java Micronaut | 8026 | 30,816.49 | 13.84ms | 127.61ms | 616,499 | 3.97MB | 111.4MiB |
+| Kotlin Ktor | 8027 | 26,392.53 | 13.53ms | 108.33ms | 527,895 | 2.47MB | 173.5MiB |
 | JS Express | 8014 | 25,475.41 | 5.52ms | 398.78ms | 509,579 | 4.79MB | 38.84MiB |
 | Swift Vapor | 8012 | 24,274.85 | 4.99ms | 60.93ms | 485,537 | 4.03MB | 4.625MiB |
 | Python FastAPI | 8004 | 20,748.27 | 12.73ms | 61.11ms | 414,988 | 3.01MB | 192.3MiB |

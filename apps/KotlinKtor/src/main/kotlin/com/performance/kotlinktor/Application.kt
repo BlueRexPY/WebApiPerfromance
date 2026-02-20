@@ -10,8 +10,9 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import org.postgresql.ds.PGSimpleDataSource
 import java.sql.Connection
+import java.sql.DriverManager
+import java.net.URI
 import java.time.LocalDateTime
 import java.util.concurrent.ArrayBlockingQueue
 
@@ -28,12 +29,13 @@ data class Order(
 )
 
 // Simple blocking connection pool
-class PgPool(url: String, size: Int = 120) {
+class PgPool(jdbcUrl: String, user: String, pass: String, size: Int = 120) {
     private val queue = ArrayBlockingQueue<Connection>(size)
 
     init {
-        val ds = PGSimpleDataSource().apply { setURL(url) }
-        repeat(size) { queue.put(ds.connection) }
+        repeat(size) {
+            queue.put(DriverManager.getConnection(jdbcUrl, user, pass))
+        }
     }
 
     suspend fun <T> use(block: (Connection) -> T): T = withContext(Dispatchers.IO) {
@@ -48,14 +50,20 @@ class PgPool(url: String, size: Int = 120) {
 
 fun main() {
     val dbUrl = System.getenv("DATABASE_URL")
-        ?: "jdbc:postgresql://db:5432/ordersdb?user=apiuser&password=apipassword"
+        ?: "postgresql://apiuser:apipassword@db:5432/ordersdb"
 
-    // Convert postgres:// → jdbc:postgresql://
-    val jdbcUrl = if (dbUrl.startsWith("postgresql://") || dbUrl.startsWith("postgres://")) {
-        "jdbc:" + dbUrl.replace("^postgres://".toRegex(), "postgresql://")
-    } else dbUrl
+    // Parse postgresql://user:pass@host:port/db into JDBC URL + credentials
+    val normalized = dbUrl.replace(Regex("^postgres(ql)?://"), "http://")
+    val uri = URI(normalized)
+    val userInfo = (uri.userInfo ?: "apiuser:apipassword").split(":", limit = 2)
+    val dbUser = userInfo.getOrElse(0) { "apiuser" }
+    val dbPass = userInfo.getOrElse(1) { "apipassword" }
+    val host = uri.host ?: "db"
+    val port = if (uri.port > 0) uri.port else 5432
+    val dbName = uri.path.trimStart('/')
+    val jdbcUrl = "jdbc:postgresql://$host:$port/$dbName"
 
-    val pool = PgPool(jdbcUrl, size = 120)
+    val pool = PgPool(jdbcUrl, dbUser, dbPass, size = 120)
 
     embeddedServer(Netty, port = 8000, host = "0.0.0.0") {
         install(ContentNegotiation) { json() }
