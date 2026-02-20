@@ -3,7 +3,6 @@ using Npgsql;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Configure JSON serialization for AOT
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
@@ -22,20 +21,17 @@ builder.Services.AddSingleton(dataSource);
 
 WebApplication app = builder.Build();
 
-// Carter-style module registration — AOT-friendly (no reflection scanning)
 IApiModule[] modules = [new HelloModule(), new OrdersModule()];
 foreach (var module in modules)
     module.AddRoutes(app);
 
 app.Run();
 
-// ── Carter-style module interface ─────────────────────────────────────────────
 public interface IApiModule
 {
     void AddRoutes(IEndpointRouteBuilder app);
 }
 
-// ── Modules ──────────────────────────────────────────────────────────────────
 public class HelloModule : IApiModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -83,7 +79,6 @@ public class OrdersModule : IApiModule
     }
 }
 
-// ── Models ────────────────────────────────────────────────────────────────────
 public record HelloResponse
 {
     public string Message { get; init; } = "Hello, World!";
@@ -98,7 +93,6 @@ public class Order
     public DateTime CreatedAt { get; set; }
 }
 
-// ── AOT JSON context ──────────────────────────────────────────────────────────
 [JsonSerializable(typeof(HelloResponse))]
 [JsonSerializable(typeof(Order))]
 [JsonSerializable(typeof(List<Order>))]
