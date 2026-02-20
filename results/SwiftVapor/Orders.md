@@ -1,35 +1,35 @@
 # Swift Vapor — Orders Benchmark
 
-**Tested**: 2026-02-18 04:46:53 UTC
+**Tested**: 2026-02-20 11:14:01 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8012/orders`
 
 ## Summary
 
-| Metric         | Value    |
-| -------------- | -------- |
-| Requests/sec   | 592.98   |
-| Avg Latency    | 203.72ms |
-| Max Latency    | 838.94ms |
-| Total Requests | 11,891   |
-| Transfer/sec   | 6.12MB   |
-| Port           | 8012     |
+| Metric | Value |
+| --- | --- |
+| Requests/sec | 579.65 |
+| Avg Latency | 206.29ms |
+| Max Latency | 698.48ms |
+| Total Requests | 11,633 |
+| Transfer/sec | 5.99MB |
+| Port | 8012 |
 
 ## Thread Stats
 
-| Stat    | Avg      | Stdev   | Max      | +/- Stdev |
-| ------- | -------- | ------- | -------- | --------- |
-| Latency | 203.72ms | 96.03ms | 838.94ms | 65.95%    |
-| Req/Sec | 301.91   | 141.60  | 831.00   | 75.19%    |
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | 206.29ms | 101.02ms | 698.48ms | 68.24% |
+| Req/Sec | 293.09 | 145.66 | 830.00 | 74.94% |
 
 ## Resource Usage
 
-| Metric       | Value    |
-| ------------ | -------- |
-| Memory Usage | 20.16MiB |
-| Memory Limit | 1GiB     |
-| Memory %     | 1.97%    |
-| CPU %        | 0.03%    |
-| PIDs         | 40       |
+| Metric | Value |
+| --- | --- |
+| Memory Usage | 60.86MiB |
+| Memory Limit | 1GiB |
+| Memory % | 5.94% |
+| CPU % | 0.04% |
+| PIDs | 38 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8012/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   203.72ms   96.03ms 838.94ms   65.95%
-    Req/Sec   301.91    141.60   831.00     75.19%
-  11891 requests in 20.05s, 122.80MB read
-Requests/sec:    592.98
-Transfer/sec:      6.12MB
+    Latency   206.29ms  101.02ms 698.48ms   68.24%
+    Req/Sec   293.09    145.66   830.00     74.94%
+  11633 requests in 20.07s, 120.14MB read
+Requests/sec:    579.65
+Transfer/sec:      5.99MB
 ```

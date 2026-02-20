@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-20 06:04:12 UTC
+**Generated**: 2026-02-20 11:21:49 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -27,28 +27,28 @@
 | C# .NET API       | 8001 | 8,193.76   | 21.65ms     | 102.03ms    | 164,048        | 87.05MB      | 61.7MiB  |
 | Elixir Plug       | 8034 | 5,976.94   | 20.40ms     | 150.91ms    | 119,584        | 65.40MB      | 209.5MiB |
 | C Microhttpd      | 8018 | 5,580.41   | 25.67ms     | 94.12ms     | 111,624        | 60.55MB      | 12.16MiB |
+| Elixir Phoenix    | 8007 | 5,369.43   | 22.34ms     | 64.47ms     | 107,447        | 58.93MB      | 213.6MiB |
 | Go Chi            | 8023 | 4,929.02   | 36.65ms     | 653.67ms    | 98,804         | 54.04MB      | 62.18MiB |
 | Go net/http       | 8032 | 4,927.33   | 36.62ms     | 677.12ms    | 98,605         | 54.02MB      | 59.77MiB |
 | Go Fiber          | 8008 | 4,414.08   | 40.54ms     | 953.34ms    | 88,421         | 48.38MB      | 69.99MiB |
-| Elixir Phoenix    | 8007 | 3,411.77   | 35.18ms     | 110.29ms    | 68,284         | 37.45MB      | 187.7MiB |
+| JS Fastify        | 8003 | 3,846.61   | 35.55ms     | 701.60ms    | 76,981         | 41.28MB      | 108.2MiB |
+| Python Litestar   | 8000 | 3,776.86   | 34.83ms     | 162.60ms    | 75,553         | 41.09MB      | 197.5MiB |
+| JS Express        | 8014 | 3,420.65   | 38.69ms     | 634.20ms    | 68,439         | 36.71MB      | 49.36MiB |
 | JS NestJS Fastify | 8030 | 3,393.83   | 39.34ms     | 1.03s       | 67,904         | 36.42MB      | 50.28MiB |
-| Python Litestar   | 8000 | 3,275.96   | 38.73ms     | 180.56ms    | 65,554         | 35.64MB      | 159.9MiB |
+| Erlang Cowboy     | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
+| Python FastAPI    | 8004 | 3,385.60   | 36.43ms     | 90.21ms     | 67,720         | 36.83MB      | 219.2MiB |
 | JS NestJS Express | 8029 | 2,785.96   | 49.84ms     | 1.23s       | 55,753         | 30.07MB      | 53.66MiB |
-| JS Express        | 8014 | 2,752.77   | 45.45ms     | 532.15ms    | 55,087         | 29.54MB      | 48.51MiB |
 | C libuv           | 8031 | 2,484.98\* | 42.26ms     | 220.51ms    | 49,744         | 26.92MB      | 9.461MiB |
-| Erlang Cowboy     | 8010 | 2,240.62   | 53.50ms     | 168.07ms    | 44,832         | 22.88MB      | 162.1MiB |
-| C++ Drogon        | 8017 | 2,169.70   | 58.65ms     | 300.55ms    | 43,500         | 23.62MB      | 42.31MiB |
-| Python FastAPI    | 8004 | 1,912.48   | 62.77ms     | 194.96ms    | 38,260         | 20.81MB      | 202.2MiB |
-| JS Fastify        | 8003 | 1,502.87   | 88.97ms     | 1.85s       | 30,077         | 16.13MB      | 45.64MiB |
+| JS Deno           | 8011 | 1,662.90   | 72.51ms     | 311.88ms    | 33,311         | 17.78MB      | 177MiB   |
+| C++ Drogon        | 8017 | 1,418.49   | 88.88ms     | 403.18ms    | 28,442         | 15.44MB      | 43.52MiB |
 | Ruby Sinatra      | 8033 | 1,246.67   | 229.73ms    | 1.18s       | 24,955         | 13.52MB      | 66.74MiB |
-| JS Deno           | 8011 | 1,135.43   | 105.51ms    | 317.83ms    | 22,736         | 12.14MB      | 104.5MiB |
 | Java Micronaut    | 8026 | 1,096.13   | 147.81ms    | 1.90s       | 21,982         | 11.69MB      | 172.9MiB |
 | Kotlin Ktor       | 8027 | 1,026.68\* | 139.66ms    | 1.29s       | 20,590         | 11.12MB      | 213.5MiB |
 | PHP Swoole        | 8028 | 1,006.90   | 120.00ms    | 499.73ms    | 20,195         | 10.97MB      | 60.59MiB |
-| Python Django     | 8016 | 832.70\*   | 142.94ms    | 2.00s       | 16,674         | 9.18MB       | 396.6MiB |
-| Haskell Servant   | 8006 | 618.77\*   | 180.92ms    | 1.93s       | 12,397         | 6.74MB       | 248.4MiB |
-| Swift Vapor       | 8012 | 592.98     | 203.72ms    | 838.94ms    | 11,891         | 6.12MB       | 20.16MiB |
+| Haskell Servant   | 8006 | 796.44\*   | 135.25ms    | 1.95s       | 15,974         | 8.68MB       | 317.1MiB |
+| Swift Vapor       | 8012 | 579.65     | 206.29ms    | 698.48ms    | 11,633         | 5.99MB       | 60.86MiB |
 | Java Spring Boot  | 8009 | 571.97\*   | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
+| Python Django     | 8016 | 470.49\*   | 265.57ms    | 1.99s       | 9,428          | 5.19MB       | 490.1MiB |
 | Ruby Rails        | 8015 | 423.29\*   | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test
