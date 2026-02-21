@@ -80,7 +80,7 @@ SERVICES: dict[str, Service] = {
         Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
         Service("dotnetapi", 8001, "C# .NET API", "DotNetApi"),
         Service("bunapi", 8002, "JS Bun", "BunApi"),
-        Service("fastifyapi", 8003, "JS Fastify", "FastifyApi"),
+        Service("fastifyapi", 8003, "JS Node Fastify", "FastifyApi"),
         Service("fastapi", 8004, "Python FastAPI", "PythonFastApi"),
         Service("rustactix", 8005, "Rust Actix", "RustActix"),
         Service("haskellservant", 8006, "Haskell Servant", "HaskellServant"),
@@ -91,7 +91,7 @@ SERVICES: dict[str, Service] = {
         Service("denoapi", 8011, "JS Deno", "DenoApi"),
         Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
         Service("dotnetapiaot", 8013, "C# .NET AOT", "DotNetApiAot"),
-        Service("expressapi", 8014, "JS Express", "ExpressApi"),
+        Service("expressapi", 8014, "JS Node Express", "ExpressApi"),
         Service("rubyrails", 8015, "Ruby Rails", "RubyRails"),
         Service("djangoapi", 8016, "Python Django", "DjangoApi"),
         Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
@@ -105,8 +105,8 @@ SERVICES: dict[str, Service] = {
         Service("javamicronaut", 8026, "Java Micronaut", "JavaMicronaut"),
         Service("kotlinktor", 8027, "Kotlin Ktor", "KotlinKtor"),
         Service("phpswoole", 8028, "PHP Swoole", "PhpSwoole"),
-        Service("nestjsexpress", 8029, "JS NestJS Express", "NestJsExpress"),
-        Service("nestjsfastify", 8030, "JS NestJS Fastify", "NestJsFastify"),
+        Service("nestjsexpress", 8029, "JS Node NestJS Express", "NestJsExpress"),
+        Service("nestjsfastify", 8030, "JS Node NestJS Fastify", "NestJsFastify"),
         Service("clibuv", 8031, "C libuv", "CLibuv"),
         Service("gonethttp", 8032, "Go net/http", "GoNetHttp"),
         Service("rubysinatra", 8033, "Ruby Sinatra", "RubySinatra"),
@@ -114,31 +114,39 @@ SERVICES: dict[str, Service] = {
         Service("dotnetcarter", 8035, "C# Carter", "DotNetCarter"),
         Service("dotnetcarteraot", 8036, "C# Carter AOT", "DotNetCarterAot"),
         Service("phplaravel", 8037, "PHP Laravel", "PhpLaravel"),
-        Service("nodekoaapi", 8038, "JS Koa", "NodeKoaApi"),
-        Service("nodehonoapi", 8039, "JS Hono", "NodeHonoApi"),
+        Service("nodekoaapi", 8038, "JS Node Koa", "NodeKoaApi"),
+        Service("nodehonoapi", 8039, "JS Node Hono", "NodeHonoApi"),
         Service("rubyfalcon", 8040, "Ruby Falcon", "RubyFalcon"),
         Service(
-            "expressclusterapi", 8041, "JS Express Cluster", "NodeExpressClusterApi"
+            "expressclusterapi",
+            8041,
+            "JS Node Express Cluster",
+            "NodeExpressClusterApi",
         ),
         Service(
-            "fastifyclusterapi", 8042, "JS Fastify Cluster", "NodeFastifyClusterApi"
+            "fastifyclusterapi",
+            8042,
+            "JS Node Fastify Cluster",
+            "NodeFastifyClusterApi",
         ),
-        Service("honoclusterapi", 8043, "JS Hono Cluster", "NodeHonoClusterApi"),
-        Service("koaclusterapi", 8044, "JS Koa Cluster", "NodeKoaClusterApi"),
+        Service("honoclusterapi", 8043, "JS Node Hono Cluster", "NodeHonoClusterApi"),
+        Service("koaclusterapi", 8044, "JS Node Koa Cluster", "NodeKoaClusterApi"),
         Service(
             "nestjsexpresscluster",
             8045,
-            "JS NestJS Express Cluster",
+            "JS Node NestJS Express Cluster",
             "NodeNestExpressClusterApi",
         ),
         Service(
             "nestjsfastifycluster",
             8046,
-            "JS NestJS Fastify Cluster",
+            "JS Node NestJS Fastify Cluster",
             "NodeNestFastifyClusterApi",
         ),
-        Service("bunclusterapi", 8047, "JS Bun Cluster", "NodeBunClusterApi"),
-        Service("denoparallelapi", 8048, "JS Deno Parallel", "NodeDenoParallelApi"),
+        Service("bunclusterapi", 8047, "JS Node Bun Cluster", "NodeBunClusterApi"),
+        Service(
+            "denoparallelapi", 8048, "JS Node Deno Parallel", "NodeDenoParallelApi"
+        ),
     ]
 }
 
