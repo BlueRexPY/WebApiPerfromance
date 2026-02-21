@@ -144,8 +144,58 @@ SERVICES: dict[str, Service] = {
             "NodeNestFastifyClusterApi",
         ),
         Service("bunclusterapi", 8047, "JS Node Bun Cluster", "NodeBunClusterApi"),
+        Service("denoparallelapi", 8048, "JS Deno Parallel", "NodeDenoParallelApi"),
+        Service("bunexpressapi", 8049, "JS Bun Express", "NodeBunExpressApi"),
+        Service("bunfastifyapi", 8050, "JS Bun Fastify", "NodeBunFastifyApi"),
+        Service("bunhonoapi", 8051, "JS Bun Hono", "NodeBunHonoApi"),
+        Service("bunkoaapi", 8052, "JS Bun Koa", "NodeBunKoaApi"),
         Service(
-            "denoparallelapi", 8048, "JS Node Deno Parallel", "NodeDenoParallelApi"
+            "bunnestexpressapi",
+            8053,
+            "JS Bun NestJS Express",
+            "NodeBunNestExpressApi",
+        ),
+        Service(
+            "bunnestfastifyapi",
+            8054,
+            "JS Bun NestJS Fastify",
+            "NodeBunNestFastifyApi",
+        ),
+        Service(
+            "bunexpressclusterapi",
+            8055,
+            "JS Bun Express Cluster",
+            "NodeBunExpressClusterApi",
+        ),
+        Service(
+            "bunfastifyclusterapi",
+            8056,
+            "JS Bun Fastify Cluster",
+            "NodeBunFastifyClusterApi",
+        ),
+        Service(
+            "bunhonoclusterapi",
+            8057,
+            "JS Bun Hono Cluster",
+            "NodeBunHonoClusterApi",
+        ),
+        Service(
+            "bunkoaclusterapi",
+            8058,
+            "JS Bun Koa Cluster",
+            "NodeBunKoaClusterApi",
+        ),
+        Service(
+            "bunnestexpressclusterapi",
+            8059,
+            "JS Bun NestJS Express Cluster",
+            "NodeBunNestExpressClusterApi",
+        ),
+        Service(
+            "bunnestfastifyclusterapi",
+            8060,
+            "JS Bun NestJS Fastify Cluster",
+            "NodeBunNestFastifyClusterApi",
         ),
     ]
 }

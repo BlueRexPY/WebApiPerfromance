@@ -1,0 +1,12 @@
+{
+    "name": "node-bun-fastify-api",
+    "version": "0.1.0",
+    "type": "module",
+    "dependencies": {
+        "fastify": "5.2.0",
+        "postgres": "3.4.4"
+    },
+    "scripts": {
+        "start": "bun run src/index.js"
+    }
+}
