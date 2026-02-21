@@ -888,6 +888,138 @@ services:
     networks:
       - webapi-network
 
+  expressclusterapi:
+    build: ./apps/NodeExpressClusterApi
+    ports:
+      - "8041:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  fastifyclusterapi:
+    build: ./apps/NodeFastifyClusterApi
+    ports:
+      - "8042:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  honoclusterapi:
+    build: ./apps/NodeHonoClusterApi
+    ports:
+      - "8043:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  koaclusterapi:
+    build: ./apps/NodeKoaClusterApi
+    ports:
+      - "8044:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  nestjsexpresscluster:
+    build: ./apps/NodeNestExpressClusterApi
+    ports:
+      - "8045:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  nestjsfastifycluster:
+    build: ./apps/NodeNestFastifyClusterApi
+    ports:
+      - "8046:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
+      NODE_ENV: production
+      WORKERS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
   #── Monitoring Stack ────────────────────────────────────────────────────────
 
   prometheus:

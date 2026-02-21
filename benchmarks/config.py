@@ -117,6 +117,26 @@ SERVICES: dict[str, Service] = {
         Service("nodekoaapi", 8038, "JS Koa", "NodeKoaApi"),
         Service("nodehonoapi", 8039, "JS Hono", "NodeHonoApi"),
         Service("rubyfalcon", 8040, "Ruby Falcon", "RubyFalcon"),
+        Service(
+            "expressclusterapi", 8041, "JS Express Cluster", "NodeExpressClusterApi"
+        ),
+        Service(
+            "fastifyclusterapi", 8042, "JS Fastify Cluster", "NodeFastifyClusterApi"
+        ),
+        Service("honoclusterapi", 8043, "JS Hono Cluster", "NodeHonoClusterApi"),
+        Service("koaclusterapi", 8044, "JS Koa Cluster", "NodeKoaClusterApi"),
+        Service(
+            "nestjsexpresscluster",
+            8045,
+            "JS NestJS Express Cluster",
+            "NodeNestExpressClusterApi",
+        ),
+        Service(
+            "nestjsfastifycluster",
+            8046,
+            "JS NestJS Fastify Cluster",
+            "NodeNestFastifyClusterApi",
+        ),
     ]
 }
 
