@@ -7,31 +7,31 @@
 
 ## Summary
 
-| Metric | Value |
-| --- | --- |
-| Requests/sec | 2,484.98\* |
-| Avg Latency | 42.26ms |
-| Max Latency | 220.51ms |
-| Total Requests | 49,744 |
-| Transfer/sec | 26.92MB |
-| Port | 8031 |
+| Metric         | Value      |
+| -------------- | ---------- |
+| Requests/sec   | 2,484.98\* |
+| Avg Latency    | 42.26ms    |
+| Max Latency    | 220.51ms   |
+| Total Requests | 49,744     |
+| Transfer/sec   | 26.92MB    |
+| Port           | 8031       |
 
 ## Thread Stats
 
-| Stat | Avg | Stdev | Max | +/- Stdev |
-| --- | --- | --- | --- | --- |
-| Latency | 42.26ms | 27.52ms | 220.51ms | 51.20% |
-| Req/Sec | 1.25k | 749.15 | 3.97k | 72.25% |
+| Stat    | Avg     | Stdev   | Max      | +/- Stdev |
+| ------- | ------- | ------- | -------- | --------- |
+| Latency | 42.26ms | 27.52ms | 220.51ms | 51.20%    |
+| Req/Sec | 1.25k   | 749.15  | 3.97k    | 72.25%    |
 
 ## Resource Usage
 
-| Metric | Value |
-| --- | --- |
+| Metric       | Value    |
+| ------------ | -------- |
 | Memory Usage | 9.461MiB |
-| Memory Limit | 512MiB |
-| Memory % | 1.85% |
-| CPU % | 0.00% |
-| PIDs | 129 |
+| Memory Limit | 512MiB   |
+| Memory %     | 1.85%    |
+| CPU %        | 0.00%    |
+| PIDs         | 129      |
 
 ## Raw Output
 
