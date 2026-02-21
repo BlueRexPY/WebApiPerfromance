@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-21 11:49:45 UTC
+**Generated**: 2026-02-21 12:39:24 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -33,6 +33,7 @@
 | F# .NET API                    | 8019 | 7,505.31   | 23.10ms     | 96.60ms     | 150,420        | 79.74MB      | 59.72MiB |
 | JS Node Express                | 8014 | 7,062.54   | 21.13ms     | 973.39ms    | 141,295        | 75.79MB      | 104MiB   |
 | Ruby Falcon                    | 8040 | 7,012.41   | 26.65ms     | 733.92ms    | 140,349        | 75.99MB      | 112.8MiB |
+| Go Gin                         | 8066 | 6,719.73   | 29.75ms     | 372.20ms    | 134,574        | 73.76MB      | 60.76MiB |
 | JS Bun NestJS Fastify Cluster  | 8060 | 6,619.76   | 19.69ms     | 321.59ms    | 132,426        | 70.74MB      | 182MiB   |
 | JS Bun Koa Cluster             | 8058 | 6,267.72   | 24.85ms     | 678.06ms    | 125,408        | 66.98MB      | 131MiB   |
 | Elixir Plug                    | 8034 | 5,976.94   | 20.40ms     | 150.91ms    | 119,584        | 65.40MB      | 209.5MiB |
@@ -66,12 +67,14 @@
 | PHP Laravel                    | 8037 | 2,165.20   | 60.50ms     | 273.60ms    | 43,316         | 23.67MB      | 161.7MiB |
 | C++ Drogon                     | 8017 | 1,889.10   | 66.90ms     | 394.96ms    | 37,859         | 20.56MB      | 44.86MiB |
 | JS Deno                        | 8011 | 1,662.90   | 72.51ms     | 311.88ms    | 33,311         | 17.78MB      | 177MiB   |
+| Python Flask                   | 8067 | 1,616.70\* | 74.86ms     | 204.13ms    | 32,388         | 17.62MB      | 90.04MiB |
 | Ruby Sinatra                   | 8033 | 1,246.67   | 229.73ms    | 1.18s       | 24,955         | 13.52MB      | 66.74MiB |
 | Kotlin Ktor                    | 8027 | 1,026.68\* | 139.66ms    | 1.29s       | 20,590         | 11.12MB      | 213.5MiB |
 | Java Micronaut                 | 8026 | 978.53     | 136.32ms    | 942.33ms    | 19,607         | 10.43MB      | 206.2MiB |
 | Haskell Servant                | 8006 | 796.44\*   | 135.25ms    | 1.95s       | 15,974         | 8.68MB       | 317.1MiB |
 | Swift Vapor                    | 8012 | 579.65     | 206.29ms    | 698.48ms    | 11,633         | 5.99MB       | 60.86MiB |
 | Java Spring Boot               | 8009 | 571.97\*   | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
+| Java Spring WebFlux            | 8065 | 542.12\*   | 217.04ms    | 1.91s       | 10,868         | 6.03MB       | 236.4MiB |
 | Python Django                  | 8016 | 470.49\*   | 265.57ms    | 1.99s       | 9,428          | 5.19MB       | 490.1MiB |
 | Ruby Rails                     | 8015 | 423.29\*   | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
 

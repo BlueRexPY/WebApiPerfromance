@@ -1,0 +1,10 @@
+name: kemal-api
+version: 0.1.0
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    version: ~> 1.7.0
+  pg:
+    github: will/crystal-pg
+    version: ~> 0.28.0

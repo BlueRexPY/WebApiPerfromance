@@ -1,0 +1,10 @@
+name: lucky-api
+version: 0.1.0
+
+dependencies:
+  lucky:
+    github: luckyframework/lucky
+    version: ~> 1.4.0
+  pg:
+    github: will/crystal-pg
+    version: ~> 0.28.0

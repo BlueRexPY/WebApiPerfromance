@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-21 11:49:45 UTC
+**Generated**: 2026-02-21 12:39:24 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -64,15 +64,18 @@
 | JS Node NestJS Express Cluster | 8045 | 32,234.77  | 6.27ms      | 377.36ms    | 644,756        | 8.05MB       | 102.5MiB |
 | Java Spring Boot               | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
 | JS Node Express                | 8014 | 28,702.16  | 4.95ms      | 375.47ms    | 574,069        | 5.39MB       | 101.7MiB |
+| Go Gin                         | 8066 | 27,973.53  | 19.85ms     | 146.98ms    | 560,841        | 4.00MB       | 21.64MiB |
 | Kotlin Ktor                    | 8027 | 26,392.53  | 13.53ms     | 108.33ms    | 527,895        | 2.47MB       | 173.5MiB |
 | Python FastAPI                 | 8004 | 26,128.34  | 12.14ms     | 68.81ms     | 522,898        | 3.79MB       | 209.5MiB |
 | JS Node NestJS Express         | 8029 | 22,594.41  | 7.17ms      | 539.74ms    | 451,933        | 5.65MB       | 45.64MiB |
+| Java Spring WebFlux            | 8065 | 22,165.38  | 14.36ms     | 163.75ms    | 443,923        | 2.07MB       | 142.1MiB |
 | Go Chi                         | 8023 | 20,670.33  | 21.06ms     | 94.38ms     | 413,480        | 2.68MB       | 18.82MiB |
 | Go net/http                    | 8032 | 19,104.87  | 21.36ms     | 133.70ms    | 382,352        | 2.48MB       | 17.21MiB |
 | Python Litestar                | 8000 | 13,861.22  | 19.59ms     | 78.61ms     | 277,275        | 2.01MB       | 184.7MiB |
 | Ruby Sinatra                   | 8033 | 3,419.24   | 132.06ms    | 700.13ms    | 68,422         | 440.74KB     | 63.75MiB |
 | PHP Laravel                    | 8037 | 3,299.74   | 45.12ms     | 281.49ms    | 66,111         | 712.15KB     | 156.8MiB |
 | Ruby Rails                     | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
+| Python Flask                   | 8067 | 2,727.53\* | 40.40ms     | 232.01ms    | 54,601         | 460.80KB     | 89.76MiB |
 | Python Django                  | 8016 | 1,082.71\* | 149.23ms    | 1.69s       | 21,723         | 319.34KB     | 437.3MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

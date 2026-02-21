@@ -1,0 +1,12 @@
+{
+    "name": "uws-api",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "node src/index.mjs"
+    },
+    "dependencies": {
+        "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0",
+        "pg": "^8.13.0"
+    }
+}
