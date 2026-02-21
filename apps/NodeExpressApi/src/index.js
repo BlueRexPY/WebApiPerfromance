@@ -13,6 +13,13 @@ const sql = postgres(DATABASE_URL, {
   prepare: true,
 });
 
+const getOrdersQuery = sql`
+  SELECT id, customer_id, total_cents, status, created_at
+  FROM orders
+  LIMIT 100
+  OFFSET 1000
+`;
+
 const app = express();
 
 // Disable unnecessary middleware for performance
@@ -27,12 +34,8 @@ app.get("/", (req, res) => {
 // GET /orders
 app.get("/orders", async (req, res) => {
   try {
-    const orders = await sql`
-      SELECT id, customer_id, total_cents, status, created_at
-      FROM orders
-      LIMIT 100
-      OFFSET 1000
-    `;
+    const orders = await getOrdersQuery;
+
     res.json(orders);
   } catch (error) {
     console.error("Database error:", error);
