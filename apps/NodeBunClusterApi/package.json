@@ -1,0 +1,16 @@
+{
+    "name": "node-bun-cluster-api",
+    "version": "0.1.0",
+    "description": "Performance focused Bun cluster API with PostgreSQL",
+    "type": "module",
+    "scripts": {
+        "dev": "bun run src/index.ts",
+        "start": "bun run src/index.ts"
+    },
+    "dependencies": {
+        "postgres": "^3.4.4"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    }
+}

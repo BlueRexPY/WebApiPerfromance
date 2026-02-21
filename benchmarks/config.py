@@ -137,6 +137,8 @@ SERVICES: dict[str, Service] = {
             "JS NestJS Fastify Cluster",
             "NodeNestFastifyClusterApi",
         ),
+        Service("bunclusterapi", 8047, "JS Bun Cluster", "NodeBunClusterApi"),
+        Service("denoparallelapi", 8048, "JS Deno Parallel", "NodeDenoParallelApi"),
     ]
 }
 

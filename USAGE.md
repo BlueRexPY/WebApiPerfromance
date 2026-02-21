@@ -110,6 +110,8 @@ python -m benchmarks stop
 | koaclusterapi        | 8044 |
 | nestjsexpresscluster | 8045 |
 | nestjsfastifycluster | 8046 |
+| bunclusterapi        | 8047 |
+| denoparallelapi      | 8048 |
 
 ## Test Types
 
