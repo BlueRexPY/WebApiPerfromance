@@ -1,4 +1,4 @@
-import { Pool } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
+import postgres from "npm:postgres";
 
 interface Order {
   id: number;
@@ -11,14 +11,19 @@ interface Order {
 const DATABASE_URL = Deno.env.get("DATABASE_URL") || "";
 const PORT = 8000;
 
-// Fix: Properly configure the pool with connection string parsing
-const pool = new Pool(DATABASE_URL, 120, true);
+const sql = postgres(DATABASE_URL, {
+  max: 120,
+  idle_timeout: 20,
+  connect_timeout: 10,
+  prepare: true,
+});
 
-const ORDERS_QUERY = `
+// Module-level PendingQuery — prepared statement cached on first execution
+const getOrdersQuery = sql<Order[]>`
   SELECT id, customer_id, total_cents, status, created_at
   FROM orders
-  LIMIT $1
-  OFFSET $2
+  LIMIT 100
+  OFFSET 1000
 `;
 
 async function handler(req: Request): Promise<Response> {
@@ -31,15 +36,9 @@ async function handler(req: Request): Promise<Response> {
   }
 
   if (url.pathname === "/orders" && req.method === "GET") {
-    const client = await pool.connect();
     try {
-      // Fix: Use proper query execution with queryObject
-      const result = await client.queryObject<Order>({
-        text: ORDERS_QUERY,
-        args: [100, 1000],
-      });
-
-      return new Response(JSON.stringify(result.rows), {
+      const orders = await getOrdersQuery;
+      return new Response(JSON.stringify(orders), {
         headers: { "Content-Type": "application/json" },
       });
     } catch (error) {
@@ -48,8 +47,6 @@ async function handler(req: Request): Promise<Response> {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
-    } finally {
-      client.release();
     }
   }
 

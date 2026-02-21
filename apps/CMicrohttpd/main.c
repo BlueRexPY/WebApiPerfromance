@@ -3,12 +3,13 @@
 #include <string.h>
 #include <signal.h>
 #include <pthread.h>
+#include <unistd.h>   /* sysconf */
 #include <microhttpd.h>
 #include <libpq-fe.h>
 
 #define PORT          8000
 #define POOL_SIZE     120
-#define THREAD_POOL   8
+/* THREAD_POOL resolved at runtime from sysconf(_SC_NPROCESSORS_ONLN) */
 #define ORDERS_BUF    (256 * 1024)  /* 256 KB initial buffer for /orders JSON */
 
 /* ── Connection pool ──────────────────────────────────────────────────────── */
@@ -280,7 +281,7 @@ int main(void)
         PORT,
         NULL, NULL,
         &request_handler, NULL,
-        MHD_OPTION_THREAD_POOL_SIZE, (unsigned int)THREAD_POOL,
+        MHD_OPTION_THREAD_POOL_SIZE, (unsigned int)sysconf(_SC_NPROCESSORS_ONLN),
         MHD_OPTION_END);
 
     if (!daemon) {

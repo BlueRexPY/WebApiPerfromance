@@ -1,35 +1,35 @@
 # C Microhttpd — Orders Benchmark
 
-**Tested**: 2026-02-20 03:34:47 UTC
+**Tested**: 2026-02-21 07:05:21 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8018/orders`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 5,580.41 |
-| Avg Latency | 25.67ms |
-| Max Latency | 94.12ms |
-| Total Requests | 111,624 |
-| Transfer/sec | 60.55MB |
+| Requests/sec | 10,254.81 |
+| Avg Latency | 25.10ms |
+| Max Latency | 186.54ms |
+| Total Requests | 205,312 |
+| Transfer/sec | 111.26MB |
 | Port | 8018 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 25.67ms | 22.42ms | 94.12ms | 75.52% |
-| Req/Sec | 2.80k | 1.08k | 7.59k | 91.75% |
+| Latency | 25.10ms | 29.21ms | 186.54ms | 79.25% |
+| Req/Sec | 5.15k | 1.36k | 7.11k | 66.75% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 12.16MiB |
+| Memory Usage | 5.809MiB |
 | Memory Limit | 1GiB |
-| Memory % | 1.19% |
+| Memory % | 0.57% |
 | CPU % | 0.00% |
-| PIDs | 9 |
+| PIDs | 33 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8018/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    25.67ms   22.42ms  94.12ms   75.52%
-    Req/Sec     2.80k     1.08k    7.59k    91.75%
-  111624 requests in 20.00s, 1.18GB read
-Requests/sec:   5580.41
-Transfer/sec:     60.55MB
+    Latency    25.10ms   29.21ms 186.54ms   79.25%
+    Req/Sec     5.15k     1.36k    7.11k    66.75%
+  205312 requests in 20.02s, 2.18GB read
+Requests/sec:  10254.81
+Transfer/sec:    111.26MB
 ```

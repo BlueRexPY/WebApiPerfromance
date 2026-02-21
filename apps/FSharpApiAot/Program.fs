@@ -105,6 +105,8 @@ let main args =
 
     let dataSourceBuilder = NpgsqlDataSourceBuilder(connectionString)
     dataSourceBuilder.EnableParameterLogging(false) |> ignore
+    let connStringBuilder: Npgsql.NpgsqlConnectionStringBuilder = dataSourceBuilder.ConnectionStringBuilder
+    connStringBuilder.MaxPoolSize <- 120
     let dataSource = dataSourceBuilder.Build()
 
     builder.Services.AddSingleton(dataSource) |> ignore

@@ -16,6 +16,7 @@ string? connectionString =
 
 NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
 dataSourceBuilder.EnableParameterLogging(false);
+dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 120;
 NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSingleton(dataSource);

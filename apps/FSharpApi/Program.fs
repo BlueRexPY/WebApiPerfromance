@@ -1,3 +1,12 @@
+module Program
+
+open System
+open System.Collections.Generic
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Builder
+open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.DependencyInjection
+open Npgsql
 
 [<CLIMutable>]
 type HelloResponse = { Message: string }
@@ -63,6 +72,8 @@ let main args =
 
     let dataSourceBuilder = NpgsqlDataSourceBuilder(connectionString)
     dataSourceBuilder.EnableParameterLogging(false) |> ignore
+    let connStringBuilder: Npgsql.NpgsqlConnectionStringBuilder = dataSourceBuilder.ConnectionStringBuilder
+    connStringBuilder.MaxPoolSize <- 120
     let dataSource = dataSourceBuilder.Build()
 
     builder.Services.AddSingleton(dataSource) |> ignore

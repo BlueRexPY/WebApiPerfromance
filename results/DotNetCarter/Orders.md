@@ -1,34 +1,34 @@
 # C# Carter — Orders Benchmark
 
-**Tested**: 2026-02-20 05:59:20 UTC
+**Tested**: 2026-02-21 07:13:17 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8035/orders`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 8,324.23 |
-| Avg Latency | 21.96ms |
-| Max Latency | 100.35ms |
-| Total Requests | 166,644 |
-| Transfer/sec | 88.44MB |
+| Requests/sec | 7,705.86 |
+| Avg Latency | 22.85ms |
+| Max Latency | 101.23ms |
+| Total Requests | 154,404 |
+| Transfer/sec | 81.87MB |
 | Port | 8035 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 21.96ms | 23.27ms | 100.35ms | 79.42% |
-| Req/Sec | 4.18k | 1.71k | 10.82k | 80.25% |
+| Latency | 22.85ms | 23.73ms | 101.23ms | 79.33% |
+| Req/Sec | 3.87k | 1.52k | 10.49k | 85.75% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 57.09MiB |
+| Memory Usage | 54.94MiB |
 | Memory Limit | 1GiB |
-| Memory % | 5.58% |
-| CPU % | 1.37% |
+| Memory % | 5.37% |
+| CPU % | 0.04% |
 | PIDs | 24 |
 
 ## Raw Output
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8035/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    21.96ms   23.27ms 100.35ms   79.42%
-    Req/Sec     4.18k     1.71k   10.82k    80.25%
-  166644 requests in 20.02s, 1.73GB read
-Requests/sec:   8324.23
-Transfer/sec:     88.44MB
+    Latency    22.85ms   23.73ms 101.23ms   79.33%
+    Req/Sec     3.87k     1.52k   10.49k    85.75%
+  154404 requests in 20.04s, 1.60GB read
+Requests/sec:   7705.86
+Transfer/sec:     81.87MB
 ```

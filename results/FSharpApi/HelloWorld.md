@@ -1,35 +1,35 @@
-# F# API — Hello World Benchmark
+# F# .NET API — Hello World Benchmark
 
-**Tested**: 2026-02-20 03:08:42 UTC
+**Tested**: 2026-02-21 07:18:18 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8019/`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 68,313.43 |
-| Avg Latency | 5.66ms |
-| Max Latency | 81.19ms |
-| Total Requests | 1,367,428 |
-| Transfer/sec | 12.12MB |
+| Requests/sec | 68,189.77 |
+| Avg Latency | 4.53ms |
+| Max Latency | 81.18ms |
+| Total Requests | 1,364,134 |
+| Transfer/sec | 12.10MB |
 | Port | 8019 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 5.66ms | 12.90ms | 81.19ms | 91.60% |
-| Req/Sec | 34.35k | 15.82k | 101.29k | 69.75% |
+| Latency | 4.53ms | 10.46ms | 81.18ms | 93.20% |
+| Req/Sec | 34.27k | 13.21k | 85.16k | 73.75% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 39.94MiB |
+| Memory Usage | 31.17MiB |
 | Memory Limit | 1GiB |
-| Memory % | 3.90% |
-| CPU % | 1.92% |
-| PIDs | 30 |
+| Memory % | 3.04% |
+| CPU % | 0.04% |
+| PIDs | 23 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8019/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.66ms   12.90ms  81.19ms   91.60%
-    Req/Sec    34.35k    15.82k  101.29k    69.75%
-  1367428 requests in 20.02s, 242.56MB read
-Requests/sec:  68313.43
-Transfer/sec:     12.12MB
+    Latency     4.53ms   10.46ms  81.18ms   93.20%
+    Req/Sec    34.27k    13.21k   85.16k    73.75%
+  1364134 requests in 20.00s, 241.97MB read
+Requests/sec:  68189.77
+Transfer/sec:     12.10MB
 ```

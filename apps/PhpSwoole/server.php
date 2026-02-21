@@ -21,8 +21,11 @@ function buildDsn(): array {
     ];
 }
 
-const POOL_SIZE = 30;
-const HELLO     = '{"message":"Hello, World!"}';
+// Per-worker pool size so that total connections across all workers ≈ 120
+$workerNum = swoole_cpu_num();
+$poolSize  = max(1, (int)ceil(120 / $workerNum));
+define('POOL_SIZE', $poolSize);
+define('HELLO',     '{"message":"Hello, World!"}');
 
 // Swoole coroutine-aware PDO connection pool using a Channel
 $pool = new Swoole\Coroutine\Channel(POOL_SIZE);
@@ -30,7 +33,7 @@ $pool = new Swoole\Coroutine\Channel(POOL_SIZE);
 $server = new Server('0.0.0.0', 8000, SWOOLE_BASE);
 
 $server->set([
-    'worker_num'            => swoole_cpu_num(),
+    'worker_num'            => $workerNum,
     'enable_coroutine'      => true,
     'http_compression'      => false,
     'open_http2_protocol'   => false,
