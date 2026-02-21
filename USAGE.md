@@ -100,6 +100,10 @@ python -m benchmarks stop
 | elixirplug      | 8034 |
 | dotnetcarter    | 8035 |
 | dotnetcarteraot | 8036 |
+| phplaravel      | 8037 |
+| nodekoaapi      | 8038 |
+| nodehonoapi     | 8039 |
+| rubyfalcon      | 8040 |
 
 ## Test Types
 

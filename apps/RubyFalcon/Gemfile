@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+ruby "3.3.0"
+
+gem "falcon", "~> 0.47"
+gem "pg", "~> 1.5"
+gem "connection_pool", "~> 2.4"

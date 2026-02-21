@@ -113,6 +113,10 @@ SERVICES: dict[str, Service] = {
         Service("elixirplug", 8034, "Elixir Plug", "ElixirPlug"),
         Service("dotnetcarter", 8035, "C# Carter", "DotNetCarter"),
         Service("dotnetcarteraot", 8036, "C# Carter AOT", "DotNetCarterAot"),
+        Service("phplaravel", 8037, "PHP Laravel", "PhpLaravel"),
+        Service("nodekoaapi", 8038, "JS Koa", "NodeKoaApi"),
+        Service("nodehonoapi", 8039, "JS Hono", "NodeHonoApi"),
+        Service("rubyfalcon", 8040, "Ruby Falcon", "RubyFalcon"),
     ]
 }
 
