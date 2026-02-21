@@ -7,7 +7,7 @@ def build_db_url
   if url.includes?("max_pool_size")
     url
   else
-    "#{url}?initial_pool_size=10&max_pool_size=90&max_idle_pool_size=10"
+    "#{url}?initial_pool_size=10&max_pool_size=120&max_idle_pool_size=10"
   end
 end
 
@@ -28,7 +28,7 @@ end
 
 get "/" do |env|
   env.response.content_type = "application/json"
-  %({"message":"Hello, World!"})
+  {message: "Hello, World!"}.to_json
 end
 
 get "/orders" do |env|

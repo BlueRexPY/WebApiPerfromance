@@ -33,13 +33,11 @@ if (cluster.isPrimary) {
     connectionTimeoutMillis: 2000,
   });
 
-  const HELLO_JSON = JSON.stringify({ message: "Hello, World!" });
-
   const app = uWS.App();
 
   app.get("/", (res) => {
     res.writeHeader("Content-Type", "application/json");
-    res.end(HELLO_JSON);
+    res.end(JSON.stringify({ message: "Hello, World!" }));
   });
 
   app.get("/orders", (res) => {

@@ -28,7 +28,7 @@ end
 # ── Database setup ─────────────────────────────────────────────────────────────
 def build_db_url : String
   url = ENV["DATABASE_URL"]? || raise "DATABASE_URL environment variable is not set"
-  url.includes?("max_pool_size") ? url : "#{url}?initial_pool_size=10&max_pool_size=90&max_idle_pool_size=10"
+  url.includes?("max_pool_size") ? url : "#{url}?initial_pool_size=10&max_pool_size=120&max_idle_pool_size=10"
 end
 
 DB_POOL = DB.open(build_db_url)

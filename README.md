@@ -16,9 +16,11 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | JS Deno Parallel               | 8048 | 167,880.22 | 841.65us    | 62.51ms     | 3,358,386      | 25.30MB      | 72.3MiB  |
 | Rust Axum                      | 8022 | 160,085.78 | 714.95us    | 47.65ms     | 3,202,007      | 20.61MB      | 3.754MiB |
 | JS Node Fastify Cluster        | 8042 | 154,504.70 | 1.60ms      | 197.81ms    | 3,090,521      | 29.17MB      | 67.56MiB |
+| JS Node uWS                    | 8064 | 146,561.93 | 0.87ms      | 38.71ms     | 2,931,886      | 21.25MB      | 12.59MiB |
 | JS Deno                        | 8011 | 142,008.63 | 0.89ms      | 55.51ms     | 2,840,349      | 21.40MB      | 108.3MiB |
+| JS Node uWS Cluster            | 8068 | 138,801.06 | 0.85ms      | 45.88ms     | 2,776,366      | 20.12MB      | 35.39MiB |
 | JS Bun                         | 8002 | 138,779.81 | 0.99ms      | 89.17ms     | 2,775,838      | 17.87MB      | 61.32MiB |
-| JS Bun Cluster                 | 8047 | 133,348.37 | 1.37ms      | 53.44ms     | 2,668,839      | 17.17MB      | 44.05MiB |
+| JS Node Bun Cluster            | 8047 | 133,348.37 | 1.37ms      | 53.44ms     | 2,668,839      | 17.17MB      | 44.05MiB |
 | JS Bun Hono                    | 8051 | 130,175.76 | 1.00ms      | 77.87ms     | 2,603,818      | 18.50MB      | 21.14MiB |
 | JS Node Koa Cluster            | 8044 | 128,326.33 | 1.44ms      | 148.60ms    | 2,566,940      | 24.11MB      | 64.74MiB |
 | JS Node NestJS Fastify Cluster | 8046 | 125,338.02 | 1.67ms      | 204.23ms    | 2,507,133      | 23.67MB      | 86.33MiB |
@@ -28,6 +30,7 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | Erlang Cowboy                  | 8010 | 108,596.31 | 1.18ms      | 69.26ms     | 2,172,176      | 15.64MB      | 110.1MiB |
 | JS Bun Hono Cluster            | 8057 | 104,025.87 | 1.65ms      | 63.01ms     | 2,080,852      | 14.78MB      | 52.55MiB |
 | JS Bun NestJS Fastify Cluster  | 8060 | 103,569.44 | 3.32ms      | 84.12ms     | 2,072,523      | 14.82MB      | 161.6MiB |
+| Crystal Kemal                  | 8061 | 101,919.44 | 1.19ms      | 37.71ms     | 2,038,644      | 17.50MB      | 15.11MiB |
 | JS Node Fastify                | 8003 | 100,921.74 | 1.64ms      | 245.68ms    | 2,018,702      | 19.06MB      | 90.28MiB |
 | JS Bun NestJS Fastify          | 8054 | 99,648.49  | 1.45ms      | 100.88ms    | 1,993,263      | 14.25MB      | 68.2MiB  |
 | JS Bun Fastify Cluster         | 8056 | 99,086.78  | 3.31ms      | 88.55ms     | 1,982,099      | 14.17MB      | 237.7MiB |
@@ -46,6 +49,7 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | F# .NET API                    | 8019 | 68,189.77  | 4.53ms      | 81.18ms     | 1,364,134      | 12.10MB      | 31.17MiB |
 | C# Carter                      | 8035 | 67,702.93  | 6.49ms      | 81.36ms     | 1,355,735      | 12.01MB      | 32.25MiB |
 | Elixir Phoenix                 | 8007 | 67,091.97  | 2.12ms      | 88.15ms     | 1,342,011      | 16.25MB      | 186.7MiB |
+| Crystal Lucky                  | 8062 | 66,714.76  | 1.80ms      | 21.13ms     | 1,334,446      | 16.03MB      | 14.34MiB |
 | JS Node Koa                    | 8038 | 57,831.27  | 2.62ms      | 306.44ms    | 1,156,768      | 10.86MB      | 26.36MiB |
 | C++ Drogon                     | 8017 | 57,398.12  | 13.89ms     | 72.96ms     | 1,148,704      | 9.42MB       | 15.43MiB |
 | Zig zap                        | 8024 | 46,060.17  | 14.64ms     | 78.95ms     | 922,067        | 8.79MB       | 31.94MiB |
@@ -61,15 +65,19 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | JS Node NestJS Express Cluster | 8045 | 32,234.77  | 6.27ms      | 377.36ms    | 644,756        | 8.05MB       | 102.5MiB |
 | Java Spring Boot               | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
 | JS Node Express                | 8014 | 28,702.16  | 4.95ms      | 375.47ms    | 574,069        | 5.39MB       | 101.7MiB |
+| Go Gin                         | 8066 | 27,973.53  | 19.85ms     | 146.98ms    | 560,841        | 4.00MB       | 21.64MiB |
 | Kotlin Ktor                    | 8027 | 26,392.53  | 13.53ms     | 108.33ms    | 527,895        | 2.47MB       | 173.5MiB |
 | Python FastAPI                 | 8004 | 26,128.34  | 12.14ms     | 68.81ms     | 522,898        | 3.79MB       | 209.5MiB |
 | JS Node NestJS Express         | 8029 | 22,594.41  | 7.17ms      | 539.74ms    | 451,933        | 5.65MB       | 45.64MiB |
+| Java Spring WebFlux            | 8065 | 22,165.38  | 14.36ms     | 163.75ms    | 443,923        | 2.07MB       | 142.1MiB |
 | Go Chi                         | 8023 | 20,670.33  | 21.06ms     | 94.38ms     | 413,480        | 2.68MB       | 18.82MiB |
 | Go net/http                    | 8032 | 19,104.87  | 21.36ms     | 133.70ms    | 382,352        | 2.48MB       | 17.21MiB |
 | Python Litestar                | 8000 | 13,861.22  | 19.59ms     | 78.61ms     | 277,275        | 2.01MB       | 184.7MiB |
+| Gleam Wisp                     | 8063 | 12,317.78  | 13.37ms     | 63.39ms     | 246,535        | 2.04MB       | 93.26MiB |
 | Ruby Sinatra                   | 8033 | 3,419.24   | 132.06ms    | 700.13ms    | 68,422         | 440.74KB     | 63.75MiB |
 | PHP Laravel                    | 8037 | 3,299.74   | 45.12ms     | 281.49ms    | 66,111         | 712.15KB     | 156.8MiB |
 | Ruby Rails                     | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
+| Python Flask                   | 8067 | 2,727.53\* | 40.40ms     | 232.01ms    | 54,601         | 460.80KB     | 89.76MiB |
 | Python Django                  | 8016 | 1,082.71\* | 149.23ms    | 1.69s       | 21,723         | 319.34KB     | 437.3MiB |
 
 **NOTE**: \* = Non-2xx/3xx responses or socket errors occurred
@@ -78,7 +86,7 @@ This repository contains performance-focused web API implementations in JS (Bun,
 
 | Framework                      | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ------------------------------ | ---- | ---------- | ----------- | ----------- | -------------- | ------------ | -------- |
-| JS Bun Cluster                 | 8047 | 27,628.28  | 4.36ms      | 24.95ms     | 552,627        | 294.84MB     | 47.51MiB |
+| JS Node Bun Cluster            | 8047 | 27,628.28  | 4.36ms      | 24.95ms     | 552,627        | 294.84MB     | 47.51MiB |
 | JS Bun Hono Cluster            | 8057 | 27,308.21  | 4.41ms      | 22.64ms     | 546,327        | 291.79MB     | 60.23MiB |
 | JS Deno Parallel               | 8048 | 18,937.49  | 6.33ms      | 17.64ms     | 378,848        | 202.51MB     | 76.05MiB |
 | JS Bun Hono                    | 8051 | 15,884.25  | 7.55ms      | 28.31ms     | 317,760        | 169.72MB     | 24.7MiB  |
@@ -97,6 +105,7 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | F# .NET API                    | 8019 | 7,505.31   | 23.10ms     | 96.60ms     | 150,420        | 79.74MB      | 59.72MiB |
 | JS Node Express                | 8014 | 7,062.54   | 21.13ms     | 973.39ms    | 141,295        | 75.79MB      | 104MiB   |
 | Ruby Falcon                    | 8040 | 7,012.41   | 26.65ms     | 733.92ms    | 140,349        | 75.99MB      | 112.8MiB |
+| Go Gin                         | 8066 | 6,719.73   | 29.75ms     | 372.20ms    | 134,574        | 73.76MB      | 60.76MiB |
 | JS Bun NestJS Fastify Cluster  | 8060 | 6,619.76   | 19.69ms     | 321.59ms    | 132,426        | 70.74MB      | 182MiB   |
 | JS Bun Koa Cluster             | 8058 | 6,267.72   | 24.85ms     | 678.06ms    | 125,408        | 66.98MB      | 131MiB   |
 | Elixir Plug                    | 8034 | 5,976.94   | 20.40ms     | 150.91ms    | 119,584        | 65.40MB      | 209.5MiB |
@@ -107,6 +116,7 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | JS Node Koa Cluster            | 8044 | 5,395.38   | 23.29ms     | 432.50ms    | 107,990        | 57.90MB      | 89.57MiB |
 | JS Bun Express Cluster         | 8055 | 5,383.80   | 25.50ms     | 522.14ms    | 107,705        | 57.53MB      | 160MiB   |
 | Elixir Phoenix                 | 8007 | 5,369.43   | 22.34ms     | 64.47ms     | 107,447        | 58.93MB      | 213.6MiB |
+| JS Node uWS Cluster            | 8068 | 5,155.84   | 24.26ms     | 320.72ms    | 103,135        | 55.10MB      | 82.21MiB |
 | Go Chi                         | 8023 | 4,929.02   | 36.65ms     | 653.67ms    | 98,804         | 54.04MB      | 62.18MiB |
 | Go net/http                    | 8032 | 4,927.33   | 36.62ms     | 677.12ms    | 98,605         | 54.02MB      | 59.77MiB |
 | JS Node Express Cluster        | 8041 | 4,784.64   | 26.83ms     | 497.11ms    | 95,720         | 51.34MB      | 92.03MiB |
@@ -124,19 +134,25 @@ This repository contains performance-focused web API implementations in JS (Bun,
 | JS Node NestJS Fastify         | 8030 | 3,393.83   | 39.34ms     | 1.03s       | 67,904         | 36.42MB      | 50.28MiB |
 | Erlang Cowboy                  | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
 | Python FastAPI                 | 8004 | 3,385.60   | 36.43ms     | 90.21ms     | 67,720         | 36.83MB      | 219.2MiB |
+| JS Node uWS                    | 8064 | 3,239.11   | 37.44ms     | 309.31ms    | 64,792         | 34.62MB      | 43.41MiB |
 | JS Node Hono                   | 8039 | 3,068.89   | 40.59ms     | 706.47ms    | 61,399         | 32.89MB      | 49.7MiB  |
 | JS Node NestJS Express         | 8029 | 2,785.96   | 49.84ms     | 1.23s       | 55,753         | 30.07MB      | 53.66MiB |
 | C libuv                        | 8031 | 2,484.98\* | 42.26ms     | 220.51ms    | 49,744         | 26.92MB      | 9.461MiB |
 | PHP Laravel                    | 8037 | 2,165.20   | 60.50ms     | 273.60ms    | 43,316         | 23.67MB      | 161.7MiB |
+| Gleam Wisp                     | 8063 | 2,126.94   | 56.37ms     | 159.72ms    | 42,581         | 23.16MB      | 120.3MiB |
 | C++ Drogon                     | 8017 | 1,889.10   | 66.90ms     | 394.96ms    | 37,859         | 20.56MB      | 44.86MiB |
 | JS Deno                        | 8011 | 1,662.90   | 72.51ms     | 311.88ms    | 33,311         | 17.78MB      | 177MiB   |
+| Python Flask                   | 8067 | 1,616.70\* | 74.86ms     | 204.13ms    | 32,388         | 17.62MB      | 90.04MiB |
 | Ruby Sinatra                   | 8033 | 1,246.67   | 229.73ms    | 1.18s       | 24,955         | 13.52MB      | 66.74MiB |
 | Kotlin Ktor                    | 8027 | 1,026.68\* | 139.66ms    | 1.29s       | 20,590         | 11.12MB      | 213.5MiB |
 | Java Micronaut                 | 8026 | 978.53     | 136.32ms    | 942.33ms    | 19,607         | 10.43MB      | 206.2MiB |
 | Haskell Servant                | 8006 | 796.44\*   | 135.25ms    | 1.95s       | 15,974         | 8.68MB       | 317.1MiB |
 | Swift Vapor                    | 8012 | 579.65     | 206.29ms    | 698.48ms    | 11,633         | 5.99MB       | 60.86MiB |
 | Java Spring Boot               | 8009 | 571.97\*   | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
+| Java Spring WebFlux            | 8065 | 542.12\*   | 217.04ms    | 1.91s       | 10,868         | 6.03MB       | 236.4MiB |
+| Crystal Kemal                  | 8061 | 483.99     | 270.64ms    | 1.18s       | 9,689          | 5.00MB       | 35.81MiB |
 | Python Django                  | 8016 | 470.49\*   | 265.57ms    | 1.99s       | 9,428          | 5.19MB       | 490.1MiB |
+| Crystal Lucky                  | 8062 | 465.35     | 276.11ms    | 1.18s       | 9,318          | 4.84MB       | 51.9MiB  |
 | Ruby Rails                     | 8015 | 423.29\*   | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
 
 **NOTE**: \* = Non-2xx/3xx responses or socket errors occurred

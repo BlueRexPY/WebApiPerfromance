@@ -202,8 +202,6 @@ SERVICES: dict[str, Service] = {
         Service("gleamapi", 8063, "Gleam Wisp", "GleamApi"),
         Service("uwsapi", 8064, "JS Node uWS", "NodeUwsApi"),
         Service("uwsclusterapi", 8068, "JS Node uWS Cluster", "NodeUwsClusterApi"),
-        Service("bunuwsapi", 8069, "JS Bun uWS", "BunUwsApi"),
-        Service("bunuwsclusterapi", 8070, "JS Bun uWS Cluster", "BunUwsClusterApi"),
         Service("springwebflux", 8065, "Java Spring WebFlux", "JavaSpringWebFlux"),
         Service("gogin", 8066, "Go Gin", "GoGin"),
         Service("pythonflask", 8067, "Python Flask", "PythonFlask"),
