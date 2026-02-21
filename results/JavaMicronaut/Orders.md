@@ -1,34 +1,34 @@
 # Java Micronaut — Orders Benchmark
 
-**Tested**: 2026-02-20 05:32:09 UTC
+**Tested**: 2026-02-21 06:55:40 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8026/orders`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 1,096.13 |
-| Avg Latency | 147.81ms |
-| Max Latency | 1.90s |
-| Total Requests | 21,982 |
-| Transfer/sec | 11.69MB |
+| Requests/sec | 978.53 |
+| Avg Latency | 136.32ms |
+| Max Latency | 942.33ms |
+| Total Requests | 19,607 |
+| Transfer/sec | 10.43MB |
 | Port | 8026 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 147.81ms | 172.52ms | 1.90s | 89.56% |
-| Req/Sec | 550.93 | 393.81 | 2.05k | 67.50% |
+| Latency | 136.32ms | 113.76ms | 942.33ms | 63.05% |
+| Req/Sec | 491.88 | 331.54 | 1.91k | 80.00% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 172.9MiB |
+| Memory Usage | 206.2MiB |
 | Memory Limit | 1GiB |
-| Memory % | 16.88% |
-| CPU % | 1.86% |
+| Memory % | 20.13% |
+| CPU % | 10.75% |
 | PIDs | 147 |
 
 ## Raw Output
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8026/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   147.81ms  172.52ms   1.90s    89.56%
-    Req/Sec   550.93    393.81     2.05k    67.50%
-  21982 requests in 20.05s, 234.37MB read
-Requests/sec:   1096.13
-Transfer/sec:     11.69MB
+    Latency   136.32ms  113.76ms 942.33ms   63.05%
+    Req/Sec   491.88    331.54     1.91k    80.00%
+  19607 requests in 20.04s, 209.05MB read
+Requests/sec:    978.53
+Transfer/sec:     10.43MB
 ```

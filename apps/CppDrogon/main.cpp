@@ -105,7 +105,8 @@ int main() {
     
     app().setLogLevel(trantor::Logger::kWarn);
     app().addListener("0.0.0.0", 8000);
-    app().setThreadNum(14);
+    // 0 → Drogon uses std::thread::hardware_concurrency() (= num logical CPUs)
+    app().setThreadNum(0);
     app().run();
     
     return 0;

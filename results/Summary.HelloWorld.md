@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-21 06:40:21 UTC
+**Generated**: 2026-02-21 06:55:41 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -14,8 +14,9 @@
 
 | Framework                 | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ------------------------- | ---- | ---------- | ----------- | ----------- | -------------- | ------------ | -------- |
+| Rust Actix                | 8005 | 204,901.52 | 563.69us    | 51.45ms     | 4,098,380      | 26.38MB      | 5.477MiB |
 | Haskell Servant           | 8006 | 185,813.73 | 703.71us    | 84.63ms     | 3,716,357      | 33.85MB      | 297.1MiB |
-| JS Deno Parallel          | 8048 | 166,758.54 | 0.90ms      | 74.78ms     | 3,335,523      | 25.13MB      | 82.07MiB |
+| JS Deno Parallel          | 8048 | 167,880.22 | 841.65us    | 62.51ms     | 3,358,386      | 25.30MB      | 72.3MiB  |
 | Rust Axum                 | 8022 | 160,085.78 | 714.95us    | 47.65ms     | 3,202,007      | 20.61MB      | 3.754MiB |
 | JS Fastify Cluster        | 8042 | 154,504.70 | 1.60ms      | 197.81ms    | 3,090,521      | 29.17MB      | 67.56MiB |
 | JS Deno                   | 8011 | 142,008.63 | 0.89ms      | 55.51ms     | 2,840,349      | 21.40MB      | 108.3MiB |
@@ -37,9 +38,8 @@
 | Elixir Phoenix            | 8007 | 67,091.97  | 2.12ms      | 88.15ms     | 1,342,011      | 16.25MB      | 186.7MiB |
 | C Microhttpd              | 8018 | 59,634.69  | 12.47ms     | 70.84ms     | 1,194,125      | 7.68MB       | 11.93MiB |
 | JS Koa                    | 8038 | 57,831.27  | 2.62ms      | 306.44ms    | 1,156,768      | 10.86MB      | 26.36MiB |
-| Rust Actix                | 8005 | 51,658.53  | 11.60ms     | 65.38ms     | 1,033,337      | 6.65MB       | 4.469MiB |
+| C++ Drogon                | 8017 | 57,398.12  | 13.89ms     | 72.96ms     | 1,148,704      | 9.42MB       | 15.43MiB |
 | Zig zap                   | 8024 | 46,060.17  | 14.64ms     | 78.95ms     | 922,067        | 8.79MB       | 31.94MiB |
-| C++ Drogon                | 8017 | 43,358.87  | 13.77ms     | 72.20ms     | 867,315        | 7.11MB       | 16.37MiB |
 | JS Hono                   | 8039 | 42,931.40  | 3.86ms      | 420.64ms    | 858,748        | 7.45MB       | 28.5MiB  |
 | JS Express Cluster        | 8041 | 41,453.36  | 4.91ms      | 301.45ms    | 829,224        | 7.79MB       | 85.52MiB |
 | Swift Vapor               | 8012 | 39,226.07  | 3.14ms      | 89.18ms     | 784,615        | 6.51MB       | 38.1MiB  |
@@ -47,9 +47,9 @@
 | Java Quarkus              | 8021 | 36,468.24  | 10.92ms     | 121.21ms    | 729,580        | 3.90MB       | 160.3MiB |
 | Go Fiber                  | 8008 | 33,699.88  | 18.91ms     | 136.12ms    | 674,858        | 4.82MB       | 13.04MiB |
 | Ruby Falcon               | 8040 | 33,294.17  | 11.29ms     | 63.36ms     | 666,781        | 3.84MB       | 89.22MiB |
+| Java Micronaut            | 8026 | 32,341.25  | 13.54ms     | 89.91ms     | 648,245        | 4.16MB       | 173.4MiB |
 | JS NestJS Express Cluster | 8045 | 32,234.77  | 6.27ms      | 377.36ms    | 644,756        | 8.05MB       | 102.5MiB |
 | Java Spring Boot          | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
-| Java Micronaut            | 8026 | 30,816.49  | 13.84ms     | 127.61ms    | 616,499        | 3.97MB       | 111.4MiB |
 | JS Express                | 8014 | 30,646.63  | 4.87ms      | 406.17ms    | 613,046        | 5.76MB       | 39.7MiB  |
 | Kotlin Ktor               | 8027 | 26,392.53  | 13.53ms     | 108.33ms    | 527,895        | 2.47MB       | 173.5MiB |
 | Python FastAPI            | 8004 | 26,128.34  | 12.14ms     | 68.81ms     | 522,898        | 3.79MB       | 209.5MiB |

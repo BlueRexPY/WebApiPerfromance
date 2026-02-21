@@ -106,7 +106,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_orders)
     })
     .bind("0.0.0.0:8000")?
-    .workers(14)
+    // workers() not set → Actix defaults to std::thread::available_parallelism() (= num logical CPUs)
     .run()
     .await
 }

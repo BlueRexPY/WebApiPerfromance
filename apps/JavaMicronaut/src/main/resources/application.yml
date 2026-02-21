@@ -2,8 +2,7 @@ micronaut:
   server:
     port: 8000
     netty:
-      worker:
-        threads: 16
+      # threads not set → Netty defaults to 2 × available processors
       max-content-length: 1048576
 
 datasources:

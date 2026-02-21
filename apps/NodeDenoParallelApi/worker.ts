@@ -3,8 +3,11 @@
  *
  * Each worker creates its own DB pool and HTTP server.
  * reusePort: true → SO_REUSEPORT allows multiple workers to share port 8000.
+ *
+ * Uses npm:postgres (same porsager/postgres driver as Bun/Node) for binary-
+ * protocol PG access, significantly faster than deno.land/x/postgres.
  */
-import { Pool } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
+import postgres from "npm:postgres";
 
 interface Order {
   id: number;
@@ -19,13 +22,19 @@ const NUM_WORKERS = parseInt(Deno.env.get("WORKERS") ?? "2", 10);
 // Each worker gets an equal share of the total 120-connection budget
 const POOL_SIZE = Math.ceil(120 / NUM_WORKERS);
 
-const pool = new Pool(DATABASE_URL, POOL_SIZE, true);
+const sql = postgres(DATABASE_URL, {
+  max: POOL_SIZE,
+  idle_timeout: 20,
+  connect_timeout: 10,
+  prepare: true,
+});
 
-const ORDERS_QUERY = `
+// Module-level PendingQuery — prepared statement is cached on the DB server
+const getOrdersQuery = sql<Order[]>`
   SELECT id, customer_id, total_cents, status, created_at
   FROM orders
-  LIMIT $1
-  OFFSET $2
+  LIMIT 100
+  OFFSET 1000
 `;
 
 async function handler(req: Request): Promise<Response> {
@@ -38,13 +47,9 @@ async function handler(req: Request): Promise<Response> {
   }
 
   if (url.pathname === "/orders" && req.method === "GET") {
-    const client = await pool.connect();
     try {
-      const result = await client.queryObject<Order>({
-        text: ORDERS_QUERY,
-        args: [100, 1000],
-      });
-      return new Response(JSON.stringify(result.rows), {
+      const orders = await getOrdersQuery;
+      return new Response(JSON.stringify(orders), {
         headers: { "Content-Type": "application/json" },
       });
     } catch (error) {
@@ -53,8 +58,6 @@ async function handler(req: Request): Promise<Response> {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
-    } finally {
-      client.release();
     }
   }
 
