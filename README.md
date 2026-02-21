@@ -1,6 +1,91 @@
 # Web API Performance Comparison
 
-This repository contains performance-focused web API implementations in JS (Bun, Deno, Fastify, Express), Python (FastAPI, Litestar, Django), Rust (Actix), Go (Fiber), Elixir (Phoenix), Erlang (Cowboy), C# (.NET API and AOT), F# (.NET API and AOT), Java (Spring Boot and Quarkus), Haskell (Servant), C++ (Drogon), Swift (Vapor), and Ruby (Rails). The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more complex "Orders" endpoint (`GET /orders`).
+<!-- Languages -->
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
+![Elixir](https://img.shields.io/badge/Elixir-4B275F?style=flat-square&logo=elixir&logoColor=white)
+![Erlang](https://img.shields.io/badge/Erlang-A90533?style=flat-square&logo=erlang&logoColor=white)
+![C#](https://img.shields.io/badge/C%23-239120?style=flat-square&logo=csharp&logoColor=white)
+![F#](https://img.shields.io/badge/F%23-378BBA?style=flat-square&logo=fsharp&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Haskell](https://img.shields.io/badge/Haskell-5D4F85?style=flat-square&logo=haskell&logoColor=white)
+![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)
+![C](https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=c&logoColor=black)
+![Swift](https://img.shields.io/badge/Swift-FA7343?style=flat-square&logo=swift&logoColor=white)
+![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat-square&logo=ruby&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)
+![Crystal](https://img.shields.io/badge/Crystal-000000?style=flat-square&logo=crystal&logoColor=white)
+![Gleam](https://img.shields.io/badge/Gleam-FFAFF3?style=flat-square&logo=gleam&logoColor=black)
+![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat-square&logo=zig&logoColor=white)
+
+<!-- Runtimes -->
+
+![Bun](https://img.shields.io/badge/Bun-000000?style=flat-square&logo=bun&logoColor=white)
+![Deno](https://img.shields.io/badge/Deno-000000?style=flat-square&logo=deno&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+
+<!-- JS Frameworks -->
+
+![Fastify](https://img.shields.io/badge/Fastify-000000?style=flat-square&logo=fastify&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)
+![Hono](https://img.shields.io/badge/Hono-E36002?style=flat-square&logo=hono&logoColor=white)
+![Koa](https://img.shields.io/badge/Koa-33333D?style=flat-square&logo=koa&logoColor=white)
+![uWebSockets](https://img.shields.io/badge/uWebSockets-000000?style=flat-square&logoColor=white)
+
+<!-- Python Frameworks -->
+
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Django](https://img.shields.io/badge/Django-092E20?style=flat-square&logo=django&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white)
+![Litestar](https://img.shields.io/badge/Litestar-1C2333?style=flat-square&logoColor=white)
+
+<!-- JVM Frameworks -->
+
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![Spring WebFlux](https://img.shields.io/badge/Spring_WebFlux-6DB33F?style=flat-square&logo=spring&logoColor=white)
+![Quarkus](https://img.shields.io/badge/Quarkus-4695EB?style=flat-square&logo=quarkus&logoColor=white)
+![Micronaut](https://img.shields.io/badge/Micronaut-1F2D3D?style=flat-square&logoColor=white)
+![Ktor](https://img.shields.io/badge/Ktor-087CFA?style=flat-square&logo=ktor&logoColor=white)
+
+<!-- .NET Frameworks -->
+
+![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat-square&logo=dotnet&logoColor=white)
+
+<!-- Other Frameworks -->
+
+![Phoenix](https://img.shields.io/badge/Phoenix-FD4F00?style=flat-square&logo=phoenixframework&logoColor=white)
+![Rails](https://img.shields.io/badge/Rails-CC0000?style=flat-square&logo=rubyonrails&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![Vapor](https://img.shields.io/badge/Vapor-2196F3?style=flat-square&logo=vapor&logoColor=white)
+
+This repository contains performance-focused web API implementations across **20 languages** and **60+ frameworks/runtimes**:
+
+- **JavaScript**: [Bun](apps/NodeBunApi/), [Deno](apps/NodeDenoApi/), [Node.js](apps/NodeExpressApi/) — with Fastify, Express, Koa, Hono, NestJS (Express & Fastify), uWebSockets (single & cluster modes)
+- **Python**: [FastAPI](apps/PythonFastApi/), [Litestar](apps/PythonLightStar/), [Django](apps/DjangoApi/), [Flask](apps/PythonFlask/)
+- **Rust**: [Actix](apps/RustActix/), [Axum](apps/RustAxum/)
+- **Go**: [Fiber](apps/GoFiber/), [Gin](apps/GoGin/), [Chi](apps/GoChi/), [net/http](apps/GoNetHttp/)
+- **Elixir**: [Phoenix](apps/ElixirPhoenix/), [Plug](apps/ElixirPlug/)
+- **Erlang**: [Cowboy](apps/ErlangCowboy/)
+- **C# / F#**: [.NET API](apps/DotNetApi/), [.NET AOT](apps/DotNetApiAot/), [Carter](apps/DotNetCarter/), [Carter AOT](apps/DotNetCarterAot/), [F# API](apps/FSharpApi/), [F# AOT](apps/FSharpApiAot/)
+- **Java**: [Spring Boot](apps/JavaSpringBoot/), [Spring WebFlux](apps/JavaSpringWebFlux/), [Quarkus](apps/JavaQuarkus/), [Micronaut](apps/JavaMicronaut/)
+- **Kotlin**: [Ktor](apps/KotlinKtor/)
+- **Haskell**: [Servant](apps/HaskellServant/)
+- **C++**: [Drogon](apps/CppDrogon/)
+- **C**: [Microhttpd](apps/CMicrohttpd/), [libuv](apps/CLibuv/)
+- **Swift**: [Vapor](apps/SwiftVapor/)
+- **Ruby**: [Rails](apps/RubyRails/), [Sinatra](apps/RubySinatra/), [Falcon](apps/RubyFalcon/)
+- **PHP**: [Laravel](apps/PhpLaravel/), [Swoole](apps/PhpSwoole/)
+- **Crystal**: [Kemal](apps/CrystalKemal/), [Lucky](apps/CrystalLucky/)
+- **Gleam**: [Wisp](apps/GleamApi/)
+- **Zig**: [zap](apps/ZigZap/)
+
+The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more complex "Orders" endpoint (`GET /orders`).
 
 ## Benchmark Results
 
