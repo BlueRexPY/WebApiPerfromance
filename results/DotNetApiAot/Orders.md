@@ -1,34 +1,34 @@
-# .NET AOT — Orders Benchmark
+# C# .NET AOT — Orders Benchmark
 
-**Tested**: 2026-02-20 03:18:14 UTC
+**Tested**: 2026-02-23 16:43:34 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8013/orders`
 
 ## Summary
 
-| Metric         | Value    |
-| -------------- | -------- |
-| Requests/sec   | 8,970.70 |
-| Avg Latency    | 19.63ms  |
-| Max Latency    | 96.22ms  |
-| Total Requests | 179,745  |
-| Transfer/sec   | 95.30MB  |
-| Port           | 8013     |
+| Metric         | Value     |
+| -------------- | --------- |
+| Requests/sec   | 11,097.91 |
+| Avg Latency    | 16.17ms   |
+| Max Latency    | 104.75ms  |
+| Total Requests | 222,126   |
+| Transfer/sec   | 117.90MB  |
+| Port           | 8013      |
 
 ## Thread Stats
 
-| Stat    | Avg     | Stdev   | Max     | +/- Stdev |
-| ------- | ------- | ------- | ------- | --------- |
-| Latency | 19.63ms | 20.63ms | 96.22ms | 80.72%    |
-| Req/Sec | 4.51k   | 1.64k   | 9.00k   | 74.00%    |
+| Stat    | Avg     | Stdev   | Max      | +/- Stdev |
+| ------- | ------- | ------- | -------- | --------- |
+| Latency | 16.17ms | 17.32ms | 104.75ms | 81.76%    |
+| Req/Sec | 5.58k   | 1.56k   | 9.78k    | 66.75%    |
 
 ## Resource Usage
 
 | Metric       | Value    |
 | ------------ | -------- |
-| Memory Usage | 35.16MiB |
+| Memory Usage | 61.38MiB |
 | Memory Limit | 1GiB     |
-| Memory %     | 3.43%    |
-| CPU %        | 0.02%    |
+| Memory %     | 5.99%    |
+| CPU %        | 0.03%    |
 | PIDs         | 21       |
 
 ## Raw Output
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8013/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    19.63ms   20.63ms  96.22ms   80.72%
-    Req/Sec     4.51k     1.64k    9.00k    74.00%
-  179745 requests in 20.04s, 1.86GB read
-Requests/sec:   8970.70
-Transfer/sec:     95.30MB
+    Latency    16.17ms   17.32ms 104.75ms   81.76%
+    Req/Sec     5.58k     1.56k    9.78k    66.75%
+  222126 requests in 20.02s, 2.30GB read
+Requests/sec:  11097.91
+Transfer/sec:    117.90MB
 ```

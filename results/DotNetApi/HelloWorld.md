@@ -1,35 +1,35 @@
-# .NET API — Hello World Benchmark
+# C# .NET API — Hello World Benchmark
 
-**Tested**: 2026-02-20 03:20:45 UTC
+**Tested**: 2026-02-23 16:44:10 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8001/`
 
 ## Summary
 
 | Metric         | Value     |
 | -------------- | --------- |
-| Requests/sec   | 68,495.90 |
-| Avg Latency    | 5.84ms    |
-| Max Latency    | 80.25ms   |
-| Total Requests | 1,370,303 |
-| Transfer/sec   | 12.15MB   |
+| Requests/sec   | 85,108.64 |
+| Avg Latency    | 5.18ms    |
+| Max Latency    | 82.93ms   |
+| Total Requests | 1,702,806 |
+| Transfer/sec   | 15.10MB   |
 | Port           | 8001      |
 
 ## Thread Stats
 
 | Stat    | Avg    | Stdev   | Max     | +/- Stdev |
 | ------- | ------ | ------- | ------- | --------- |
-| Latency | 5.84ms | 12.80ms | 80.25ms | 90.82%    |
-| Req/Sec | 34.43k | 18.08k  | 104.07k | 71.50%    |
+| Latency | 5.18ms | 12.02ms | 82.93ms | 91.26%    |
+| Req/Sec | 42.78k | 21.06k  | 99.48k  | 60.75%    |
 
 ## Resource Usage
 
 | Metric       | Value    |
 | ------------ | -------- |
-| Memory Usage | 32.61MiB |
+| Memory Usage | 41.55MiB |
 | Memory Limit | 1GiB     |
-| Memory %     | 3.18%    |
-| CPU %        | 2.60%    |
-| PIDs         | 23       |
+| Memory %     | 4.06%    |
+| CPU %        | 0.03%    |
+| PIDs         | 24       |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8001/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.84ms   12.80ms  80.25ms   90.82%
-    Req/Sec    34.43k    18.08k  104.07k    71.50%
-  1370303 requests in 20.01s, 243.07MB read
-Requests/sec:  68495.90
-Transfer/sec:     12.15MB
+    Latency     5.18ms   12.02ms  82.93ms   91.26%
+    Req/Sec    42.78k    21.06k   99.48k    60.75%
+  1702806 requests in 20.01s, 302.05MB read
+Requests/sec:  85108.64
+Transfer/sec:     15.10MB
 ```

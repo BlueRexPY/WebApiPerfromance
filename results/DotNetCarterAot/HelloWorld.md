@@ -1,33 +1,33 @@
 # C# Carter AOT — Hello World Benchmark
 
-**Tested**: 2026-02-21 07:09:19 UTC
+**Tested**: 2026-02-23 16:46:06 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8036/`
 
 ## Summary
 
 | Metric         | Value     |
 | -------------- | --------- |
-| Requests/sec   | 73,044.17 |
-| Avg Latency    | 4.80ms    |
-| Max Latency    | 74.32ms   |
-| Total Requests | 1,461,660 |
-| Transfer/sec   | 12.96MB   |
+| Requests/sec   | 80,958.61 |
+| Avg Latency    | 5.82ms    |
+| Max Latency    | 74.65ms   |
+| Total Requests | 1,619,425 |
+| Transfer/sec   | 14.36MB   |
 | Port           | 8036      |
 
 ## Thread Stats
 
 | Stat    | Avg    | Stdev   | Max     | +/- Stdev |
 | ------- | ------ | ------- | ------- | --------- |
-| Latency | 4.80ms | 11.11ms | 74.32ms | 92.24%    |
-| Req/Sec | 36.73k | 15.25k  | 103.85k | 66.00%    |
+| Latency | 5.82ms | 13.06ms | 74.65ms | 90.16%    |
+| Req/Sec | 40.69k | 21.08k  | 102.50k | 68.00%    |
 
 ## Resource Usage
 
 | Metric       | Value    |
 | ------------ | -------- |
-| Memory Usage | 15.17MiB |
+| Memory Usage | 33.73MiB |
 | Memory Limit | 1GiB     |
-| Memory %     | 1.48%    |
+| Memory %     | 3.29%    |
 | CPU %        | 0.02%    |
 | PIDs         | 20       |
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8036/
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     4.80ms   11.11ms  74.32ms   92.24%
-    Req/Sec    36.73k    15.25k  103.85k    66.00%
-  1461660 requests in 20.01s, 259.27MB read
-Requests/sec:  73044.17
-Transfer/sec:     12.96MB
+    Latency     5.82ms   13.06ms  74.65ms   90.16%
+    Req/Sec    40.69k    21.08k  102.50k    68.00%
+  1619425 requests in 20.00s, 287.26MB read
+Requests/sec:  80958.61
+Transfer/sec:     14.36MB
 ```

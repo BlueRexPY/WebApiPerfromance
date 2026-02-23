@@ -800,6 +800,216 @@ services:
     networks:
       - webapi-network
 
+  dotnetefcoreaot:
+    build: ./apps/DotNetEfCoreAot
+    ports:
+      - "8069:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetefcore:
+    build: ./apps/DotNetEfCore
+    ports:
+      - "8070:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetdapper:
+    build: ./apps/DotNetDapper
+    ports:
+      - "8071:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarterefcore:
+    build: ./apps/DotNetCarterEfCore
+    ports:
+      - "8072:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarterdapper:
+    build: ./apps/DotNetCarterDapper
+    ports:
+      - "8073:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarteraotefcore:
+    build: ./apps/DotNetCarterAotEfCore
+    ports:
+      - "8074:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  dotnetcarteraotdapper:
+    build: ./apps/DotNetCarterAotDapper
+    ports:
+      - "8075:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  fsharpefcore:
+    build: ./apps/FSharpEfCore
+    ports:
+      - "8076:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  fsharpdapper:
+    build: ./apps/FSharpDapper
+    ports:
+      - "8077:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
+  fsharpaotdapper:
+    build: ./apps/FSharpAotDapper
+    ports:
+      - "8078:8000"
+    environment:
+      DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+    networks:
+      - webapi-network
+
   phplaravel:
     build: ./apps/PhpLaravel
     ports:

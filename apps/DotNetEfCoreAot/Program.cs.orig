@@ -1,0 +1,47 @@
+using System.Text.Json.Serialization;
+using CompiledModels;
+using Microsoft.EntityFrameworkCore;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// Configure JSON serialization for AOT
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
+
+string connectionString =
+    Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("DATABASE_URL is not set");
+
+// Use DbContext pool with the AOT pre-compiled model
+builder.Services.AddDbContextPool<OrdersDbContext>(
+    options =>
+        options
+            .UseNpgsql(connectionString, npgsql => npgsql.MaxBatchSize(120))
+            .UseModel(OrdersDbContextModel.Instance),
+    poolSize: 128
+);
+
+WebApplication app = builder.Build();
+
+app.MapGet("/", () => new HelloResponse { Message = "Hello, World!" });
+
+app.MapGet(
+    "/orders",
+    async (OrdersDbContext db) =>
+        await db.Orders.AsNoTracking().OrderBy(o => o.Id).Skip(1000).Take(100).ToListAsync()
+);
+
+app.Run();
+
+public record HelloResponse
+{
+    public string Message { get; init; } = "Hello, World!";
+}
+
+[JsonSerializable(typeof(HelloResponse))]
+[JsonSerializable(typeof(List<Order>))]
+[JsonSerializable(typeof(Order))]
+internal partial class AppJsonSerializerContext : JsonSerializerContext { }
