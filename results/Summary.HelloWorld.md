@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-23 16:58:09 UTC
+**Generated**: 2026-02-25 07:41:39 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -69,6 +69,7 @@
 | JS Node Hono                   | 8039 | 42,931.40  | 3.86ms      | 420.64ms    | 858,748        | 7.45MB       | 28.5MiB  |
 | JS Node Express Cluster        | 8041 | 41,453.36  | 4.91ms      | 301.45ms    | 829,224        | 7.79MB       | 85.52MiB |
 | Swift Vapor                    | 8012 | 39,226.07  | 3.14ms      | 89.18ms     | 784,615        | 6.51MB       | 38.1MiB  |
+| COBOL GnuCOBOL                 | 8081 | 37,180.36  | 2.35ms      | 49.67ms     | 744,322        | 4.15MB       | 20.85MiB |
 | C libuv                        | 8031 | 36,984.32  | 2.60ms      | 40.81ms     | 740,036        | 4.13MB       | 4.035MiB |
 | PHP Swoole                     | 8028 | 36,746.54  | 18.87ms     | 96.30ms     | 734,981        | 6.55MB       | 47.66MiB |
 | Java Quarkus                   | 8021 | 36,468.24  | 10.92ms     | 121.21ms    | 729,580        | 3.90MB       | 160.3MiB |
@@ -87,10 +88,13 @@
 | Go net/http                    | 8032 | 19,104.87  | 21.36ms     | 133.70ms    | 382,352        | 2.48MB       | 17.21MiB |
 | Python Litestar                | 8000 | 13,861.22  | 19.59ms     | 78.61ms     | 277,275        | 2.01MB       | 184.7MiB |
 | Gleam Wisp                     | 8063 | 12,317.78  | 13.37ms     | 63.39ms     | 246,535        | 2.04MB       | 93.26MiB |
+| Ada (GNAT.Sockets)             | 8079 | 11,495.25  | 13.88ms     | 79.92ms     | 230,215        | 1.28MB       | 3.809MiB |
+| Fortran GFortran               | 8083 | 5,468.92   | 25.08ms     | 76.96ms     | 109,588        | 624.87KB     | 5.504MiB |
 | Ruby Sinatra                   | 8033 | 3,419.24   | 132.06ms    | 700.13ms    | 68,422         | 440.74KB     | 63.75MiB |
 | PHP Laravel                    | 8037 | 3,299.74   | 45.12ms     | 281.49ms    | 66,111         | 712.15KB     | 156.8MiB |
 | Ruby Rails                     | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
 | Python Flask                   | 8067 | 2,727.53\* | 40.40ms     | 232.01ms    | 54,601         | 460.80KB     | 89.76MiB |
+| Pascal fpWeb                   | 8082 | 2,194.52\* | 236.76ms    | 1.90s       | 43,899         | 246.46KB     | 3.758MiB |
 | Python Django                  | 8016 | 1,082.71\* | 149.23ms    | 1.69s       | 21,723         | 319.34KB     | 437.3MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

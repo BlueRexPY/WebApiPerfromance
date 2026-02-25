@@ -124,6 +124,10 @@ python -m benchmarks stop
 | bunkoaclusterapi         | 8058 |
 | bunnestexpressclusterapi | 8059 |
 | bunnestfastifyclusterapi | 8060 |
+| adaapi                   | 8079 |
+| cobolapi                 | 8081 |
+| pascalapi                | 8082 |
+| fortranapi               | 8083 |
 
 ## Test Types
 

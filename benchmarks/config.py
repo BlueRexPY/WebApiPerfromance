@@ -225,6 +225,10 @@ SERVICES: dict[str, Service] = {
         Service("springwebflux", 8065, "Java Spring WebFlux", "JavaSpringWebFlux"),
         Service("gogin", 8066, "Go Gin", "GoGin"),
         Service("pythonflask", 8067, "Python Flask", "PythonFlask"),
+        Service("adaapi", 8079, "Ada (GNAT.Sockets)", "AdaApi"),
+        Service("cobolapi", 8081, "COBOL GnuCOBOL", "CobolApi"),
+        Service("pascalapi", 8082, "Pascal fpWeb", "PascalApi"),
+        Service("fortranapi", 8083, "Fortran GFortran", "FortranApi"),
     ]
 }
 

@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-02-23 16:58:09 UTC
+**Generated**: 2026-02-25 07:41:39 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -71,7 +71,9 @@
 | Erlang Cowboy                  | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
 | Python FastAPI                 | 8004 | 3,385.60   | 36.43ms     | 90.21ms     | 67,720         | 36.83MB      | 219.2MiB |
 | JS Node uWS                    | 8064 | 3,239.11   | 37.44ms     | 309.31ms    | 64,792         | 34.62MB      | 43.41MiB |
+| Ada (GNAT.Sockets)             | 8079 | 3,234.96   | 40.82ms     | 104.05ms    | 64,829         | 35.04MB      | 5.969MiB |
 | JS Node Hono                   | 8039 | 3,068.89   | 40.59ms     | 706.47ms    | 61,399         | 32.89MB      | 49.7MiB  |
+| COBOL GnuCOBOL                 | 8081 | 2,941.64   | 43.00ms     | 100.59ms    | 58,872         | 31.87MB      | 21.09MiB |
 | JS Node NestJS Express         | 8029 | 2,785.96   | 49.84ms     | 1.23s       | 55,753         | 30.07MB      | 53.66MiB |
 | F# EF Core                     | 8076 | 2,532.90   | 49.01ms     | 295.17ms    | 50,838         | 26.91MB      | 104.4MiB |
 | C libuv                        | 8031 | 2,484.98\* | 42.26ms     | 220.51ms    | 49,744         | 26.92MB      | 9.461MiB |
@@ -92,5 +94,7 @@
 | Python Django                  | 8016 | 470.49\*   | 265.57ms    | 1.99s       | 9,428          | 5.19MB       | 490.1MiB |
 | Crystal Lucky                  | 8062 | 465.35     | 276.11ms    | 1.18s       | 9,318          | 4.84MB       | 51.9MiB  |
 | Ruby Rails                     | 8015 | 423.29\*   | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
+| Pascal fpWeb                   | 8082 | 322.28\*   | 393.40ms    | 2.00s       | 6,450          | 4.01MB       | 5.184MiB |
+| Fortran GFortran               | 8083 | 0.05       | 1.99ms      | 1.99ms      | 1              | 567.46B      | 14.47MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

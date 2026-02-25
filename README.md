@@ -22,6 +22,10 @@
 ![Crystal](https://img.shields.io/badge/Crystal-000000?style=flat-square&logo=crystal&logoColor=white)
 ![Gleam](https://img.shields.io/badge/Gleam-FFAFF3?style=flat-square&logo=gleam&logoColor=black)
 ![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat-square&logo=zig&logoColor=white)
+![Ada](https://img.shields.io/badge/Ada-02f88c?style=flat-square&logoColor=white)
+![COBOL](https://img.shields.io/badge/COBOL-005CA5?style=flat-square&logoColor=white)
+![Pascal](https://img.shields.io/badge/Pascal-E90029?style=flat-square&logoColor=white)
+![Fortran](https://img.shields.io/badge/Fortran-734F96?style=flat-square&logo=fortran&logoColor=white)
 
 <!-- Runtimes -->
 
@@ -64,15 +68,18 @@
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white)
 ![Vapor](https://img.shields.io/badge/Vapor-2196F3?style=flat-square&logo=vapor&logoColor=white)
 
-This repository contains performance-focused web API implementations across **20 languages** and **60+ frameworks/runtimes**:
+This repository contains performance-focused web API implementations across **23 languages** and **80+ frameworks/runtimes**:
 
-- **JavaScript**: [Bun](apps/NodeBunApi/), [Deno](apps/NodeDenoApi/), [Node.js](apps/NodeExpressApi/) — with Fastify, Express, Koa, Hono, NestJS (Express & Fastify), uWebSockets (single & cluster modes)
+- **JavaScript / Node.js**: [Express](apps/NodeExpressApi/), [Express Cluster](apps/NodeExpressClusterApi/), [Fastify](apps/NodeFastifyApi/), [Fastify Cluster](apps/NodeFastifyClusterApi/), [Koa](apps/NodeKoaApi/), [Koa Cluster](apps/NodeKoaClusterApi/), [Hono](apps/NodeHonoApi/), [Hono Cluster](apps/NodeHonoClusterApi/), [NestJS Express](apps/NodeNestExpressApi/), [NestJS Express Cluster](apps/NodeNestExpressClusterApi/), [NestJS Fastify](apps/NodeNestFastifyApi/), [NestJS Fastify Cluster](apps/NodeNestFastifyClusterApi/), [uWebSockets](apps/NodeUwsApi/), [uWebSockets Cluster](apps/NodeUwsClusterApi/)
+- **JavaScript / Bun**: [Bun](apps/NodeBunApi/), [Bun Cluster](apps/NodeBunClusterApi/), [Express](apps/NodeBunExpressApi/), [Express Cluster](apps/NodeBunExpressClusterApi/), [Fastify](apps/NodeBunFastifyApi/), [Fastify Cluster](apps/NodeBunFastifyClusterApi/), [Hono](apps/NodeBunHonoApi/), [Hono Cluster](apps/NodeBunHonoClusterApi/), [Koa](apps/NodeBunKoaApi/), [Koa Cluster](apps/NodeBunKoaClusterApi/), [NestJS Express](apps/NodeBunNestExpressApi/), [NestJS Express Cluster](apps/NodeBunNestExpressClusterApi/), [NestJS Fastify](apps/NodeBunNestFastifyApi/), [NestJS Fastify Cluster](apps/NodeBunNestFastifyClusterApi/)
+- **JavaScript / Deno**: [Deno](apps/NodeDenoApi/), [Deno Parallel](apps/NodeDenoParallelApi/)
 - **Python**: [FastAPI](apps/PythonFastApi/), [Litestar](apps/PythonLightStar/), [Django](apps/DjangoApi/), [Flask](apps/PythonFlask/)
 - **Rust**: [Actix](apps/RustActix/), [Axum](apps/RustAxum/)
 - **Go**: [Fiber](apps/GoFiber/), [Gin](apps/GoGin/), [Chi](apps/GoChi/), [net/http](apps/GoNetHttp/)
 - **Elixir**: [Phoenix](apps/ElixirPhoenix/), [Plug](apps/ElixirPlug/)
 - **Erlang**: [Cowboy](apps/ErlangCowboy/)
-- **C# / F#**: [.NET API](apps/DotNetApi/), [.NET AOT](apps/DotNetApiAot/), [Carter](apps/DotNetCarter/), [Carter AOT](apps/DotNetCarterAot/), [F# API](apps/FSharpApi/), [F# AOT](apps/FSharpApiAot/)
+- **C#**: [.NET API](apps/DotNetApi/), [.NET AOT](apps/DotNetApiAot/), [Carter](apps/DotNetCarter/), [Carter AOT](apps/DotNetCarterAot/), [Carter AOT + Dapper](apps/DotNetCarterAotDapper/), [Carter AOT + EF Core](apps/DotNetCarterAotEfCore/), [Carter + Dapper](apps/DotNetCarterDapper/), [Carter + EF Core](apps/DotNetCarterEfCore/), [Dapper](apps/DotNetDapper/), [EF Core](apps/DotNetEfCore/), [EF Core AOT](apps/DotNetEfCoreAot/)
+- **F#**: [F# API](apps/FSharpApi/), [F# AOT](apps/FSharpApiAot/), [F# Dapper](apps/FSharpDapper/), [F# EF Core](apps/FSharpEfCore/), [F# AOT + Dapper](apps/FSharpAotDapper/)
 - **Java**: [Spring Boot](apps/JavaSpringBoot/), [Spring WebFlux](apps/JavaSpringWebFlux/), [Quarkus](apps/JavaQuarkus/), [Micronaut](apps/JavaMicronaut/)
 - **Kotlin**: [Ktor](apps/KotlinKtor/)
 - **Haskell**: [Servant](apps/HaskellServant/)
@@ -84,13 +91,17 @@ This repository contains performance-focused web API implementations across **20
 - **Crystal**: [Kemal](apps/CrystalKemal/), [Lucky](apps/CrystalLucky/)
 - **Gleam**: [Wisp](apps/GleamApi/)
 - **Zig**: [zap](apps/ZigZap/)
+- **Ada**: [GNAT](apps/AdaApi/)
+- **COBOL**: [GnuCOBOL](apps/CobolApi/)
+- **Pascal**: [fpWeb](apps/PascalApi/)
+- **Fortran**: [GFortran](apps/FortranApi/)
 
 The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more complex "Orders" endpoint (`GET /orders`).
 
 ## Benchmark Results
 
 **Test Configuration**: `wrk -t 2 -c 120 -d 20s` — 2 threads, 120 connections, 20 seconds  
-**Tested**: 2026-02-20 03:34:48 UTC
+**Tested**: 2026-02-25 07:41:39 UTC
 
 ### Hello World (`GET /`)
 
@@ -116,31 +127,42 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | JS Bun Hono Cluster            | 8057 | 104,025.87 | 1.65ms      | 63.01ms     | 2,080,852      | 14.78MB      | 52.55MiB |
 | JS Bun NestJS Fastify Cluster  | 8060 | 103,569.44 | 3.32ms      | 84.12ms     | 2,072,523      | 14.82MB      | 161.6MiB |
 | Crystal Kemal                  | 8061 | 101,919.44 | 1.19ms      | 37.71ms     | 2,038,644      | 17.50MB      | 15.11MiB |
+| F# AOT Dapper                  | 8078 | 101,445.39 | 5.68ms      | 77.67ms     | 2,029,641      | 17.99MB      | 16.78MiB |
 | JS Node Fastify                | 8003 | 100,921.74 | 1.64ms      | 245.68ms    | 2,018,702      | 19.06MB      | 90.28MiB |
 | JS Bun NestJS Fastify          | 8054 | 99,648.49  | 1.45ms      | 100.88ms    | 1,993,263      | 14.25MB      | 68.2MiB  |
 | JS Bun Fastify Cluster         | 8056 | 99,086.78  | 3.31ms      | 88.55ms     | 1,982,099      | 14.17MB      | 237.7MiB |
 | JS Bun Express                 | 8049 | 98,480.07  | 1.36ms      | 90.91ms     | 1,969,829      | 14.09MB      | 55.44MiB |
+| C# Carter AOT EF Core          | 8074 | 96,485.39  | 4.62ms      | 73.46ms     | 1,929,793      | 17.11MB      | 50.23MiB |
 | JS Bun NestJS Express Cluster  | 8059 | 95,976.10  | 3.06ms      | 95.22ms     | 1,919,943      | 19.68MB      | 160.8MiB |
+| C# Carter AOT Dapper           | 8075 | 93,110.08  | 6.52ms      | 75.16ms     | 1,863,982      | 16.52MB      | 36.98MiB |
 | JS Node Hono Cluster           | 8043 | 92,498.68  | 2.27ms      | 261.50ms    | 1,850,262      | 16.05MB      | 65.12MiB |
 | JS Bun Koa                     | 8052 | 88,181.55  | 1.56ms      | 67.38ms     | 1,763,855      | 12.61MB      | 60.54MiB |
 | JS Node NestJS Fastify         | 8030 | 87,719.48  | 1.86ms      | 244.97ms    | 1,754,643      | 16.56MB      | 33.78MiB |
 | C Microhttpd                   | 8018 | 87,121.48  | 13.23ms     | 99.02ms     | 1,742,720      | 11.22MB      | 5.348MiB |
-| C# .NET AOT                    | 8013 | 80,032.55  | 3.98ms      | 70.59ms     | 1,600,855      | 14.20MB      | 15.34MiB |
+| C# .NET API                    | 8001 | 85,108.64  | 5.18ms      | 82.93ms     | 1,702,806      | 15.10MB      | 41.55MiB |
+| C# Carter                      | 8035 | 83,960.09  | 4.17ms      | 83.95ms     | 1,679,575      | 14.89MB      | 34.27MiB |
+| C# Carter AOT                  | 8036 | 80,958.61  | 5.82ms      | 74.65ms     | 1,619,425      | 14.36MB      | 33.73MiB |
 | JS Bun NestJS Express          | 8053 | 76,837.89  | 1.74ms      | 78.85ms     | 1,536,990      | 15.75MB      | 71.61MiB |
-| C# Carter AOT                  | 8036 | 73,044.17  | 4.80ms      | 74.32ms     | 1,461,660      | 12.96MB      | 15.17MiB |
+| C# EF Core                     | 8070 | 73,428.55  | 4.27ms      | 83.62ms     | 1,469,842      | 13.03MB      | 31.75MiB |
+| C# .NET AOT                    | 8013 | 70,931.65  | 6.73ms      | 75.12ms     | 1,419,164      | 12.58MB      | 38.66MiB |
+| C# Carter Dapper               | 8073 | 70,884.07  | 5.28ms      | 80.57ms     | 1,418,893      | 12.57MB      | 31.7MiB  |
+| F# EF Core                     | 8076 | 70,492.79  | 5.35ms      | 79.70ms     | 1,410,387      | 12.50MB      | 33.68MiB |
 | Elixir Plug                    | 8034 | 69,919.49  | 2.07ms      | 71.02ms     | 1,398,547      | 14.54MB      | 160.5MiB |
-| F# .NET AOT                    | 8020 | 69,588.24  | 4.70ms      | 69.90ms     | 1,392,675      | 12.34MB      | 15.38MiB |
-| C# .NET API                    | 8001 | 68,495.90  | 5.84ms      | 80.25ms     | 1,370,303      | 12.15MB      | 32.61MiB |
-| F# .NET API                    | 8019 | 68,189.77  | 4.53ms      | 81.18ms     | 1,364,134      | 12.10MB      | 31.17MiB |
-| C# Carter                      | 8035 | 67,702.93  | 6.49ms      | 81.36ms     | 1,355,735      | 12.01MB      | 32.25MiB |
+| C# Dapper                      | 8071 | 69,819.14  | 5.41ms      | 81.09ms     | 1,396,663      | 12.38MB      | 32.15MiB |
+| F# .NET API                    | 8019 | 68,064.85  | 4.25ms      | 76.61ms     | 1,362,255      | 12.07MB      | 34.86MiB |
+| F# Dapper                      | 8077 | 67,658.45  | 6.23ms      | 80.07ms     | 1,353,427      | 12.00MB      | 33.91MiB |
 | Elixir Phoenix                 | 8007 | 67,091.97  | 2.12ms      | 88.15ms     | 1,342,011      | 16.25MB      | 186.7MiB |
 | Crystal Lucky                  | 8062 | 66,714.76  | 1.80ms      | 21.13ms     | 1,334,446      | 16.03MB      | 14.34MiB |
+| C# EF Core AOT                 | 8069 | 65,272.32  | 6.33ms      | 93.57ms     | 1,305,667      | 11.58MB      | 52.84MiB |
+| F# .NET AOT                    | 8020 | 65,174.10  | 5.84ms      | 76.28ms     | 1,303,753      | 11.56MB      | 34.91MiB |
 | JS Node Koa                    | 8038 | 57,831.27  | 2.62ms      | 306.44ms    | 1,156,768      | 10.86MB      | 26.36MiB |
 | C++ Drogon                     | 8017 | 57,398.12  | 13.89ms     | 72.96ms     | 1,148,704      | 9.42MB       | 15.43MiB |
+| C# Carter EF Core              | 8072 | 55,641.79  | 7.58ms      | 84.43ms     | 1,114,093      | 9.87MB       | 32.57MiB |
 | Zig zap                        | 8024 | 46,060.17  | 14.64ms     | 78.95ms     | 922,067        | 8.79MB       | 31.94MiB |
 | JS Node Hono                   | 8039 | 42,931.40  | 3.86ms      | 420.64ms    | 858,748        | 7.45MB       | 28.5MiB  |
 | JS Node Express Cluster        | 8041 | 41,453.36  | 4.91ms      | 301.45ms    | 829,224        | 7.79MB       | 85.52MiB |
 | Swift Vapor                    | 8012 | 39,226.07  | 3.14ms      | 89.18ms     | 784,615        | 6.51MB       | 38.1MiB  |
+| COBOL GnuCOBOL                 | 8081 | 37,180.36  | 2.35ms      | 49.67ms     | 744,322        | 4.15MB       | 20.85MiB |
 | C libuv                        | 8031 | 36,984.32  | 2.60ms      | 40.81ms     | 740,036        | 4.13MB       | 4.035MiB |
 | PHP Swoole                     | 8028 | 36,746.54  | 18.87ms     | 96.30ms     | 734,981        | 6.55MB       | 47.66MiB |
 | Java Quarkus                   | 8021 | 36,468.24  | 10.92ms     | 121.21ms    | 729,580        | 3.90MB       | 160.3MiB |
@@ -159,10 +181,13 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | Go net/http                    | 8032 | 19,104.87  | 21.36ms     | 133.70ms    | 382,352        | 2.48MB       | 17.21MiB |
 | Python Litestar                | 8000 | 13,861.22  | 19.59ms     | 78.61ms     | 277,275        | 2.01MB       | 184.7MiB |
 | Gleam Wisp                     | 8063 | 12,317.78  | 13.37ms     | 63.39ms     | 246,535        | 2.04MB       | 93.26MiB |
+| Ada (GNAT.Sockets)             | 8079 | 11,495.25  | 13.88ms     | 79.92ms     | 230,215        | 1.28MB       | 3.809MiB |
+| Fortran GFortran               | 8083 | 5,468.92   | 25.08ms     | 76.96ms     | 109,588        | 624.87KB     | 5.504MiB |
 | Ruby Sinatra                   | 8033 | 3,419.24   | 132.06ms    | 700.13ms    | 68,422         | 440.74KB     | 63.75MiB |
 | PHP Laravel                    | 8037 | 3,299.74   | 45.12ms     | 281.49ms    | 66,111         | 712.15KB     | 156.8MiB |
 | Ruby Rails                     | 8015 | 3,103.00   | 44.47ms     | 1.16s       | 62,156         | 869.69KB     | 296.5MiB |
 | Python Flask                   | 8067 | 2,727.53\* | 40.40ms     | 232.01ms    | 54,601         | 460.80KB     | 89.76MiB |
+| Pascal fpWeb                   | 8082 | 2,194.52\* | 236.76ms    | 1.90s       | 43,899         | 246.46KB     | 3.758MiB |
 | Python Django                  | 8016 | 1,082.71\* | 149.23ms    | 1.69s       | 21,723         | 319.34KB     | 437.3MiB |
 
 **NOTE**: \* = Non-2xx/3xx responses or socket errors occurred
@@ -178,16 +203,23 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | JS Bun                         | 8002 | 15,455.76  | 7.76ms      | 25.50ms     | 309,152        | 164.94MB     | 71.47MiB |
 | Rust Axum                      | 8022 | 14,961.55  | 11.05ms     | 273.42ms    | 299,291        | 162.52MB     | 9.605MiB |
 | JS Bun Express                 | 8049 | 14,649.64  | 8.19ms      | 39.19ms     | 293,110        | 156.54MB     | 58.61MiB |
+| C# Carter AOT EF Core          | 8074 | 11,542.63  | 16.35ms     | 92.28ms     | 231,351        | 122.63MB     | 75.02MiB |
+| F# AOT Dapper                  | 8078 | 11,107.95  | 15.50ms     | 89.47ms     | 222,335        | 119.07MB     | 35.24MiB |
+| C# .NET AOT                    | 8013 | 11,097.91  | 16.17ms     | 104.75ms    | 222,126        | 117.90MB     | 61.38MiB |
+| C# EF Core AOT                 | 8069 | 10,837.59  | 16.96ms     | 94.23ms     | 217,138        | 115.14MB     | 120.9MiB |
 | C Microhttpd                   | 8018 | 10,254.81  | 25.10ms     | 186.54ms    | 205,312        | 111.26MB     | 5.809MiB |
+| C# Carter AOT Dapper           | 8075 | 10,180.90  | 18.66ms     | 98.35ms     | 203,973        | 108.16MB     | 58.77MiB |
 | Rust Actix                     | 8005 | 10,015.38  | 14.88ms     | 171.72ms    | 200,328        | 108.79MB     | 12.2MiB  |
-| C# Carter AOT                  | 8036 | 9,015.45   | 19.81ms     | 96.70ms     | 180,493        | 95.78MB      | 31.76MiB |
-| C# .NET AOT                    | 8013 | 8,970.70   | 19.63ms     | 96.22ms     | 179,745        | 95.30MB      | 35.16MiB |
+| F# Dapper                      | 8077 | 9,663.76   | 19.07ms     | 93.33ms     | 193,584        | 102.67MB     | 72.45MiB |
+| C# Carter                      | 8035 | 9,483.80   | 19.69ms     | 94.97ms     | 189,802        | 100.76MB     | 58.09MiB |
+| C# .NET API                    | 8001 | 8,885.70   | 20.70ms     | 100.33ms    | 177,834        | 94.40MB      | 70.48MiB |
+| C# Carter Dapper               | 8073 | 8,841.10   | 20.51ms     | 97.02ms     | 177,008        | 93.93MB      | 71.13MiB |
 | Java Quarkus                   | 8021 | 8,660.41   | 27.97ms     | 830.87ms    | 173,299        | 91.50MB      | 206.4MiB |
-| F# .NET AOT                    | 8020 | 8,347.39   | 19.35ms     | 93.80ms     | 167,313        | 89.48MB      | 49.88MiB |
+| C# Carter AOT                  | 8036 | 8,353.54   | 20.49ms     | 98.74ms     | 167,376        | 88.75MB      | 49.17MiB |
 | Zig zap                        | 8024 | 8,331.74   | 27.98ms     | 106.42ms    | 167,054        | 90.92MB      | 35.02MiB |
-| C# .NET API                    | 8001 | 8,193.76   | 21.65ms     | 102.03ms    | 164,048        | 87.05MB      | 61.7MiB  |
-| C# Carter                      | 8035 | 7,705.86   | 22.85ms     | 101.23ms    | 154,404        | 81.87MB      | 54.94MiB |
-| F# .NET API                    | 8019 | 7,505.31   | 23.10ms     | 96.60ms     | 150,420        | 79.74MB      | 59.72MiB |
+| F# .NET AOT                    | 8020 | 8,228.84   | 19.39ms     | 93.36ms     | 164,780        | 88.21MB      | 58.41MiB |
+| F# .NET API                    | 8019 | 8,107.83   | 21.66ms     | 95.25ms     | 162,566        | 86.14MB      | 57.63MiB |
+| C# Dapper                      | 8071 | 7,858.15   | 21.71ms     | 114.75ms    | 157,322        | 83.48MB      | 60.66MiB |
 | JS Node Express                | 8014 | 7,062.54   | 21.13ms     | 973.39ms    | 141,295        | 75.79MB      | 104MiB   |
 | Ruby Falcon                    | 8040 | 7,012.41   | 26.65ms     | 733.92ms    | 140,349        | 75.99MB      | 112.8MiB |
 | Go Gin                         | 8066 | 6,719.73   | 29.75ms     | 372.20ms    | 134,574        | 73.76MB      | 60.76MiB |
@@ -216,13 +248,18 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | JS Node Fastify                | 8003 | 3,846.61   | 35.55ms     | 701.60ms    | 76,981         | 41.28MB      | 108.2MiB |
 | Python Litestar                | 8000 | 3,776.86   | 34.83ms     | 162.60ms    | 75,553         | 41.09MB      | 197.5MiB |
 | JS Node Koa                    | 8038 | 3,750.58   | 33.74ms     | 765.63ms    | 75,029         | 40.25MB      | 47.28MiB |
+| C# EF Core                     | 8070 | 3,502.58   | 39.30ms     | 204.96ms    | 70,255         | 37.21MB      | 91.77MiB |
 | JS Node NestJS Fastify         | 8030 | 3,393.83   | 39.34ms     | 1.03s       | 67,904         | 36.42MB      | 50.28MiB |
 | Erlang Cowboy                  | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
 | Python FastAPI                 | 8004 | 3,385.60   | 36.43ms     | 90.21ms     | 67,720         | 36.83MB      | 219.2MiB |
 | JS Node uWS                    | 8064 | 3,239.11   | 37.44ms     | 309.31ms    | 64,792         | 34.62MB      | 43.41MiB |
+| Ada (GNAT.Sockets)             | 8079 | 3,234.96   | 40.82ms     | 104.05ms    | 64,829         | 35.04MB      | 5.969MiB |
 | JS Node Hono                   | 8039 | 3,068.89   | 40.59ms     | 706.47ms    | 61,399         | 32.89MB      | 49.7MiB  |
+| COBOL GnuCOBOL                 | 8081 | 2,941.64   | 43.00ms     | 100.59ms    | 58,872         | 31.87MB      | 21.09MiB |
 | JS Node NestJS Express         | 8029 | 2,785.96   | 49.84ms     | 1.23s       | 55,753         | 30.07MB      | 53.66MiB |
+| F# EF Core                     | 8076 | 2,532.90   | 49.01ms     | 295.17ms    | 50,838         | 26.91MB      | 104.4MiB |
 | C libuv                        | 8031 | 2,484.98\* | 42.26ms     | 220.51ms    | 49,744         | 26.92MB      | 9.461MiB |
+| C# Carter EF Core              | 8072 | 2,420.60   | 51.28ms     | 309.41ms    | 48,483         | 25.72MB      | 83.34MiB |
 | PHP Laravel                    | 8037 | 2,165.20   | 60.50ms     | 273.60ms    | 43,316         | 23.67MB      | 161.7MiB |
 | Gleam Wisp                     | 8063 | 2,126.94   | 56.37ms     | 159.72ms    | 42,581         | 23.16MB      | 120.3MiB |
 | C++ Drogon                     | 8017 | 1,889.10   | 66.90ms     | 394.96ms    | 37,859         | 20.56MB      | 44.86MiB |
@@ -239,5 +276,7 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | Python Django                  | 8016 | 470.49\*   | 265.57ms    | 1.99s       | 9,428          | 5.19MB       | 490.1MiB |
 | Crystal Lucky                  | 8062 | 465.35     | 276.11ms    | 1.18s       | 9,318          | 4.84MB       | 51.9MiB  |
 | Ruby Rails                     | 8015 | 423.29\*   | 194.37ms    | 1.80s       | 8,486          | 4.58MB       | 318.1MiB |
+| Pascal fpWeb                   | 8082 | 322.28\*   | 393.40ms    | 2.00s       | 6,450          | 4.01MB       | 5.184MiB |
+| Fortran GFortran               | 8083 | 0.05       | 1.99ms      | 1.99ms      | 1              | 567.46B      | 14.47MiB |
 
 **NOTE**: \* = Non-2xx/3xx responses or socket errors occurred
