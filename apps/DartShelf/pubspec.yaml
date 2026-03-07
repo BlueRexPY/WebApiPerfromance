@@ -1,0 +1,11 @@
+name: dart_shelf_api
+description: Dart Shelf HTTP API for benchmarking
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  shelf: ^1.4.1
+  postgres: ^3.3.4

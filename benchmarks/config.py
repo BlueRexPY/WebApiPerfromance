@@ -229,6 +229,8 @@ SERVICES: dict[str, Service] = {
         Service("cobolapi", 8081, "COBOL GnuCOBOL", "CobolApi"),
         Service("pascalapi", 8082, "Pascal fpWeb", "PascalApi"),
         Service("fortranapi", 8083, "Fortran GFortran", "FortranApi"),
+        Service("luaopenresty", 8084, "Lua OpenResty", "LuaOpenResty"),
+        Service("dartshelf", 8085, "Dart Shelf", "DartShelf"),
     ]
 }
 

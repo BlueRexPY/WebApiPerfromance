@@ -26,6 +26,8 @@
 ![COBOL](https://img.shields.io/badge/COBOL-005CA5?style=flat-square&logoColor=white)
 ![Pascal](https://img.shields.io/badge/Pascal-E90029?style=flat-square&logoColor=white)
 ![Fortran](https://img.shields.io/badge/Fortran-734F96?style=flat-square&logo=fortran&logoColor=white)
+![Lua](https://img.shields.io/badge/Lua-2C2D72?style=flat-square&logo=lua&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=dart&logoColor=white)
 
 <!-- Runtimes -->
 
@@ -68,7 +70,7 @@
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white)
 ![Vapor](https://img.shields.io/badge/Vapor-2196F3?style=flat-square&logo=vapor&logoColor=white)
 
-This repository contains performance-focused web API implementations across **23 languages** and **80+ frameworks/runtimes**:
+This repository contains performance-focused web API implementations across **25 languages** and **80+ frameworks/runtimes**:
 
 - **JavaScript / Node.js**: [Express](apps/NodeExpressApi/), [Express Cluster](apps/NodeExpressClusterApi/), [Fastify](apps/NodeFastifyApi/), [Fastify Cluster](apps/NodeFastifyClusterApi/), [Koa](apps/NodeKoaApi/), [Koa Cluster](apps/NodeKoaClusterApi/), [Hono](apps/NodeHonoApi/), [Hono Cluster](apps/NodeHonoClusterApi/), [NestJS Express](apps/NodeNestExpressApi/), [NestJS Express Cluster](apps/NodeNestExpressClusterApi/), [NestJS Fastify](apps/NodeNestFastifyApi/), [NestJS Fastify Cluster](apps/NodeNestFastifyClusterApi/), [uWebSockets](apps/NodeUwsApi/), [uWebSockets Cluster](apps/NodeUwsClusterApi/)
 - **JavaScript / Bun**: [Bun](apps/NodeBunApi/), [Bun Cluster](apps/NodeBunClusterApi/), [Express](apps/NodeBunExpressApi/), [Express Cluster](apps/NodeBunExpressClusterApi/), [Fastify](apps/NodeBunFastifyApi/), [Fastify Cluster](apps/NodeBunFastifyClusterApi/), [Hono](apps/NodeBunHonoApi/), [Hono Cluster](apps/NodeBunHonoClusterApi/), [Koa](apps/NodeBunKoaApi/), [Koa Cluster](apps/NodeBunKoaClusterApi/), [NestJS Express](apps/NodeBunNestExpressApi/), [NestJS Express Cluster](apps/NodeBunNestExpressClusterApi/), [NestJS Fastify](apps/NodeBunNestFastifyApi/), [NestJS Fastify Cluster](apps/NodeBunNestFastifyClusterApi/)
@@ -95,13 +97,15 @@ This repository contains performance-focused web API implementations across **23
 - **COBOL**: [GnuCOBOL](apps/CobolApi/)
 - **Pascal**: [fpWeb](apps/PascalApi/)
 - **Fortran**: [GFortran](apps/FortranApi/)
+- **Lua**: [OpenResty](apps/LuaOpenResty/)
+- **Dart**: [Shelf](apps/DartShelf/)
 
 The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more complex "Orders" endpoint (`GET /orders`).
 
 ## Benchmark Results
 
 **Test Configuration**: `wrk -t 2 -c 120 -d 20s` — 2 threads, 120 connections, 20 seconds  
-**Tested**: 2026-02-25 07:41:39 UTC
+**Generated**: 2026-03-07 14:01:09 UTC
 
 ### Hello World (`GET /`)
 
@@ -142,6 +146,7 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | C# .NET API                    | 8001 | 85,108.64  | 5.18ms      | 82.93ms     | 1,702,806      | 15.10MB      | 41.55MiB |
 | C# Carter                      | 8035 | 83,960.09  | 4.17ms      | 83.95ms     | 1,679,575      | 14.89MB      | 34.27MiB |
 | C# Carter AOT                  | 8036 | 80,958.61  | 5.82ms      | 74.65ms     | 1,619,425      | 14.36MB      | 33.73MiB |
+| Lua OpenResty                  | 8084 | 78,059.22  | 10.32ms     | 65.02ms     | 1,562,356      | 15.41MB      | 35.21MiB |
 | JS Bun NestJS Express          | 8053 | 76,837.89  | 1.74ms      | 78.85ms     | 1,536,990      | 15.75MB      | 71.61MiB |
 | C# EF Core                     | 8070 | 73,428.55  | 4.27ms      | 83.62ms     | 1,469,842      | 13.03MB      | 31.75MiB |
 | C# .NET AOT                    | 8013 | 70,931.65  | 6.73ms      | 75.12ms     | 1,419,164      | 12.58MB      | 38.66MiB |
@@ -168,6 +173,7 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | Java Quarkus                   | 8021 | 36,468.24  | 10.92ms     | 121.21ms    | 729,580        | 3.90MB       | 160.3MiB |
 | Go Fiber                       | 8008 | 33,699.88  | 18.91ms     | 136.12ms    | 674,858        | 4.82MB       | 13.04MiB |
 | Ruby Falcon                    | 8040 | 33,294.17  | 11.29ms     | 63.36ms     | 666,781        | 3.84MB       | 89.22MiB |
+| Dart Shelf                     | 8085 | 32,659.47  | 3.72ms      | 89.60ms     | 653,260        | 8.38MB       | 49.86MiB |
 | Java Micronaut                 | 8026 | 32,341.25  | 13.54ms     | 89.91ms     | 648,245        | 4.16MB       | 173.4MiB |
 | JS Node NestJS Express Cluster | 8045 | 32,234.77  | 6.27ms      | 377.36ms    | 644,756        | 8.05MB       | 102.5MiB |
 | Java Spring Boot               | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |
@@ -252,6 +258,7 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | JS Node NestJS Fastify         | 8030 | 3,393.83   | 39.34ms     | 1.03s       | 67,904         | 36.42MB      | 50.28MiB |
 | Erlang Cowboy                  | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
 | Python FastAPI                 | 8004 | 3,385.60   | 36.43ms     | 90.21ms     | 67,720         | 36.83MB      | 219.2MiB |
+| Lua OpenResty                  | 8084 | 3,335.69   | 43.07ms     | 365.08ms    | 66,802         | 36.42MB      | 62.12MiB |
 | JS Node uWS                    | 8064 | 3,239.11   | 37.44ms     | 309.31ms    | 64,792         | 34.62MB      | 43.41MiB |
 | Ada (GNAT.Sockets)             | 8079 | 3,234.96   | 40.82ms     | 104.05ms    | 64,829         | 35.04MB      | 5.969MiB |
 | JS Node Hono                   | 8039 | 3,068.89   | 40.59ms     | 706.47ms    | 61,399         | 32.89MB      | 49.7MiB  |
@@ -269,6 +276,7 @@ The APIs expose two endpoints: a simple "Hello World" (`GET /`) and a more compl
 | Kotlin Ktor                    | 8027 | 1,026.68\* | 139.66ms    | 1.29s       | 20,590         | 11.12MB      | 213.5MiB |
 | Java Micronaut                 | 8026 | 978.53     | 136.32ms    | 942.33ms    | 19,607         | 10.43MB      | 206.2MiB |
 | Haskell Servant                | 8006 | 796.44\*   | 135.25ms    | 1.95s       | 15,974         | 8.68MB       | 317.1MiB |
+| Dart Shelf                     | 8085 | 788.17\*   | 115.07ms    | 1.96s       | 15,793         | 8.74MB       | 106.6MiB |
 | Swift Vapor                    | 8012 | 579.65     | 206.29ms    | 698.48ms    | 11,633         | 5.99MB       | 60.86MiB |
 | Java Spring Boot               | 8009 | 571.97\*   | 241.20ms    | 2.00s       | 11,449         | 6.52MB       | 231.1MiB |
 | Java Spring WebFlux            | 8065 | 542.12\*   | 217.04ms    | 1.91s       | 10,868         | 6.03MB       | 236.4MiB |

@@ -1,6 +1,6 @@
 # Hello World Performance Test Results — Summary
 
-**Generated**: 2026-02-25 07:41:39 UTC
+**Generated**: 2026-03-07 14:01:09 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/`
 
 **Test Configuration**:
@@ -49,6 +49,7 @@
 | C# .NET API                    | 8001 | 85,108.64  | 5.18ms      | 82.93ms     | 1,702,806      | 15.10MB      | 41.55MiB |
 | C# Carter                      | 8035 | 83,960.09  | 4.17ms      | 83.95ms     | 1,679,575      | 14.89MB      | 34.27MiB |
 | C# Carter AOT                  | 8036 | 80,958.61  | 5.82ms      | 74.65ms     | 1,619,425      | 14.36MB      | 33.73MiB |
+| Lua OpenResty                  | 8084 | 78,059.22  | 10.32ms     | 65.02ms     | 1,562,356      | 15.41MB      | 35.21MiB |
 | JS Bun NestJS Express          | 8053 | 76,837.89  | 1.74ms      | 78.85ms     | 1,536,990      | 15.75MB      | 71.61MiB |
 | C# EF Core                     | 8070 | 73,428.55  | 4.27ms      | 83.62ms     | 1,469,842      | 13.03MB      | 31.75MiB |
 | C# .NET AOT                    | 8013 | 70,931.65  | 6.73ms      | 75.12ms     | 1,419,164      | 12.58MB      | 38.66MiB |
@@ -75,6 +76,7 @@
 | Java Quarkus                   | 8021 | 36,468.24  | 10.92ms     | 121.21ms    | 729,580        | 3.90MB       | 160.3MiB |
 | Go Fiber                       | 8008 | 33,699.88  | 18.91ms     | 136.12ms    | 674,858        | 4.82MB       | 13.04MiB |
 | Ruby Falcon                    | 8040 | 33,294.17  | 11.29ms     | 63.36ms     | 666,781        | 3.84MB       | 89.22MiB |
+| Dart Shelf                     | 8085 | 32,659.47  | 3.72ms      | 89.60ms     | 653,260        | 8.38MB       | 49.86MiB |
 | Java Micronaut                 | 8026 | 32,341.25  | 13.54ms     | 89.91ms     | 648,245        | 4.16MB       | 173.4MiB |
 | JS Node NestJS Express Cluster | 8045 | 32,234.77  | 6.27ms      | 377.36ms    | 644,756        | 8.05MB       | 102.5MiB |
 | Java Spring Boot               | 8009 | 31,265.68  | 13.21ms     | 170.99ms    | 625,607        | 2.92MB       | 144.2MiB |

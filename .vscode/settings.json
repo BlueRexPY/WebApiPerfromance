@@ -36,6 +36,7 @@
         "bunuwsclusterapi",
         "bytebufferpool",
         "cadvisor",
+        "cjson",
         "clibuv",
         "cmicrohttpd",
         "colorable",
@@ -201,5 +202,6 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "**/node_modules": true
-    }
+    },
+    "sarif-viewer.connectToGithubCodeScanning": "off"
 }

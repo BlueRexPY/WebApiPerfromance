@@ -128,6 +128,8 @@ python -m benchmarks stop
 | cobolapi                 | 8081 |
 | pascalapi                | 8082 |
 | fortranapi               | 8083 |
+| luaopenresty             | 8084 |
+| dartshelf                | 8085 |
 
 ## Test Types
 
