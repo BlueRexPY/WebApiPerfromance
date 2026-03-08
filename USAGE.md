@@ -130,6 +130,18 @@ python -m benchmarks stop
 | fortranapi               | 8083 |
 | luaopenresty             | 8084 |
 | dartshelf                | 8085 |
+| bunelysiaapi             | 8086 |
+| bunelysiaclusterapi      | 8087 |
+| adonisapi                | 8088 |
+| nitroapi                 | 8089 |
+| bunadonisapi             | 8090 |
+| adonisclusterapi         | 8091 |
+| bunadonisclusterapi      | 8092 |
+| nitroclusterapi          | 8093 |
+| bunnitroapi              | 8094 |
+| bunnitroclusterapi       | 8095 |
+| goechoapi                | 8096 |
+| pythonblacksheep         | 8097 |
 
 ## Test Types
 

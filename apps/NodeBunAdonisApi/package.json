@@ -1,0 +1,21 @@
+{
+    "name": "node-bun-adonis-api",
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "start": "bun run bin/server.ts"
+    },
+    "dependencies": {
+        "@adonisjs/core": "^6.17.1",
+        "postgres": "3.4.4",
+        "reflect-metadata": "^0.2.2"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "imports": {
+        "#start/*": "./start/*.ts",
+        "#config/*": "./config/*.ts",
+        "#app/*": "./app/*.ts"
+    }
+}

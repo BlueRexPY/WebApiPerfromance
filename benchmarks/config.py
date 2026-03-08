@@ -231,6 +231,43 @@ SERVICES: dict[str, Service] = {
         Service("fortranapi", 8083, "Fortran GFortran", "FortranApi"),
         Service("luaopenresty", 8084, "Lua OpenResty", "LuaOpenResty"),
         Service("dartshelf", 8085, "Dart Shelf", "DartShelf"),
+        Service("bunelysiaapi", 8086, "JS Bun Elysia", "NodeBunElysiaApi"),
+        Service(
+            "bunelysiaclusterapi",
+            8087,
+            "JS Bun Elysia Cluster",
+            "NodeBunElysiaClusterApi",
+        ),
+        Service("adonisapi", 8088, "JS Node AdonisJS", "NodeAdonisApi"),
+        Service("nitroapi", 8089, "JS Node Nitro", "NodeNitroApi"),
+        Service("bunadonisapi", 8090, "JS Bun AdonisJS", "NodeBunAdonisApi"),
+        Service(
+            "adonisclusterapi",
+            8091,
+            "JS Node AdonisJS Cluster",
+            "NodeAdonisClusterApi",
+        ),
+        Service(
+            "bunadonisclusterapi",
+            8092,
+            "JS Bun AdonisJS Cluster",
+            "NodeBunAdonisClusterApi",
+        ),
+        Service(
+            "nitroclusterapi",
+            8093,
+            "JS Node Nitro Cluster",
+            "NodeNitroClusterApi",
+        ),
+        Service("bunnitroapi", 8094, "JS Bun Nitro", "NodeBunNitroApi"),
+        Service(
+            "bunnitroclusterapi",
+            8095,
+            "JS Bun Nitro Cluster",
+            "NodeBunNitroClusterApi",
+        ),
+        Service("goechoapi", 8096, "Go Echo", "GoEcho"),
+        Service("pythonblacksheep", 8097, "Python BlackSheep", "PythonBlackSheep"),
     ]
 }
 

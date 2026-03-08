@@ -1,0 +1,23 @@
+{
+    "name": "node-adonis-api",
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc && cp package.json build/",
+        "start": "node bin/server.js"
+    },
+    "dependencies": {
+        "@adonisjs/core": "^6.17.1",
+        "postgres": "3.4.4",
+        "reflect-metadata": "^0.2.2"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "typescript": "^5.6.0"
+    },
+    "imports": {
+        "#start/*": "./start/*.js",
+        "#config/*": "./config/*.js",
+        "#app/*": "./app/*.js"
+    }
+}

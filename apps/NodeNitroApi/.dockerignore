@@ -1,0 +1,8 @@
+node_modules
+.output
+.git
+.gitignore
+.dockerignore
+*.md
+.env.local
+.env.*.local

@@ -1,6 +1,6 @@
 # Orders Performance Test Results — Summary
 
-**Generated**: 2026-03-07 14:01:09 UTC
+**Generated**: 2026-03-08 22:53:29 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/orders`
 
 **Test Configuration**:
@@ -15,12 +15,14 @@
 | Framework                      | Port | Req/sec    | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ------------------------------ | ---- | ---------- | ----------- | ----------- | -------------- | ------------ | -------- |
 | JS Node Bun Cluster            | 8047 | 27,628.28  | 4.36ms      | 24.95ms     | 552,627        | 294.84MB     | 47.51MiB |
+| JS Bun Elysia Cluster          | 8087 | 27,539.99  | 4.38ms      | 29.04ms     | 550,886        | 294.26MB     | 116.1MiB |
 | JS Bun Hono Cluster            | 8057 | 27,308.21  | 4.41ms      | 22.64ms     | 546,327        | 291.79MB     | 60.23MiB |
 | JS Deno Parallel               | 8048 | 18,937.49  | 6.33ms      | 17.64ms     | 378,848        | 202.51MB     | 76.05MiB |
 | JS Bun Hono                    | 8051 | 15,884.25  | 7.55ms      | 28.31ms     | 317,760        | 169.72MB     | 24.7MiB  |
 | JS Bun                         | 8002 | 15,455.76  | 7.76ms      | 25.50ms     | 309,152        | 164.94MB     | 71.47MiB |
 | Rust Axum                      | 8022 | 14,961.55  | 11.05ms     | 273.42ms    | 299,291        | 162.52MB     | 9.605MiB |
 | JS Bun Express                 | 8049 | 14,649.64  | 8.19ms      | 39.19ms     | 293,110        | 156.54MB     | 58.61MiB |
+| JS Bun Elysia                  | 8086 | 14,169.07  | 8.47ms      | 22.87ms     | 283,469        | 151.40MB     | 41.01MiB |
 | C# Carter AOT EF Core          | 8074 | 11,542.63  | 16.35ms     | 92.28ms     | 231,351        | 122.63MB     | 75.02MiB |
 | F# AOT Dapper                  | 8078 | 11,107.95  | 15.50ms     | 89.47ms     | 222,335        | 119.07MB     | 35.24MiB |
 | C# .NET AOT                    | 8013 | 11,097.91  | 16.17ms     | 104.75ms    | 222,126        | 117.90MB     | 61.38MiB |
@@ -45,7 +47,9 @@
 | JS Bun Koa Cluster             | 8058 | 6,267.72   | 24.85ms     | 678.06ms    | 125,408        | 66.98MB      | 131MiB   |
 | Elixir Plug                    | 8034 | 5,976.94   | 20.40ms     | 150.91ms    | 119,584        | 65.40MB      | 209.5MiB |
 | JS Bun Fastify Cluster         | 8056 | 5,866.15   | 27.04ms     | 697.98ms    | 117,354        | 62.69MB      | 169.9MiB |
+| Go Echo                        | 8096 | 5,848.89   | 33.62ms     | 890.00ms    | 117,124        | 64.13MB      | 55.9MiB  |
 | JS Bun NestJS Express Cluster  | 8059 | 5,637.79   | 22.54ms     | 350.10ms    | 112,797        | 60.61MB      | 173.1MiB |
+| JS Bun Nitro Cluster           | 8095 | 5,586.04   | 26.23ms     | 625.68ms    | 111,825        | 59.61MB      | 146MiB   |
 | JS Node Fastify Cluster        | 8042 | 5,576.88   | 22.43ms     | 369.66ms    | 111,555        | 59.85MB      | 92.59MiB |
 | PHP Swoole                     | 8028 | 5,500.98   | 32.79ms     | 208.24ms    | 110,352        | 59.96MB      | 54.55MiB |
 | JS Node Koa Cluster            | 8044 | 5,395.38   | 23.29ms     | 432.50ms    | 107,990        | 57.90MB      | 89.57MiB |
@@ -56,16 +60,21 @@
 | Go net/http                    | 8032 | 4,927.33   | 36.62ms     | 677.12ms    | 98,605         | 54.02MB      | 59.77MiB |
 | JS Node Express Cluster        | 8041 | 4,784.64   | 26.83ms     | 497.11ms    | 95,720         | 51.34MB      | 92.03MiB |
 | Go Fiber                       | 8008 | 4,655.43   | 37.94ms     | 732.37ms    | 93,423         | 51.02MB      | 54.62MiB |
+| JS Node Nitro Cluster          | 8093 | 4,606.21   | 27.32ms     | 502.98ms    | 92,199         | 49.36MB      | 98.76MiB |
 | JS Node Hono Cluster           | 8043 | 4,578.65   | 28.34ms     | 541.61ms    | 91,593         | 49.07MB      | 90.64MiB |
 | JS Node NestJS Fastify Cluster | 8046 | 4,541.06   | 29.08ms     | 815.96ms    | 90,849         | 48.73MB      | 112.9MiB |
 | JS Bun NestJS Fastify          | 8054 | 4,442.57   | 29.65ms     | 457.81ms    | 88,884         | 47.47MB      | 93.96MiB |
+| JS Bun AdonisJS Cluster        | 8092 | 4,441.34   | 31.56ms     | 656.07ms    | 88,860         | 47.46MB      | 260MiB   |
 | JS Bun NestJS Express          | 8053 | 4,380.24   | 27.53ms     | 144.06ms    | 87,619         | 47.09MB      | 81.44MiB |
 | JS Bun Koa                     | 8052 | 4,221.26   | 34.09ms     | 719.09ms    | 84,466         | 45.11MB      | 63.89MiB |
+| Python BlackSheep              | 8097 | 4,211.39   | 31.25ms     | 156.88ms    | 84,248         | 45.81MB      | 167.3MiB |
 | JS Bun Fastify                 | 8050 | 4,174.03   | 32.39ms     | 616.92ms    | 83,500         | 44.60MB      | 74.01MiB |
 | JS Node NestJS Express Cluster | 8045 | 4,094.54   | 31.76ms     | 833.64ms    | 81,911         | 44.20MB      | 109.9MiB |
 | JS Node Fastify                | 8003 | 3,846.61   | 35.55ms     | 701.60ms    | 76,981         | 41.28MB      | 108.2MiB |
 | Python Litestar                | 8000 | 3,776.86   | 34.83ms     | 162.60ms    | 75,553         | 41.09MB      | 197.5MiB |
 | JS Node Koa                    | 8038 | 3,750.58   | 33.74ms     | 765.63ms    | 75,029         | 40.25MB      | 47.28MiB |
+| JS Bun Nitro                   | 8094 | 3,619.69   | 36.16ms     | 558.55ms    | 72,483         | 38.63MB      | 68.93MiB |
+| JS Node Nitro                  | 8089 | 3,525.11   | 37.25ms     | 907.33ms    | 70,589         | 37.78MB      | 52.5MiB  |
 | C# EF Core                     | 8070 | 3,502.58   | 39.30ms     | 204.96ms    | 70,255         | 37.21MB      | 91.77MiB |
 | JS Node NestJS Fastify         | 8030 | 3,393.83   | 39.34ms     | 1.03s       | 67,904         | 36.42MB      | 50.28MiB |
 | Erlang Cowboy                  | 8010 | 3,389.72   | 35.37ms     | 104.03ms    | 67,829         | 34.61MB      | 170.4MiB |
@@ -73,9 +82,12 @@
 | Lua OpenResty                  | 8084 | 3,335.69   | 43.07ms     | 365.08ms    | 66,802         | 36.42MB      | 62.12MiB |
 | JS Node uWS                    | 8064 | 3,239.11   | 37.44ms     | 309.31ms    | 64,792         | 34.62MB      | 43.41MiB |
 | Ada (GNAT.Sockets)             | 8079 | 3,234.96   | 40.82ms     | 104.05ms    | 64,829         | 35.04MB      | 5.969MiB |
+| JS Node AdonisJS Cluster       | 8091 | 3,130.45   | 39.51ms     | 589.91ms    | 62,632         | 33.59MB      | 140.1MiB |
+| JS Bun AdonisJS                | 8090 | 3,091.47   | 41.59ms     | 568.84ms    | 61,868         | 33.04MB      | 114.8MiB |
 | JS Node Hono                   | 8039 | 3,068.89   | 40.59ms     | 706.47ms    | 61,399         | 32.89MB      | 49.7MiB  |
 | COBOL GnuCOBOL                 | 8081 | 2,941.64   | 43.00ms     | 100.59ms    | 58,872         | 31.87MB      | 21.09MiB |
 | JS Node NestJS Express         | 8029 | 2,785.96   | 49.84ms     | 1.23s       | 55,753         | 30.07MB      | 53.66MiB |
+| JS Node AdonisJS               | 8088 | 2,558.87   | 48.73ms     | 570.89ms    | 51,192         | 27.46MB      | 64.14MiB |
 | F# EF Core                     | 8076 | 2,532.90   | 49.01ms     | 295.17ms    | 50,838         | 26.91MB      | 104.4MiB |
 | C libuv                        | 8031 | 2,484.98\* | 42.26ms     | 220.51ms    | 49,744         | 26.92MB      | 9.461MiB |
 | C# Carter EF Core              | 8072 | 2,420.60   | 51.28ms     | 309.41ms    | 48,483         | 25.72MB      | 83.34MiB |

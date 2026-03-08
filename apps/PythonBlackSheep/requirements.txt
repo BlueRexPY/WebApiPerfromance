@@ -1,0 +1,4 @@
+blacksheep>=2.0.0
+psycopg[binary,pool]
+uvicorn[standard]
+python-dotenv
