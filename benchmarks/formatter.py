@@ -5,20 +5,23 @@ Generates per-service result files and combined summary tables.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import (
+    DEFAULT_K6,
     DEFAULT_WRK,
     RESULTS_DIR,
     SERVICES,
     TEST_TYPES,
+    K6Config,
     Service,
     TestType,
     WrkConfig,
     result_path,
 )
-from .parser import MemoryStats, WrkResult
+from .parser import K6Result, MemoryStats, WrkResult
 
 
 def _ensure_results_dir() -> None:
@@ -92,6 +95,74 @@ def write_result(
     return path
 
 
+def write_ws_result(
+    service: Service,
+    test_type: TestType,
+    k6_result: K6Result,
+    k6_config: K6Config = DEFAULT_K6,
+    memory: MemoryStats | None = None,
+) -> Path:
+    """Write a single k6 WebSocket benchmark result to its markdown file."""
+    _ensure_results_dir()
+    path = result_path(service, test_type)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    error_note = ""
+    if k6_result.has_errors:
+        error_note = "\n> **Warning**: Some checks failed during this test.\n"
+
+    its = f"{k6_result.iterations_per_sec:,.2f}"
+    if k6_result.has_errors:
+        its += "\\*"
+
+    mem_section = ""
+    if memory and memory.mem_usage:
+        mem_section = f"""
+## Resource Usage
+
+| Metric | Value |
+| --- | --- |
+| Memory Usage | {memory.mem_usage} |
+| Memory Limit | {memory.mem_limit} |
+| Memory % | {memory.mem_percent} |
+| CPU % | {memory.cpu_percent} |
+| PIDs | {memory.pids} |
+"""
+
+    content = f"""# {service.display_name} — {test_type.label} Benchmark
+
+**Tested**: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")}
+**Command**: `k6 run --vus {k6_config.vus} --duration {k6_config.duration_flag} ws://127.0.0.1:{service.port}{test_type.path}`
+{error_note}
+## Summary
+
+| Metric | Value |
+| --- | --- |
+| Requests/sec | {its} |
+| Avg Latency | {k6_result.avg_rtt_ms}ms |
+| Max Latency | {k6_result.max_rtt_ms}ms |
+| Total Requests | {k6_result.iterations:,} |
+| Transfer/sec | N/A |
+| Port | {service.port} |
+
+## k6 Stats
+
+| Stat | Avg | p(95) | Max |
+| --- | --- | --- | --- |
+| RTT (ms) | {k6_result.avg_rtt_ms} | {k6_result.p95_rtt_ms} | {k6_result.max_rtt_ms} |
+| Iteration Duration | {k6_result.avg_iter_duration} | {k6_result.p95_iter_duration} | — |
+| Checks Passed | {k6_result.checks_passed_pct:.2f}% | — | — |
+{mem_section}
+## Raw Output
+
+```
+{k6_result.raw.strip()}
+```
+"""
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
 def write_summary(test_type_name: str | None = None) -> list[Path]:
     """Generate combined summary markdown file(s) from individual results.
 
@@ -113,9 +184,6 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
                 continue
 
             content = rpath.read_text(encoding="utf-8")
-            # Extract values from the summary table
-            import re
-
             rps_match = re.search(r"Requests/sec\s*\|\s*([^\|]+)", content)
             lat_match = re.search(r"Avg Latency\s*\|\s*([^\|]+)", content)
             max_lat_match = re.search(r"Max Latency\s*\|\s*([^\|]+)", content)
@@ -141,16 +209,20 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
         table_rows = "\n".join(r[1] for r in rows)
 
         summary_path = RESULTS_DIR / f"Summary.{tt.label.replace(' ', '')}.md"
+        if tt.tool == "k6":
+            test_cmd = f"`k6 run --vus {DEFAULT_K6.vus} --duration {DEFAULT_K6.duration_flag} ws://127.0.0.1:PORT{tt.path}`"
+            config_lines = f"- VUs: {DEFAULT_K6.vus}\n- Duration: {DEFAULT_K6.duration_seconds} seconds"
+        else:
+            test_cmd = f"`wrk -t {DEFAULT_WRK.threads} -c {DEFAULT_WRK.connections} -d {DEFAULT_WRK.duration_flag} http://127.0.0.1:PORT{tt.path}`"
+            config_lines = f"- Threads: {DEFAULT_WRK.threads}\n- Connections: {DEFAULT_WRK.connections}\n- Duration: {DEFAULT_WRK.duration_seconds} seconds"
         summary_content = f"""# {tt.label} Performance Test Results — Summary
 
 **Generated**: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")}
-**Test Command**: `wrk -t {DEFAULT_WRK.threads} -c {DEFAULT_WRK.connections} -d {DEFAULT_WRK.duration_flag} http://127.0.0.1:PORT{tt.path}`
+**Test Command**: {test_cmd}
 
 **Test Configuration**:
 
-- Threads: {DEFAULT_WRK.threads}
-- Connections: {DEFAULT_WRK.connections}
-- Duration: {DEFAULT_WRK.duration_seconds} seconds
+{config_lines}
 - Endpoint: `{tt.path}` ({tt.label})
 
 ## Results

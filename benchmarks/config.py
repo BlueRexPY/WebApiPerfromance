@@ -9,13 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-# ── Paths ──────────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = PROJECT_ROOT / "results"
 COMPOSE_FILE = PROJECT_ROOT / "docker-compose.yml"
 
 
-# ── Data classes ───────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class Service:
     """A docker-compose service that exposes an HTTP API."""
@@ -34,6 +32,8 @@ class TestType:
     path: str  # HTTP path, e.g. "/"
     label: str  # human label, e.g. "Hello World"
     description: str = ""  # optional extra context for reports
+    tool: str = "wrk"  # "wrk" or "k6"
+    ws_script: str = ""  # path relative to PROJECT_ROOT, used when tool == "k6"
 
 
 @dataclass(frozen=True)
@@ -49,8 +49,22 @@ class WrkConfig:
         return f"{self.duration_seconds}s"
 
 
-# ── Default wrk settings ──────────────────────────────────────────────────────
 DEFAULT_WRK = WrkConfig()
+
+
+@dataclass(frozen=True)
+class K6Config:
+    """k6 WebSocket load-testing parameters."""
+
+    vus: int = 120
+    duration_seconds: int = 20
+
+    @property
+    def duration_flag(self) -> str:
+        return f"{self.duration_seconds}s"
+
+
+DEFAULT_K6 = K6Config()
 
 
 # ── Test types registry ───────────────────────────────────────────────────────
@@ -67,6 +81,22 @@ TEST_TYPES: dict[str, TestType] = {
         path="/orders",
         label="Orders",
         description="Database query returning 100 orders with LIMIT/OFFSET",
+    ),
+    "ws_echo": TestType(
+        name="ws_echo",
+        path="/ws/echo",
+        label="WS Echo",
+        description="WebSocket echo — round-trip latency, no database",
+        tool="k6",
+        ws_script="benchmarks/ws/echo.js",
+    ),
+    "ws_orders": TestType(
+        name="ws_orders",
+        path="/ws/orders",
+        label="WS Orders",
+        description="WebSocket orders push — server streams 100 orders per message",
+        tool="k6",
+        ws_script="benchmarks/ws/orders.js",
     ),
 }
 

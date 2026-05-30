@@ -4,10 +4,8 @@ Usage:
     # Run all benchmarks (all services, all test types)
     python -m benchmarks run
 
-    # Run benchmarks for a single service
     python -m benchmarks run --service dotnetapiaot
 
-    # Run a single test type for one service
     python -m benchmarks run --service dotnetapiaot --test hello_world
 
     # Run only specific test types across all services
@@ -22,7 +20,6 @@ Usage:
     # Generate summary from existing results
     python -m benchmarks summary
 
-    # Stop all running services
     python -m benchmarks stop
 """
 
@@ -32,9 +29,9 @@ import argparse
 import logging
 import sys
 
-from .config import DEFAULT_WRK, SERVICES, TEST_TYPES, WrkConfig
+from .config import DEFAULT_K6, DEFAULT_WRK, SERVICES, TEST_TYPES, K6Config, WrkConfig
 from .formatter import write_summary
-from .runner import run_all, start_monitoring, stop_all_services, stop_monitoring
+from .runner import run_all, stop_all_services
 
 
 class _ColorFormatter(logging.Formatter):
@@ -96,11 +93,14 @@ def _cmd_run(args: argparse.Namespace) -> int:
         connections=args.connections,
         duration_seconds=args.duration,
     )
+    k6_config = K6Config(
+        vus=args.vus,
+        duration_seconds=args.duration,
+    )
 
     services = args.service if args.service else None
     test_types = args.test if args.test else None
 
-    # Validate service names
     if services:
         for s in services:
             if s not in SERVICES:
@@ -109,7 +109,6 @@ def _cmd_run(args: argparse.Namespace) -> int:
                 )
                 return 1
 
-    # Validate test type names
     if test_types:
         for t in test_types:
             if t not in TEST_TYPES:
@@ -122,12 +121,12 @@ def _cmd_run(args: argparse.Namespace) -> int:
         services,
         test_types,
         wrk_config,
+        k6_config,
         parallel=getattr(args, "parallel", False),
         max_workers=getattr(args, "max_workers", 0),
         monitoring=getattr(args, "monitoring", False),
     )
 
-    # Print summary
     print("\n" + "═" * 70)
     print("  BENCHMARK RESULTS")
     print("═" * 70)
@@ -137,20 +136,31 @@ def _cmd_run(args: argparse.Namespace) -> int:
 
     if succeeded:
         print(f"\n  ✓ Passed: {len(succeeded)}")
-        # Sort by req/sec descending
-        succeeded.sort(key=lambda r: r.wrk_result.requests_per_sec, reverse=True)
+
+        # Sort by throughput descending
+        def _sort_key(r):
+            if r.k6_result is not None:
+                return r.k6_result.iterations_per_sec
+            return r.wrk_result.requests_per_sec
+
+        succeeded.sort(key=_sort_key, reverse=True)
         print(
             f"  {'Service':<20} {'Test':<15} {'Req/sec':>12} {'Avg Latency':>12} {'Memory':>12}"
         )
         print(f"  {'─'*20} {'─'*15} {'─'*12} {'─'*12} {'─'*12}")
         for r in succeeded:
-            rps = f"{r.wrk_result.requests_per_sec:,.2f}"
+            if r.k6_result is not None:
+                rps = f"{r.k6_result.iterations_per_sec:,.2f}"
+                lat = r.k6_result.avg_rtt_ms + "ms" if r.k6_result.avg_rtt_ms else "N/A"
+            else:
+                rps = f"{r.wrk_result.requests_per_sec:,.2f}"
+                lat = r.wrk_result.avg_latency
             mem = r.memory.mem_usage if r.memory.mem_usage else "N/A"
             print(
                 f"  {r.service.display_name:<20} "
                 f"{r.test_type.label:<15} "
                 f"{rps:>12} "
-                f"{r.wrk_result.avg_latency:>12} "
+                f"{lat:>12} "
                 f"{mem:>12}"
             )
 
@@ -199,7 +209,6 @@ def main(argv: list[str] | None = None) -> int:
 
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
-    # ── run ──
     run_parser = subparsers.add_parser("run", help="Run benchmarks")
     run_parser.add_argument(
         "--service",
@@ -247,6 +256,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Max concurrent wrk processes in parallel mode. 0 = unlimited, all at once (default: 20)",
     )
     run_parser.add_argument(
+        "--vus",
+        type=int,
+        default=DEFAULT_K6.vus,
+        help=f"k6 virtual users for WebSocket tests (default: {DEFAULT_K6.vus})",
+    )
+    run_parser.add_argument(
         "--monitoring",
         "-m",
         action="store_true",
@@ -254,10 +269,8 @@ def main(argv: list[str] | None = None) -> int:
         help="Start monitoring stack (Prometheus, Grafana, cAdvisor) during benchmarks",
     )
 
-    # ── list ──
     subparsers.add_parser("list", help="List services and test types")
 
-    # ── summary ──
     summary_parser = subparsers.add_parser(
         "summary", help="Generate summary from results"
     )
@@ -266,7 +279,6 @@ def main(argv: list[str] | None = None) -> int:
         help="Generate summary for a specific test type only",
     )
 
-    # ── stop ──
     subparsers.add_parser("stop", help="Stop all Docker services")
 
     args = parser.parse_args(argv)

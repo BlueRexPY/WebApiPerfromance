@@ -10,33 +10,35 @@ import logging
 import shutil
 import subprocess
 import time
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from .config import (
     COMPOSE_FILE,
+    DEFAULT_K6,
     DEFAULT_WRK,
     MONITORING_SERVICES,
+    PROJECT_ROOT,
     SERVICES,
     TEST_TYPES,
+    K6Config,
     Service,
     TestType,
     WrkConfig,
 )
-from .formatter import write_result, write_summary
-from .parser import MemoryStats, WrkResult, parse_wrk_output
+from .formatter import write_result, write_summary, write_ws_result
+from .parser import K6Result, MemoryStats, WrkResult, parse_k6_output, parse_wrk_output
 
 logger = logging.getLogger(__name__)
 
-# ── Timeouts ───────────────────────────────────────────────────────────────────
 SERVICE_START_TIMEOUT = 120  # seconds to wait for a service to respond
 HEALTH_CHECK_INTERVAL = 2  # seconds between health check attempts
 WARMUP_REQUESTS = 5  # quick requests before the real benchmark
 WARMUP_DELAY = 2  # seconds to wait after warmup
 
 
-# ── Exceptions ─────────────────────────────────────────────────────────────────
 class BenchmarkError(Exception):
     """Raised when a benchmark run fails."""
 
@@ -49,7 +51,10 @@ class WrkNotFoundError(BenchmarkError):
     """Raised when wrk is not installed."""
 
 
-# ── Docker helpers ─────────────────────────────────────────────────────────────
+class K6NotFoundError(BenchmarkError):
+    """Raised when k6 is not installed."""
+
+
 def _compose_cmd() -> list[str]:
     """Return the base docker compose command."""
     # Support both `docker compose` (v2) and `docker-compose` (v1)
@@ -146,7 +151,6 @@ def stop_all_services() -> None:
     )
 
 
-# ── Monitoring helpers ──────────────────────────────────────────────────────
 def start_monitoring() -> None:
     """Start the monitoring stack (Prometheus, Grafana, cAdvisor, etc.)."""
     cmd = _compose_cmd()
@@ -193,12 +197,8 @@ def restart_db() -> None:
     ensure_db_up()
 
 
-# ── Health check ───────────────────────────────────────────────────────────────
 def wait_for_service(service: Service, timeout: int = SERVICE_START_TIMEOUT) -> None:
     """Wait until the service responds to HTTP on its port."""
-    import urllib.error
-    import urllib.request
-
     url = f"http://127.0.0.1:{service.port}/"
     deadline = time.monotonic() + timeout
     last_error = None
@@ -224,12 +224,8 @@ def wait_for_service(service: Service, timeout: int = SERVICE_START_TIMEOUT) -> 
     )
 
 
-# ── Warmup ─────────────────────────────────────────────────────────────────────
 def warmup(service: Service, test_type: TestType) -> None:
     """Send a few warmup requests before benchmarking."""
-    import urllib.error
-    import urllib.request
-
     url = f"http://127.0.0.1:{service.port}{test_type.path}"
     logger.info(
         "Warming up %s %s (%d requests)...",
@@ -242,14 +238,13 @@ def warmup(service: Service, test_type: TestType) -> None:
         try:
             with urllib.request.urlopen(url, timeout=10):
                 pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Warmup request failed (non-fatal): %s", e)
         time.sleep(0.1)
 
     time.sleep(WARMUP_DELAY)
 
 
-# ── wrk execution ─────────────────────────────────────────────────────────────
 def get_container_name(service: Service) -> str:
     """Get the running container name for a docker-compose service."""
     cmd = _compose_cmd()
@@ -261,7 +256,6 @@ def get_container_name(service: Service) -> str:
     container_id = r.stdout.strip().splitlines()[0] if r.stdout.strip() else ""
     if not container_id:
         return ""
-    # Get the container name from the ID
     r2 = subprocess.run(
         ["docker", "inspect", "--format", "{{.Name}}", container_id],
         capture_output=True,
@@ -348,7 +342,44 @@ def run_wrk(
     return parse_wrk_output(result.stdout)
 
 
-# ── High-level runners ────────────────────────────────────────────────────────
+def run_k6(
+    service: Service,
+    test_type: TestType,
+    k6_config: K6Config = DEFAULT_K6,
+) -> K6Result:
+    """Execute k6 against a WebSocket endpoint and return parsed results."""
+    if not shutil.which("k6"):
+        raise K6NotFoundError("k6 is not installed. Install it with: snap install k6")
+
+    ws_url = f"ws://127.0.0.1:{service.port}{test_type.path}"
+    script_path = PROJECT_ROOT / test_type.ws_script
+
+    cmd = [
+        "k6",
+        "run",
+        "--vus",
+        str(k6_config.vus),
+        "--duration",
+        k6_config.duration_flag,
+        "-e",
+        f"WS_URL={ws_url}",
+        "--no-color",
+        str(script_path),
+    ]
+
+    logger.info("Running: %s", " ".join(cmd))
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        timeout=k6_config.duration_seconds + 60,
+    )
+
+    # k6 exits non-zero when thresholds fail; still parse output for results
+    output = result.stdout + "\n" + result.stderr
+    return parse_k6_output(output)
+
+
 @dataclass
 class BenchmarkResult:
     """Result of a single benchmark run."""
@@ -360,21 +391,24 @@ class BenchmarkResult:
     success: bool
     error: str = ""
     memory: MemoryStats = field(default_factory=MemoryStats)
+    k6_result: K6Result | None = None
 
 
 def run_benchmark(
     service: Service,
     test_type: TestType,
     wrk_config: WrkConfig = DEFAULT_WRK,
+    k6_config: K6Config = DEFAULT_K6,
     *,
     manage_docker: bool = True,
 ) -> BenchmarkResult:
-    """Run a complete benchmark: start service → warmup → wrk → save result.
+    """Run a complete benchmark: start service → warmup → run tool → save result.
 
     Args:
         service: The service to benchmark.
         test_type: The test scenario to run.
-        wrk_config: wrk parameters.
+        wrk_config: wrk parameters (used when test_type.tool == "wrk").
+        k6_config: k6 parameters (used when test_type.tool == "k6").
         manage_docker: If True, start/stop the service automatically.
                        Set False when running in bulk with shared containers.
     """
@@ -383,6 +417,30 @@ def run_benchmark(
             start_service(service)
 
         wait_for_service(service)
+
+        if test_type.tool == "k6":
+            mem_before = get_memory_stats(service)
+            k6_result = run_k6(service, test_type, k6_config)
+            mem_after = get_memory_stats(service)
+            memory = mem_after if mem_after.mem_usage else mem_before
+            path = write_ws_result(service, test_type, k6_result, k6_config, memory)
+            logger.info(
+                "✓ %s / %s — %.2f iter/s → %s",
+                service.display_name,
+                test_type.label,
+                k6_result.iterations_per_sec,
+                path,
+            )
+            return BenchmarkResult(
+                service=service,
+                test_type=test_type,
+                wrk_result=WrkResult(),
+                result_path=path,
+                success=True,
+                memory=memory,
+                k6_result=k6_result,
+            )
+
         warmup(service, test_type)
 
         # Capture memory before benchmark
@@ -431,6 +489,7 @@ def run_all(
     services: list[str] | None = None,
     test_types: list[str] | None = None,
     wrk_config: WrkConfig = DEFAULT_WRK,
+    k6_config: K6Config = DEFAULT_K6,
     *,
     parallel: bool = False,
     max_workers: int = 0,
@@ -464,9 +523,11 @@ def run_all(
 
     try:
         if parallel:
-            results = _run_parallel(svc_list, tt_list, wrk_config, max_workers)
+            results = _run_parallel(
+                svc_list, tt_list, wrk_config, k6_config, max_workers
+            )
         else:
-            results = _run_sequential(svc_list, tt_list, wrk_config)
+            results = _run_sequential(svc_list, tt_list, wrk_config, k6_config)
     finally:
         if monitoring:
             stop_monitoring()
@@ -482,6 +543,7 @@ def _run_sequential(
     svc_list: list[Service],
     tt_list: list[TestType],
     wrk_config: WrkConfig,
+    k6_config: K6Config = DEFAULT_K6,
 ) -> list[BenchmarkResult]:
     """Run benchmarks sequentially, one service at a time.
 
@@ -511,7 +573,9 @@ def _run_sequential(
                     svc.display_name,
                     tt.label,
                 )
-                result = run_benchmark(svc, tt, wrk_config, manage_docker=False)
+                result = run_benchmark(
+                    svc, tt, wrk_config, k6_config, manage_docker=False
+                )
                 results.append(result)
 
         except Exception as e:
@@ -544,7 +608,8 @@ def _run_parallel(
     svc_list: list[Service],
     tt_list: list[TestType],
     wrk_config: WrkConfig,
-    max_workers: int,
+    k6_config: K6Config = DEFAULT_K6,
+    max_workers: int = 0,
 ) -> list[BenchmarkResult]:
     """True parallel execution.
 
@@ -564,7 +629,6 @@ def _run_parallel(
         total_combos,
     )
 
-    # ── Phase 1: start all services in parallel ────────────────────────────────
     started: list[Service] = []
 
     with ThreadPoolExecutor(max_workers=len(svc_list)) as executor:
@@ -592,17 +656,15 @@ def _run_parallel(
     if not started:
         return results
 
-    # ── Phase 2: warmup all (service × test_type) in parallel ─────────────────
-    warmup_combos = [(svc, tt) for svc in started for tt in tt_list]
+    warmup_combos = [(svc, tt) for svc in started for tt in tt_list if tt.tool != "k6"]
     with ThreadPoolExecutor(max_workers=len(warmup_combos)) as executor:
         warmup_futures = [executor.submit(warmup, svc, tt) for svc, tt in warmup_combos]
         for f in as_completed(warmup_futures):
             try:
                 f.result()
-            except Exception:
-                pass  # warmup failures are non-fatal
+            except Exception as e:
+                logger.debug("Warmup failure (non-fatal): %s", e)
 
-    # ── Phase 3: fire all wrk processes simultaneously ─────────────────────────
     bench_combos = [(svc, tt) for svc in started for tt in tt_list]
     # 0 = unlimited: one thread per combo so all wrk runs start at the same time
     workers = (
@@ -617,7 +679,9 @@ def _run_parallel(
 
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = {
-            executor.submit(run_benchmark, svc, tt, wrk_config, manage_docker=False): (
+            executor.submit(
+                run_benchmark, svc, tt, wrk_config, k6_config, manage_docker=False
+            ): (
                 svc,
                 tt,
             )
@@ -640,7 +704,6 @@ def _run_parallel(
                     )
                 )
 
-    # ── Phase 4: stop all services in parallel ─────────────────────────────────
     with ThreadPoolExecutor(max_workers=len(started)) as executor:
         list(executor.map(stop_service, started))
 
