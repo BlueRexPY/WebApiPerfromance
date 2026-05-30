@@ -1,6 +1,6 @@
 # WS Orders Performance Test Results — Summary
 
-**Generated**: 2026-05-30 23:26:35 UTC
+**Generated**: 2026-05-30 23:53:52 UTC
 **Test Command**: `k6 run --vus 120 --duration 20s ws://127.0.0.1:PORT/ws/orders`
 
 **Test Configuration**:
@@ -14,15 +14,19 @@
 | Framework                      | Port | Req/sec  | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ------------------------------ | ---- | -------- | ----------- | ----------- | -------------- | ------------ | -------- |
 | C# .NET AOT                    | 8013 | 3,049.43 | 8.043334ms  | 63ms        | 61,136         | N/A          | 60.82MiB |
+| JS Node AdonisJS Cluster       | 8091 | 3,001.26 | 0ms         | 0ms         | 60,182         | N/A          | 121.4MiB |
 | Rust Actix                     | 8005 | 2,992.05 | 9.990471ms  | 445ms       | 59,959         | N/A          | 11.31MiB |
 | F# .NET AOT                    | 8020 | 2,981.39 | 9.058304ms  | 77ms        | 59,747         | N/A          | 60.55MiB |
 | C# Carter AOT                  | 8036 | 2,961.26 | 9.970103ms  | 118ms       | 59,346         | N/A          | 57.62MiB |
 | Rust Axum                      | 8022 | 2,949.83 | 9.369969ms  | 157ms       | 59,113         | N/A          | 9.691MiB |
+| JS Node AdonisJS               | 8088 | 2,945.31 | 0ms         | 0ms         | 59,024         | N/A          | 49.56MiB |
+| JS Node Nitro                  | 8089 | 2,753.51 | 0ms         | 0ms         | 55,182         | N/A          | 16.18MiB |
 | JS Bun                         | 8002 | 2,697.11 | 7.786266ms  | 44ms        | 54,057         | N/A          | 23.1MiB  |
 | C# .NET API                    | 8001 | 2,664.70 | 18.879532ms | 146ms       | 53,411         | N/A          | 79.7MiB  |
 | F# .NET API                    | 8019 | 2,577.43 | 18.490002ms | 194ms       | 51,653         | N/A          | 86.99MiB |
 | C# Carter                      | 8035 | 2,467.31 | 21.309035ms | 218ms       | 49,456         | N/A          | 84.09MiB |
 | JS Bun Hono Cluster            | 8057 | 2,453.70 | 23.677489ms | 313ms       | 49,185         | N/A          | 104.1MiB |
+| JS Node Nitro Cluster          | 8093 | 2,452.57 | 0ms         | 0ms         | 49,172         | N/A          | 57.3MiB  |
 | JS Node Bun Cluster            | 8047 | 2,442.93 | 22.925916ms | 383ms       | 48,929         | N/A          | 111.7MiB |
 | JS Bun Fastify Cluster         | 8056 | 2,413.43 | 25.467564ms | 303ms       | 48,371         | N/A          | 129.1MiB |
 | JS Bun Express Cluster         | 8055 | 2,371.23 | 25.330913ms | 523ms       | 47,534         | N/A          | 114.6MiB |
@@ -51,5 +55,7 @@
 | JS Node Koa                    | 8038 | 1,348.00 | 2.98505ms   | 155ms       | 27,090         | N/A          | 37.02MiB |
 | JS Node Fastify                | 8003 | 1,178.77 | 12.674553ms | 205ms       | 23,755         | N/A          | 40.14MiB |
 | JS Node NestJS Fastify         | 8030 | 492.27   | 38.762891ms | 248ms       | 9,949          | N/A          | 45.66MiB |
+| JS Bun AdonisJS                | 8090 | 1.36     | 0ms         | 0ms         | 68             | N/A          | 64.54MiB |
+| JS Bun AdonisJS Cluster        | 8092 | 0.96     | 0ms         | 0ms         | 48             | N/A          | 178.8MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

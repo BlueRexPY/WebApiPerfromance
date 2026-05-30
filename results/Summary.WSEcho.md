@@ -1,6 +1,6 @@
 # WS Echo Performance Test Results — Summary
 
-**Generated**: 2026-05-30 23:26:17 UTC
+**Generated**: 2026-05-30 23:54:56 UTC
 **Test Command**: `k6 run --vus 120 --duration 20s ws://127.0.0.1:PORT/ws/echo`
 
 **Test Configuration**:
@@ -30,11 +30,14 @@
 | JS Bun NestJS Fastify          | 8054 | 3,092.72 | 3.2932ms    | 42ms        | 62,000         | N/A          | 47.41MiB |
 | JS Bun NestJS Express          | 8053 | 3,072.45 | 2.75523ms   | 35ms        | 61,593         | N/A          | 84.99MiB |
 | JS Bun NestJS Fastify Cluster  | 8060 | 3,070.99 | 2.079582ms  | 46ms        | 61,594         | N/A          | 123.9MiB |
+| JS Node AdonisJS               | 8088 | 2,988.29 | 0ms         | 0ms         | 59,917         | N/A          | 45.76MiB |
 | JS Bun Elysia                  | 8086 | 2,876.51 | 3.172423ms  | 26ms        | 57,684         | N/A          | 48.49MiB |
 | JS Bun Elysia Cluster          | 8087 | 2,829.74 | 3.219279ms  | 65ms        | 56,719         | N/A          | 135.2MiB |
+| JS Node Nitro                  | 8089 | 2,789.05 | 0ms         | 0ms         | 55,902         | N/A          | 31.7MiB  |
 | JS Node Fastify Cluster        | 8042 | 2,731.03 | 0.877591ms  | 80ms        | 54,730         | N/A          | 97.08MiB |
 | JS Node NestJS Fastify Cluster | 8046 | 2,726.66 | 0.821897ms  | 65ms        | 54,667         | N/A          | 114.7MiB |
 | JS Node NestJS Express         | 8029 | 2,714.05 | 0.437995ms  | 17ms        | 54,392         | N/A          | 23.57MiB |
+| JS Node Nitro Cluster          | 8093 | 2,662.30 | 0ms         | 0ms         | 53,367         | N/A          | 87.78MiB |
 | JS Node Express Cluster        | 8041 | 2,656.40 | 0.96784ms   | 61ms        | 53,230         | N/A          | 94.75MiB |
 | JS Node NestJS Express Cluster | 8045 | 2,645.64 | 0.901447ms  | 52ms        | 53,021         | N/A          | 108.3MiB |
 | JS Node Hono Cluster           | 8043 | 2,628.17 | 1.475734ms  | 61ms        | 52,705         | N/A          | 93.27MiB |
@@ -49,6 +52,9 @@
 | JS Bun Koa                     | 8052 | 2,071.59 | 3.601675ms  | 26ms        | 41,526         | N/A          | 36.67MiB |
 | JS Bun Fastify                 | 8050 | 2,049.08 | 3.151311ms  | 50ms        | 41,078         | N/A          | 40.45MiB |
 | JS Node Koa Cluster            | 8044 | 2,021.33 | 6.369718ms  | 25ms        | 40,525         | N/A          | 49.52MiB |
+| JS Node AdonisJS Cluster       | 8091 | 1,961.71 | 0ms         | 0ms         | 39,300         | N/A          | 96.71MiB |
+| JS Bun AdonisJS                | 8090 | 0.88     | 0ms         | 0ms         | 44             | N/A          | 67.82MiB |
+| JS Bun AdonisJS Cluster        | 8092 | 0.36     | 0ms         | 0ms         | 18             | N/A          | 176.4MiB |
 | JS Node Fastify                | 8003 | 0.00     | 0ms         | 0ms         | 0              | N/A          | 20.56MiB |
 | JS Node Express                | 8014 | 0.00     | 0ms         | 0ms         | 0              | N/A          | 19.83MiB |
 
