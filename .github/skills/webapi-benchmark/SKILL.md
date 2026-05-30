@@ -1,7 +1,7 @@
 ---
 name: webapi-benchmark
-description: "WebApiPerformance project workflow. Use when: adding a new app/framework/language to the benchmark suite; registering a new service; writing GET / and GET /orders endpoints; adding a Dockerfile; adding a docker-compose entry; running benchmarks; recording wrk results; regenerating summary markdown tables; updating docs after a test run."
-argument-hint: "add <AppName> | run <service> | summary"
+description: "WebApiPerformance project workflow. Use when: adding a new app/framework/language to the benchmark suite; registering a new service; writing GET / and GET /orders endpoints; adding WebSocket endpoints (WS Echo, WS Orders); adding a Dockerfile; adding a docker-compose entry; running benchmarks (wrk HTTP or k6 WebSocket); recording results; regenerating summary markdown tables; updating docs after a test run."
+argument-hint: "add <AppName> | run <service> | run ws_echo | summary"
 ---
 
 # WebApiPerformance — Benchmark Workflow
@@ -204,7 +204,136 @@ results/Summary.Orders.md          ← updated ranking table (all services)
 
 ---
 
-## Quick Checklist — Adding a New App
+## 3. Adding WebSocket Support to an App
+
+WebSocket tests use **k6** (not wrk). Two test types are defined:
+
+| Test type   | Path         | k6 script                 | Analogous HTTP test |
+| ----------- | ------------ | ------------------------- | ------------------- |
+| `ws_echo`   | `/ws/echo`   | `benchmarks/ws/echo.js`   | `hello_world`       |
+| `ws_orders` | `/ws/orders` | `benchmarks/ws/orders.js` | `orders`            |
+
+### Step 1 — Implement the two WebSocket endpoints
+
+**`/ws/echo`** — Echo any received text message back verbatim.
+
+**`/ws/orders`** — On receiving any trigger message, query 100 orders from the DB and send the JSON array as a single text frame, then close.
+
+Reference implementation: [apps/DotNetApi/Program.cs](../../../apps/DotNetApi/Program.cs)
+
+```csharp
+app.UseWebSockets();
+
+app.Map("/ws/echo", async (HttpContext context) =>
+{
+    if (!context.WebSockets.IsWebSocketRequest) { context.Response.StatusCode = 400; return; }
+    using var ws = await context.WebSockets.AcceptWebSocketAsync();
+    var buffer = new byte[1024];
+    while (ws.State == WebSocketState.Open)
+    {
+        var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+        if (result.MessageType == WebSocketMessageType.Close) break;
+        await ws.SendAsync(buffer.AsMemory(0, result.Count), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "done", CancellationToken.None);
+});
+
+app.Map("/ws/orders", async (HttpContext context, NpgsqlDataSource dataSource) =>
+{
+    if (!context.WebSockets.IsWebSocketRequest) { context.Response.StatusCode = 400; return; }
+    using var ws = await context.WebSockets.AcceptWebSocketAsync();
+    var buffer = new byte[64];
+    var recv = await ws.ReceiveAsync(buffer, CancellationToken.None);
+    if (recv.MessageType == WebSocketMessageType.Close) { await ws.CloseAsync(...); return; }
+
+    // query 100 orders, serialize to JSON, send as one text frame
+    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "done", CancellationToken.None);
+});
+```
+
+For other languages/frameworks adapt to the equivalent WebSocket upgrade API. The important contracts are:
+
+- Upgrade only on a real WS request; return HTTP 400 otherwise
+- Echo: receive → send same bytes → loop
+- Orders: receive trigger → query DB → send JSON → close
+
+### Step 2 — No docker-compose changes needed
+
+WebSocket endpoints live on the same container/port as the HTTP endpoints. The WS URL scheme (`ws://`) is derived automatically from the service's existing `port` in `benchmarks/config.py`.
+
+### Step 3 — Register WS support (nothing extra in config.py)
+
+The `ws_echo` and `ws_orders` test types are already defined in `benchmarks/config.py`. A service automatically participates in WS benchmarks once you run them with `--test ws_echo` / `--test ws_orders`.
+
+### Step 4 — Run the WS benchmarks
+
+```bash
+# Prerequisites: k6 installed (snap install k6)
+
+# Echo test for one service
+python -m benchmarks run --service <name> --test ws_echo
+
+# Orders WS test for one service
+python -m benchmarks run --service <name> --test ws_orders
+
+# Custom VU count (default 120) or duration (default 20s)
+python -m benchmarks run --service <name> --test ws_echo --vus 50 --duration 30
+
+# Run all test types (HTTP + WS) for a service
+python -m benchmarks run --service <name>
+```
+
+k6 runs with `--no-color`, passes `WS_URL=ws://127.0.0.1:<port><path>` as an env var, and exits after the test. Output is parsed automatically.
+
+### Step 5 — Result files written
+
+```
+results/<DirName>/WsEcho.md     ← iterations/sec, avg RTT, p95 RTT, VU count
+results/<DirName>/WsOrders.md   ← same, for orders WS test
+```
+
+These files use the same `Requests/sec` / `Avg Latency` key format as HTTP results, so `python -m benchmarks summary` can aggregate them alongside HTTP results.
+
+### Step 6 — Regenerate summaries
+
+```bash
+python -m benchmarks summary --test ws_echo
+python -m benchmarks summary --test ws_orders
+```
+
+---
+
+## 4. k6 WebSocket Scripts Reference
+
+Scripts live in `benchmarks/ws/`. Each uses a `WS_URL` env var injected by the runner.
+
+**`benchmarks/ws/echo.js`** — Echo RTT test:
+
+- Connects, sends `"ping"`, measures time until response, records to `Trend("ws_echo_rtt_ms")`
+- 120 VUs × 20 s by default
+
+**`benchmarks/ws/orders.js`** — Orders push test:
+
+- Connects, sends `"go"`, waits for JSON array, parses and checks `length == 100`
+- Records RTT to `Trend("ws_orders_rtt_ms")`
+
+> **Important**: Trend metrics must NOT use the `true` (isTime) second constructor parameter. Using `new Trend("name", true)` causes k6 to display values with unit suffixes (e.g. `avg=170µs`) which breaks the regex parser. Always use `new Trend("name")`.
+
+---
+
+## Quick Checklist — Adding WebSocket Support to an Existing App
+
+- [ ] `GET /ws/echo` — upgrade, echo loop, close on client close
+- [ ] `GET /ws/orders` — upgrade, receive trigger, query 100 orders, send JSON, close
+- [ ] HTTP 400 for non-WS requests to both paths
+- [ ] `python -m benchmarks run --service <name> --test ws_echo` completes without errors
+- [ ] `python -m benchmarks run --service <name> --test ws_orders` completes without errors
+- [ ] `results/<DirName>/WsEcho.md` and `WsOrders.md` exist
+- [ ] `python -m benchmarks summary --test ws_echo` run and summary updated
+
+---
+
+## Quick Checklist — Adding a New App (HTTP)
 
 - [ ] `apps/<DirName>/` created with source + `Dockerfile`
 - [ ] `GET /` returns `{"message": "Hello, World!"}`
@@ -216,3 +345,4 @@ results/Summary.Orders.md          ← updated ranking table (all services)
 - [ ] `python -m benchmarks run --service <name>` completes without errors
 - [ ] `results/<DirName>/HelloWorld.md` and `Orders.md` exist
 - [ ] `python -m benchmarks summary` run and `Summary.*.md` files updated
+- [ ] _(Optional)_ WebSocket endpoints added — see **Section 3** above
