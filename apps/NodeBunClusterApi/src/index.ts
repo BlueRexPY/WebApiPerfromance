@@ -74,9 +74,7 @@ if (!IS_WORKER) {
     prepare: true,
   });
 
-  // Pre-create the PendingQuery at module level so the postgres driver
-  // caches the result after the first execution — same pattern as NodeBunApi.
-  const getOrdersQuery = sql<Order[]>`
+  const getOrdersQuery = () => sql<Order[]>`
     SELECT id, customer_id, total_cents, status, created_at
     FROM orders
     LIMIT 100
@@ -111,7 +109,7 @@ if (!IS_WORKER) {
 
       if (url.pathname === "/orders") {
         try {
-          const orders = await getOrdersQuery;
+          const orders = await getOrdersQuery();
           return new Response(JSON.stringify(orders), {
             headers: { "Content-Type": "application/json" },
           });
@@ -134,12 +132,7 @@ if (!IS_WORKER) {
         if (ws.data.type === "echo") {
           ws.send(message);
         } else if (ws.data.type === "orders") {
-          sql`
-            SELECT id, customer_id, total_cents, status, created_at
-            FROM orders
-            LIMIT 100
-            OFFSET 1000
-          `.then((orders) => {
+          getOrdersQuery().then((orders) => {
             ws.send(JSON.stringify(orders));
           });
         }

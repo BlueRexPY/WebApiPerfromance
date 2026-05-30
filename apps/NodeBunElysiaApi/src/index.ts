@@ -12,7 +12,7 @@ const sql = postgres(DATABASE_URL, {
   prepare: true,
 });
 
-const query = sql`
+const query = () => sql`
       SELECT id, customer_id, total_cents, status, created_at
       FROM orders
       LIMIT 100
@@ -22,7 +22,7 @@ const query = sql`
 const app = new Elysia()
   .get("/", () => ({ message: "Hello, World!" }))
   .get("/orders", async () => {
-    return await query;
+    return await query();
   })
   .ws("/ws/echo", {
     message(ws, message) {

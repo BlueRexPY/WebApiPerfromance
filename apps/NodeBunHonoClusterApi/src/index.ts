@@ -71,7 +71,7 @@ if (!IS_WORKER) {
     prepare: true,
   });
 
-  const getOrdersQuery = sql<Order[]>`
+  const getOrdersQuery = () => sql<Order[]>`
     SELECT id, customer_id, total_cents, status, created_at
     FROM orders
     LIMIT 100
@@ -83,7 +83,7 @@ if (!IS_WORKER) {
   app.get("/", (c) => c.json({ message: "Hello, World!" }));
 
   app.get("/orders", async (c) => {
-    const orders = await getOrdersQuery;
+    const orders = await getOrdersQuery();
     return c.json(orders);
   });
 

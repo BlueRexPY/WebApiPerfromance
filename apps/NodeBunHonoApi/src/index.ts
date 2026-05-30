@@ -12,8 +12,7 @@ const sql = postgres(DATABASE_URL, {
   prepare: true,
 });
 
-// Prepared query
-const getOrdersQuery = sql`
+const getOrdersQuery = () => sql`
   SELECT id, customer_id, total_cents, status, created_at
   FROM orders
   LIMIT 100
@@ -27,7 +26,7 @@ app.get("/", (c) => c.json({ message: "Hello, World!" }));
 
 // GET /orders
 app.get("/orders", async (c) => {
-  const orders = await getOrdersQuery;
+  const orders = await getOrdersQuery();
   return c.json(orders);
 });
 

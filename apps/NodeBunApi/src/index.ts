@@ -24,8 +24,7 @@ interface HelloResponse {
   message: string;
 }
 
-// Prepared query
-const getOrdersQuery = sql`
+const getOrdersQuery = () => sql`
   SELECT id, customer_id, total_cents, status, created_at
   FROM orders
   LIMIT 100
@@ -61,7 +60,7 @@ const server = Bun.serve<{ type: "echo" | "orders" }>({
     // GET /orders
     if (url.pathname === "/orders") {
       try {
-        const orders = await getOrdersQuery;
+        const orders = await getOrdersQuery();
         return new Response(JSON.stringify(orders), {
           headers: { "Content-Type": "application/json" },
         });
@@ -85,12 +84,7 @@ const server = Bun.serve<{ type: "echo" | "orders" }>({
       if (ws.data.type === "echo") {
         ws.send(message);
       } else if (ws.data.type === "orders") {
-        sql`
-          SELECT id, customer_id, total_cents, status, created_at
-          FROM orders
-          LIMIT 100
-          OFFSET 1000
-        `.then((orders) => {
+        getOrdersQuery().then((orders) => {
           ws.send(JSON.stringify(orders));
         });
       }
