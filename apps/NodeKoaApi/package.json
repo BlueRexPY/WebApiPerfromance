@@ -5,6 +5,7 @@
     "dependencies": {
         "@koa/router": "^13.1.0",
         "koa": "^2.15.3",
-        "postgres": "3.4.4"
+        "postgres": "3.4.4",
+        "ws": "^8.18.0"
     }
 }

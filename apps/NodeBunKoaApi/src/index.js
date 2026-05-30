@@ -1,6 +1,7 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import postgres from "postgres";
+import { WebSocketServer } from "ws";
 
 const DATABASE_URL =
   process.env.DATABASE_URL ||
@@ -41,6 +42,40 @@ app.use(router.routes()).use(router.allowedMethods());
 
 const server = app.listen(8000, "0.0.0.0", () => {
   console.log("Koa server on Bun running at http://0.0.0.0:8000");
+});
+
+// WebSocket
+const echoWss = new WebSocketServer({ noServer: true });
+const ordersWss = new WebSocketServer({ noServer: true });
+
+echoWss.on("connection", (ws) => {
+  ws.on("message", (data) => ws.send(data));
+});
+
+ordersWss.on("connection", (ws) => {
+  ws.on("message", async () => {
+    const orders = await sql`
+      SELECT id, customer_id, total_cents, status, created_at
+      FROM orders
+      LIMIT 100
+      OFFSET 1000
+    `;
+    ws.send(JSON.stringify(orders));
+  });
+});
+
+server.on("upgrade", (req, socket, head) => {
+  if (req.url === "/ws/echo") {
+    echoWss.handleUpgrade(req, socket, head, (ws) =>
+      echoWss.emit("connection", ws, req),
+    );
+  } else if (req.url === "/ws/orders") {
+    ordersWss.handleUpgrade(req, socket, head, (ws) =>
+      ordersWss.emit("connection", ws, req),
+    );
+  } else {
+    socket.destroy();
+  }
 });
 
 process.on("SIGINT", async () => {

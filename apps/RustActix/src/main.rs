@@ -1,4 +1,5 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_ws::Message;
 use chrono::NaiveDateTime;
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
 use serde::{Deserialize, Serialize};
@@ -73,6 +74,89 @@ fn get_database_url() -> String {
     env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
 
+async fn ws_echo(
+    req: HttpRequest,
+    stream: web::Payload,
+) -> Result<HttpResponse, actix_web::Error> {
+    let (res, mut session, mut msg_stream) = actix_ws::handle(&req, stream)?;
+    actix_web::rt::spawn(async move {
+        while let Some(Ok(msg)) = msg_stream.recv().await {
+            match msg {
+                Message::Text(text) => {
+                    if session.text(text).await.is_err() {
+                        break;
+                    }
+                }
+                Message::Binary(bin) => {
+                    if session.binary(bin).await.is_err() {
+                        break;
+                    }
+                }
+                Message::Close(reason) => {
+                    let _ = session.close(reason).await;
+                    break;
+                }
+                _ => {}
+            }
+        }
+    });
+    Ok(res)
+}
+
+async fn ws_orders(
+    req: HttpRequest,
+    stream: web::Payload,
+    data: web::Data<AppState>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let (res, mut session, mut msg_stream) = actix_ws::handle(&req, stream)?;
+    let pool = data.pool.clone();
+    actix_web::rt::spawn(async move {
+        while let Some(Ok(msg)) = msg_stream.recv().await {
+            match msg {
+                Message::Text(_) | Message::Binary(_) => {}
+                Message::Close(reason) => {
+                    let _ = session.close(reason).await;
+                    break;
+                }
+                _ => continue,
+            }
+            let client = match pool.get().await {
+                Ok(c) => c,
+                Err(_) => break,
+            };
+            let stmt = match client
+                .prepare_cached(
+                    "SELECT id, customer_id, total_cents, status, created_at \
+                     FROM orders LIMIT $1 OFFSET $2",
+                )
+                .await
+            {
+                Ok(s) => s,
+                Err(_) => break,
+            };
+            let rows = match client.query(&stmt, &[&100i64, &1000i64]).await {
+                Ok(r) => r,
+                Err(_) => break,
+            };
+            let orders: Vec<Order> = rows
+                .iter()
+                .map(|row| Order {
+                    id: row.get(0),
+                    customer_id: row.get(1),
+                    total_cents: row.get(2),
+                    status: row.get(3),
+                    created_at: row.get(4),
+                })
+                .collect();
+            let json = serde_json::to_string(&orders).unwrap_or_default();
+            if session.text(json).await.is_err() {
+                break;
+            }
+        }
+    });
+    Ok(res)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -104,6 +188,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(app_state.clone())
             .service(hello)
             .service(get_orders)
+            .route("/ws/echo", web::get().to(ws_echo))
+            .route("/ws/orders", web::get().to(ws_orders))
     })
     .bind("0.0.0.0:8000")?
     // workers() not set → Actix defaults to std::thread::available_parallelism() (= num logical CPUs)

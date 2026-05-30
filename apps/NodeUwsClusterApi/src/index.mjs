@@ -66,6 +66,27 @@ if (cluster.isPrimary) {
       });
   });
 
+  app.ws("/ws/echo", {
+    message: (ws, message, isBinary) => {
+      ws.send(message, isBinary);
+    },
+  });
+
+  app.ws("/ws/orders", {
+    message: (ws) => {
+      pool
+        .query(
+          "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",
+          [100, 1000],
+        )
+        .then((result) => {
+          const data = Buffer.from(JSON.stringify(result.rows));
+          ws.send(data, false);
+        })
+        .catch(() => {});
+    },
+  });
+
   app.listen(8000, (token) => {
     if (token) {
       console.log(

@@ -1,11 +1,12 @@
 import datetime
+import json
 import os
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Sequence
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from psycopg import sql
 from psycopg.rows import class_row
 from psycopg_pool import AsyncConnectionPool
@@ -36,14 +37,12 @@ class Order:
     created_at: datetime.datetime
 
 
-ORDERS_SQL = sql.SQL(
-    """
+ORDERS_SQL = sql.SQL("""
     SELECT id, customer_id, total_cents, status, created_at
     FROM orders
     LIMIT %(limit)s
     OFFSET %(offset)s
-    """
-)
+    """)
 
 pool: AsyncConnectionPool | None = None
 
@@ -76,3 +75,47 @@ async def get_orders() -> Sequence[Order]:
                 ORDERS_SQL, {"limit": 100, "offset": 1000}, prepare=True
             )
             return await cursor.fetchall()
+
+
+@app.websocket("/ws/echo")
+async def ws_echo(websocket: WebSocket) -> None:
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(data)
+    except Exception:
+        pass
+
+
+@app.websocket("/ws/orders")
+async def ws_orders(websocket: WebSocket) -> None:
+    await websocket.accept()
+    try:
+        while True:
+            await websocket.receive_text()
+            async with pool.connection() as conn:
+                async with conn.cursor() as cursor:
+                    await cursor.execute(
+                        "SELECT id, customer_id, total_cents, status, created_at "
+                        "FROM orders LIMIT %s OFFSET %s",
+                        (100, 1000),
+                    )
+                    rows = await cursor.fetchall()
+            orders = [
+                {
+                    "id": r[0],
+                    "customer_id": r[1],
+                    "total_cents": r[2],
+                    "status": r[3],
+                    "created_at": (
+                        r[4].isoformat()
+                        if isinstance(r[4], datetime.datetime)
+                        else r[4]
+                    ),
+                }
+                for r in rows
+            ]
+            await websocket.send_text(json.dumps(orders))
+    except Exception:
+        pass

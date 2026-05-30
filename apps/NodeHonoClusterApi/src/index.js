@@ -2,6 +2,7 @@ import cluster from "cluster";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import postgres from "postgres";
+import { WebSocketServer } from "ws";
 
 const NUM_WORKERS = parseInt(process.env.WORKERS || "2", 10);
 
@@ -46,7 +47,27 @@ if (cluster.isPrimary) {
     return c.json(orders);
   });
 
-  serve(
+  // WebSocket
+  const echoWss = new WebSocketServer({ noServer: true });
+  const ordersWss = new WebSocketServer({ noServer: true });
+
+  echoWss.on("connection", (ws) => {
+    ws.on("message", (data) => ws.send(data));
+  });
+
+  ordersWss.on("connection", (ws) => {
+    ws.on("message", async () => {
+      const orders = await sql`
+        SELECT id, customer_id, total_cents, status, created_at
+        FROM orders
+        LIMIT 100
+        OFFSET 1000
+      `;
+      ws.send(JSON.stringify(orders));
+    });
+  });
+
+  const server = serve(
     {
       fetch: app.fetch,
       port: 8000,
@@ -56,6 +77,20 @@ if (cluster.isPrimary) {
       console.log(`Worker ${process.pid} — Hono server at http://0.0.0.0:8000`);
     },
   );
+
+  server.on("upgrade", (req, socket, head) => {
+    if (req.url === "/ws/echo") {
+      echoWss.handleUpgrade(req, socket, head, (ws) =>
+        echoWss.emit("connection", ws, req),
+      );
+    } else if (req.url === "/ws/orders") {
+      ordersWss.handleUpgrade(req, socket, head, (ws) =>
+        ordersWss.emit("connection", ws, req),
+      );
+    } else {
+      socket.destroy();
+    }
+  });
 
   process.on("SIGINT", async () => {
     await sql.end();

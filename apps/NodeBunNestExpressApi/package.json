@@ -12,7 +12,8 @@
         "@nestjs/platform-express": "^10.4.0",
         "pg": "^8.13.2",
         "reflect-metadata": "^0.2.2",
-        "rxjs": "^7.8.1"
+        "rxjs": "^7.8.1",
+        "ws": "^8.18.0"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

@@ -1,3 +1,5 @@
+using System.Net.WebSockets;
+using System.Text.Json;
 using Dapper;
 using Npgsql;
 
@@ -16,6 +18,75 @@ NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 builder.Services.AddSingleton(dataSource);
 
 WebApplication app = builder.Build();
+
+app.UseWebSockets();
+
+app.Map(
+    "/ws/echo",
+    async (HttpContext context) =>
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            return;
+        }
+        using WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
+        byte[] buffer = new byte[1024];
+        while (ws.State == WebSocketState.Open)
+        {
+            WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                await ws.CloseAsync(
+                    WebSocketCloseStatus.NormalClosure,
+                    null,
+                    CancellationToken.None
+                );
+                break;
+            }
+            await ws.SendAsync(
+                new ArraySegment<byte>(buffer, 0, result.Count),
+                result.MessageType,
+                result.EndOfMessage,
+                CancellationToken.None
+            );
+        }
+    }
+);
+
+app.Map(
+    "/ws/orders",
+    async (HttpContext context, NpgsqlDataSource ds) =>
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            return;
+        }
+        using WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
+        byte[] buffer = new byte[256];
+        while (ws.State == WebSocketState.Open)
+        {
+            WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                await ws.CloseAsync(
+                    WebSocketCloseStatus.NormalClosure,
+                    null,
+                    CancellationToken.None
+                );
+                break;
+            }
+            await using var conn = await ds.OpenConnectionAsync();
+            var orders = await conn.QueryAsync<Order>(
+                "SELECT id, customer_id AS CustomerId, total_cents AS TotalCents, "
+                    + "status, created_at AS CreatedAt FROM orders LIMIT 100 OFFSET 1000"
+            );
+            byte[] payload = JsonSerializer.SerializeToUtf8Bytes(orders);
+            await ws.SendAsync(payload, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+    }
+);
 
 app.MapGet("/", () => new HelloResponse { Message = "Hello, World!" });
 

@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -25,6 +27,10 @@ type Order struct {
 }
 
 var pool *pgxpool.Pool
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
 
 func main() {
 	godotenv.Load()
@@ -54,10 +60,61 @@ func main() {
 
 	r.GET("/", helloHandler)
 	r.GET("/orders", ordersHandler)
+	r.GET("/ws/echo", wsEchoHandler)
+	r.GET("/ws/orders", wsOrdersHandler)
 
 	log.Println("Starting Gin server on :8000")
 	if err := r.Run(":8000"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
+	}
+}
+
+func wsEchoHandler(c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	for {
+		mt, msg, err := conn.ReadMessage()
+		if err != nil {
+			break
+		}
+		if err := conn.WriteMessage(mt, msg); err != nil {
+			break
+		}
+	}
+}
+
+func wsOrdersHandler(c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	for {
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			break
+		}
+		rows, err := pool.Query(context.Background(),
+			"SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",
+			100, 1000)
+		if err != nil {
+			_ = conn.WriteMessage(websocket.TextMessage, []byte("[]"))
+			continue
+		}
+		orders := make([]Order, 0, 100)
+		for rows.Next() {
+			var o Order
+			rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+			orders = append(orders, o)
+		}
+		rows.Close()
+		data, _ := json.Marshal(orders)
+		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
+			break
+		}
 	}
 }
 

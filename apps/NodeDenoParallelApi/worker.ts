@@ -40,6 +40,34 @@ const getOrdersQuery = sql<Order[]>`
 async function handler(req: Request): Promise<Response> {
   const url = new URL(req.url);
 
+  if (
+    url.pathname === "/ws/echo" &&
+    req.headers.get("upgrade") === "websocket"
+  ) {
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    socket.onmessage = (e) => {
+      socket.send(e.data);
+    };
+    return response;
+  }
+
+  if (
+    url.pathname === "/ws/orders" &&
+    req.headers.get("upgrade") === "websocket"
+  ) {
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    socket.onmessage = async () => {
+      const orders = await sql`
+        SELECT id, customer_id, total_cents, status, created_at
+        FROM orders
+        LIMIT 100
+        OFFSET 1000
+      `;
+      socket.send(JSON.stringify(orders));
+    };
+    return response;
+  }
+
   if (url.pathname === "/" && req.method === "GET") {
     return new Response(JSON.stringify({ message: "Hello, World!" }), {
       headers: { "Content-Type": "application/json" },

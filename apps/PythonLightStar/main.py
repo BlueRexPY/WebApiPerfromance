@@ -1,10 +1,13 @@
 import datetime
+import json
 import os
 from typing import Sequence
 
 import msgspec
 from dotenv import load_dotenv
 from litestar import Litestar, Response, get
+from litestar.connection import WebSocket
+from litestar.handlers.websocket_handlers import websocket
 from psycopg import sql
 from psycopg.rows import class_row
 from psycopg_pool import AsyncConnectionPool
@@ -36,14 +39,12 @@ class Order(msgspec.Struct):
     created_at: datetime.datetime
 
 
-ORDERS_SQL = sql.SQL(
-    """
+ORDERS_SQL = sql.SQL("""
     SELECT id, customer_id, total_cents, status, created_at
     FROM orders
     LIMIT %(limit)s
     OFFSET %(offset)s
-    """
-)
+    """)
 
 
 @get("/")
@@ -62,6 +63,52 @@ async def get_orders() -> Sequence[Order]:
                 ORDERS_SQL, {"limit": 100, "offset": 1000}, prepare=True
             )
             return await cursor.fetchall()
+
+
+@websocket("/ws/echo")
+async def ws_echo(socket: WebSocket) -> None:
+    await socket.accept()
+    try:
+        while True:
+            data = await socket.receive_data(mode="text")
+            await socket.send_data(data)
+    except Exception:
+        pass
+
+
+@websocket("/ws/orders")
+async def ws_orders(socket: WebSocket) -> None:
+    await socket.accept()
+    try:
+        while True:
+            await socket.receive_data(mode="text")
+            if pool is None:
+                break
+            async with pool.connection() as conn:
+                async with conn.cursor() as cursor:
+                    await cursor.execute(
+                        "SELECT id, customer_id, total_cents, status, created_at "
+                        "FROM orders LIMIT %s OFFSET %s",
+                        (100, 1000),
+                    )
+                    rows = await cursor.fetchall()
+            orders = [
+                {
+                    "id": r[0],
+                    "customer_id": r[1],
+                    "total_cents": r[2],
+                    "status": r[3],
+                    "created_at": (
+                        r[4].isoformat()
+                        if isinstance(r[4], datetime.datetime)
+                        else r[4]
+                    ),
+                }
+                for r in rows
+            ]
+            await socket.send_data(json.dumps(orders))
+    except Exception:
+        pass
 
 
 async def on_startup() -> None:
@@ -83,7 +130,7 @@ async def on_shutdown() -> None:
 
 
 app = Litestar(
-    route_handlers=[hello, get_orders],
+    route_handlers=[hello, get_orders, ws_echo, ws_orders],
     on_startup=[on_startup],
     on_shutdown=[on_shutdown],
     debug=False,

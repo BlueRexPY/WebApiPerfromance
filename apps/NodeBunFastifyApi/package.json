@@ -4,7 +4,8 @@
     "type": "module",
     "dependencies": {
         "fastify": "5.2.0",
-        "postgres": "3.4.4"
+        "postgres": "3.4.4",
+        "ws": "^8.18.0"
     },
     "scripts": {
         "start": "bun run src/index.js"

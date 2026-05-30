@@ -24,6 +24,22 @@ const app = new Elysia()
   .get("/orders", async () => {
     return await query;
   })
+  .ws("/ws/echo", {
+    message(ws, message) {
+      ws.send(message);
+    },
+  })
+  .ws("/ws/orders", {
+    async message(ws) {
+      const orders = await sql`
+        SELECT id, customer_id, total_cents, status, created_at
+        FROM orders
+        LIMIT 100
+        OFFSET 1000
+      `;
+      ws.send(JSON.stringify(orders));
+    },
+  })
   .listen({ port: 8000, hostname: "0.0.0.0" });
 
 console.log(

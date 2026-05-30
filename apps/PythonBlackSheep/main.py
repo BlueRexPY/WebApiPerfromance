@@ -1,7 +1,8 @@
 import datetime
+import json as json_module
 import os
 
-from blacksheep import Application, json
+from blacksheep import Application, WebSocket, json
 from dotenv import load_dotenv
 from psycopg_pool import AsyncConnectionPool
 
@@ -69,3 +70,43 @@ async def get_orders():
                 for row in rows
             ]
     return json(orders)
+
+
+@app.router.ws("/ws/echo")
+async def ws_echo(websocket: WebSocket) -> None:
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(data)
+    except Exception:
+        pass
+
+
+@app.router.ws("/ws/orders")
+async def ws_orders(websocket: WebSocket) -> None:
+    await websocket.accept()
+    try:
+        while True:
+            await websocket.receive_text()
+            async with pool.connection() as conn:
+                async with conn.cursor() as cursor:
+                    await cursor.execute(ORDERS_SQL, {"limit": 100, "offset": 1000})
+                    rows = await cursor.fetchall()
+            orders = [
+                {
+                    "id": row[0],
+                    "customer_id": row[1],
+                    "total_cents": row[2],
+                    "status": row[3],
+                    "created_at": (
+                        row[4].isoformat()
+                        if isinstance(row[4], datetime.datetime)
+                        else row[4]
+                    ),
+                }
+                for row in rows
+            ]
+            await websocket.send_text(json_module.dumps(orders))
+    except Exception:
+        pass

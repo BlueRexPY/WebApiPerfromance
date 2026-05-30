@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -62,6 +64,8 @@ func main() {
 	// Routes
 	app.Get("/", helloHandler)
 	app.Get("/orders", ordersHandler)
+	app.Get("/ws/echo", websocket.New(wsEchoHandler))
+	app.Get("/ws/orders", websocket.New(wsOrdersHandler))
 
 	// Start server
 	log.Println("Starting server on :8000")
@@ -117,4 +121,43 @@ func ordersHandler(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(orders)
+}
+
+func wsEchoHandler(c *websocket.Conn) {
+	for {
+		mt, msg, err := c.ReadMessage()
+		if err != nil {
+			break
+		}
+		if err := c.WriteMessage(mt, msg); err != nil {
+			break
+		}
+	}
+}
+
+func wsOrdersHandler(c *websocket.Conn) {
+	for {
+		_, _, err := c.ReadMessage()
+		if err != nil {
+			break
+		}
+		rows, err := pool.Query(context.Background(),
+			"SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",
+			100, 1000)
+		if err != nil {
+			_ = c.WriteMessage(websocket.TextMessage, []byte("[]"))
+			continue
+		}
+		orders := make([]Order, 0, 100)
+		for rows.Next() {
+			var o Order
+			rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+			orders = append(orders, o)
+		}
+		rows.Close()
+		data, _ := json.Marshal(orders)
+		if err := c.WriteMessage(websocket.TextMessage, data); err != nil {
+			break
+		}
+	}
 }

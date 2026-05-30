@@ -1,6 +1,7 @@
 import cluster from "cluster";
 import Fastify from "fastify";
 import postgres from "postgres";
+import { WebSocketServer } from "ws";
 
 const NUM_WORKERS = parseInt(process.env.WORKERS || "2", 10);
 
@@ -60,6 +61,38 @@ if (cluster.isPrimary) {
   const start = async () => {
     try {
       await fastify.listen({ port: 8000, host: "0.0.0.0" });
+
+      // WebSocket
+      const echoWss = new WebSocketServer({ noServer: true });
+      const ordersWss = new WebSocketServer({ noServer: true });
+      echoWss.on("connection", (ws) => {
+        ws.on("message", (data) => ws.send(data));
+      });
+      ordersWss.on("connection", (ws) => {
+        ws.on("message", async () => {
+          const orders = await sql`
+            SELECT id, customer_id, total_cents, status, created_at
+            FROM orders
+            LIMIT 100
+            OFFSET 1000
+          `;
+          ws.send(JSON.stringify(orders));
+        });
+      });
+      fastify.server.on("upgrade", (req, socket, head) => {
+        if (req.url === "/ws/echo") {
+          echoWss.handleUpgrade(req, socket, head, (ws) =>
+            echoWss.emit("connection", ws, req),
+          );
+        } else if (req.url === "/ws/orders") {
+          ordersWss.handleUpgrade(req, socket, head, (ws) =>
+            ordersWss.emit("connection", ws, req),
+          );
+        } else {
+          socket.destroy();
+        }
+      });
+
       console.log(
         `Worker ${process.pid} — Fastify/Bun server at http://0.0.0.0:8000`,
       );
