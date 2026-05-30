@@ -66,7 +66,7 @@ if (cluster.isPrimary) {
       const echoWss = new WebSocketServer({ noServer: true });
       const ordersWss = new WebSocketServer({ noServer: true });
       echoWss.on("connection", (ws) => {
-        ws.on("message", (data) => ws.send(data));
+        ws.on("message", (data, isBinary) => ws.send(data, { binary: isBinary }));
       });
       ordersWss.on("connection", (ws) => {
         ws.on("message", async () => {
