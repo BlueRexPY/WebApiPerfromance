@@ -1,35 +1,35 @@
 # Go Echo — SSE Orders Benchmark
 
-**Tested**: 2026-05-31 18:24:59 UTC
+**Tested**: 2026-05-31 18:33:34 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8096/sse/orders`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 4,641.64 |
-| Avg Latency | 30.76ms |
-| Max Latency | 361.10ms |
-| Total Requests | 93,127 |
-| Transfer/sec | 54.46MB |
+| Requests/sec | 5,238.62 |
+| Avg Latency | 33.05ms |
+| Max Latency | 369.16ms |
+| Total Requests | 105,077 |
+| Transfer/sec | 61.46MB |
 | Port | 8096 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 30.76ms | 30.69ms | 361.10ms | 80.76% |
-| Req/Sec | 2.34k | 445.38 | 4.51k | 72.66% |
+| Latency | 33.05ms | 35.61ms | 369.16ms | 80.02% |
+| Req/Sec | 2.64k | 371.88 | 3.73k | 74.50% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 65.21MiB |
+| Memory Usage | 56.5MiB |
 | Memory Limit | 1GiB |
-| Memory % | 6.37% |
+| Memory % | 5.52% |
 | CPU % | 0.00% |
-| PIDs | 53 |
+| PIDs | 47 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8096/sse/orders
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    30.76ms   30.69ms 361.10ms   80.76%
-    Req/Sec     2.34k   445.38     4.51k    72.66%
-  93127 requests in 20.06s, 1.07GB read
-Requests/sec:   4641.64
-Transfer/sec:     54.46MB
+    Latency    33.05ms   35.61ms 369.16ms   80.02%
+    Req/Sec     2.64k   371.88     3.73k    74.50%
+  105077 requests in 20.06s, 1.20GB read
+Requests/sec:   5238.62
+Transfer/sec:     61.46MB
 ```

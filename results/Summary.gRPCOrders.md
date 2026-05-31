@@ -1,6 +1,6 @@
 # gRPC Orders Performance Test Results — Summary
 
-**Generated**: 2026-05-31 18:25:38 UTC
+**Generated**: 2026-05-31 18:38:11 UTC
 **Test Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:PORT/api.ApiService/GetOrders`
 
 **Test Configuration**:
@@ -15,9 +15,12 @@
 | Framework               | Port | Req/sec | Avg Latency | Max Latency | Total Requests | Transfer/sec | Memory   |
 | ----------------------- | ---- | ------- | ----------- | ----------- | -------------- | ------------ | -------- |
 | C# .NET API             | 8001 | 374.77  | 0ms         | 0ms         | 18,739         | N/A          | 785MiB   |
+| Go Fiber                | 8008 | 0.26    | 0ms         | 0ms         | 13             | N/A          | 905.4MiB |
 | JS Node Bun Cluster     | 8047 | 0.06    | 0ms         | 0ms         | 3              | N/A          | 278.9MiB |
 | JS Bun                  | 8002 | 0.02    | 0ms         | 0ms         | 1              | N/A          | 205.2MiB |
 | JS Node Express         | 8014 | 0.02    | 0ms         | 0ms         | 1              | N/A          | 34.32MiB |
+| Go Chi                  | 8023 | 0.02    | 0ms         | 0ms         | 1              | N/A          | 984.4MiB |
 | JS Node Express Cluster | 8041 | 0.02    | 0ms         | 0ms         | 1              | N/A          | 76.25MiB |
+| Go Echo                 | 8096 | 0.02    | 0ms         | 0ms         | 1              | N/A          | 914.4MiB |
 
 **Note**: \* = Non-2xx or 3xx responses occurred during the test

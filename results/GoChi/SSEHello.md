@@ -1,35 +1,35 @@
 # Go Chi — SSE Hello Benchmark
 
-**Tested**: 2026-05-31 18:26:22 UTC
+**Tested**: 2026-05-31 18:30:19 UTC
 **Command**: `wrk -t 2 -c 120 -d 20s http://127.0.0.1:8023/sse/hello`
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 40,263.05 |
-| Avg Latency | 18.09ms |
-| Max Latency | 88.09ms |
-| Total Requests | 807,655 |
-| Transfer/sec | 9.02MB |
+| Requests/sec | 37,095.55 |
+| Avg Latency | 17.36ms |
+| Max Latency | 87.12ms |
+| Total Requests | 743,748 |
+| Transfer/sec | 8.31MB |
 | Port | 8023 |
 
 ## Thread Stats
 
 | Stat | Avg | Stdev | Max | +/- Stdev |
 | --- | --- | --- | --- | --- |
-| Latency | 18.09ms | 24.80ms | 88.09ms | 79.64% |
-| Req/Sec | 20.25k | 2.23k | 38.04k | 77.75% |
+| Latency | 17.36ms | 23.90ms | 87.12ms | 79.88% |
+| Req/Sec | 18.67k | 1.93k | 27.07k | 73.25% |
 
 ## Resource Usage
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 57.26MiB |
+| Memory Usage | 54.39MiB |
 | Memory Limit | 1GiB |
-| Memory % | 5.59% |
+| Memory % | 5.31% |
 | CPU % | 0.00% |
-| PIDs | 48 |
+| PIDs | 52 |
 
 ## Raw Output
 
@@ -37,9 +37,9 @@
 Running 20s test @ http://127.0.0.1:8023/sse/hello
   2 threads and 120 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    18.09ms   24.80ms  88.09ms   79.64%
-    Req/Sec    20.25k     2.23k   38.04k    77.75%
-  807655 requests in 20.06s, 181.01MB read
-Requests/sec:  40263.05
-Transfer/sec:      9.02MB
+    Latency    17.36ms   23.90ms  87.12ms   79.88%
+    Req/Sec    18.67k     1.93k   27.07k    73.25%
+  743748 requests in 20.05s, 166.69MB read
+Requests/sec:  37095.55
+Transfer/sec:      8.31MB
 ```
