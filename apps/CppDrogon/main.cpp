@@ -1,4 +1,5 @@
 #include <drogon/drogon.h>
+#include <drogon/WebSocketController.h>
 #include <json/json.h>
 #include <cstdlib>
 #include <string>
@@ -6,6 +7,59 @@
 #include <regex>
 
 using namespace drogon;
+
+class WsEchoController : public WebSocketController<WsEchoController> {
+public:
+    void handleNewMessage(const WebSocketConnectionPtr& conn,
+                          std::string&& message,
+                          const WebSocketMessageType& type) override {
+        if (type == WebSocketMessageType::Text) {
+            conn->send(message);
+        }
+    }
+    void handleConnectionClosed(const WebSocketConnectionPtr&) override {}
+    void handleNewConnection(const HttpRequestPtr&, const WebSocketConnectionPtr&) override {}
+    WS_PATH_LIST_BEGIN
+    WS_PATH_ADD("/ws/echo");
+    WS_PATH_LIST_END
+};
+
+class WsOrdersController : public WebSocketController<WsOrdersController> {
+public:
+    void handleNewMessage(const WebSocketConnectionPtr& conn,
+                          std::string&& message,
+                          const WebSocketMessageType& type) override {
+        if (type != WebSocketMessageType::Text) return;
+        auto dbClient = app().getDbClient();
+        dbClient->execSqlAsync(
+            "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000",
+            [conn](const orm::Result& result) {
+                Json::Value ordersArray(Json::arrayValue);
+                for (const auto& row : result) {
+                    Json::Value order;
+                    order["id"] = row["id"].as<int>();
+                    order["customer_id"] = row["customer_id"].as<int>();
+                    order["total_cents"] = row["total_cents"].as<int>();
+                    order["status"] = row["status"].as<std::string>();
+                    order["created_at"] = row["created_at"].as<std::string>();
+                    ordersArray.append(order);
+                }
+                Json::StreamWriterBuilder builder;
+                builder["indentation"] = "";
+                conn->send(Json::writeString(builder, ordersArray));
+                conn->shutdown();
+            },
+            [conn](const orm::DrogonDbException& e) {
+                conn->shutdown();
+            }
+        );
+    }
+    void handleConnectionClosed(const WebSocketConnectionPtr&) override {}
+    void handleNewConnection(const HttpRequestPtr&, const WebSocketConnectionPtr&) override {}
+    WS_PATH_LIST_BEGIN
+    WS_PATH_ADD("/ws/orders");
+    WS_PATH_LIST_END
+};
 
 // Parse DATABASE_URL in format: postgresql://user:password@host:port/database
 void parseAndConfigureDatabase() {

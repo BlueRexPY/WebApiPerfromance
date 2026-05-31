@@ -1,3 +1,11 @@
+
+use std::future::Future;
+pub mod api {
+    tonic::include_proto!("api");
+}
+use api::api_service_server::{ApiService, ApiServiceServer};
+use tonic::{Request, Response as TonicResponse, Status};
+
 use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use actix_ws::Message;
 use chrono::NaiveDateTime;
@@ -18,6 +26,72 @@ struct Order {
     total_cents: i32,
     status: String,
     created_at: NaiveDateTime,
+}
+
+
+pub struct ApiServerImpl {
+    pub pool: deadpool_postgres::Pool,
+}
+
+#[tonic::async_trait]
+impl ApiService for ApiServerImpl {
+    async fn say_hello(&self, _req: Request<api::HelloRequest>) -> Result<TonicResponse<api::HelloReply>, Status> {
+        Ok(TonicResponse::new(api::HelloReply {
+            message: "Hello, World!".to_string(),
+        }))
+    }
+
+    async fn get_orders(&self, _req: Request<api::GetOrdersRequest>) -> Result<TonicResponse<api::GetOrdersReply>, Status> {
+        let client = self.pool.get().await.map_err(|_| Status::internal("DB error"))?;
+        let stmt = client.prepare_cached("SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000").await.map_err(|_| Status::internal("DB error"))?;
+        let rows = client.query(&stmt, &[]).await.map_err(|_| Status::internal("DB error"))?;
+        
+        let orders = rows.iter().map(|row| api::Order {
+            id: row.get(0),
+            customer_id: row.get(1),
+            total_cents: row.get(2),
+            status: row.get(3),
+            created_at: row.get::<usize, chrono::NaiveDateTime>(4).format("%Y-%m-%dT%H:%M:%S").to_string(),
+        }).collect();
+        
+        Ok(TonicResponse::new(api::GetOrdersReply { orders }))
+    }
+}
+
+
+#[get("/sse/hello")]
+async fn sse_hello() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("text/event-stream")
+        .append_header(("Cache-Control", "no-cache"))
+        .append_header(("Connection", "keep-alive"))
+        .body("data: {\"message\":\"Hello, World!\"}\n\n")
+}
+
+#[get("/sse/orders")]
+async fn sse_orders(data: web::Data<AppState>) -> impl Responder {
+    let client = match data.pool.get().await {
+        Ok(client) => client,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
+    let stmt = match client.prepare_cached("SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000").await {
+        Ok(stmt) => stmt,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
+    let rows = match client.query(&stmt, &[]).await {
+        Ok(rows) => rows,
+        Err(_) => return HttpResponse::InternalServerError().finish(),
+    };
+    let mut chunks = String::new();
+    for row in rows {
+        let o = Order { id: row.get(0), customer_id: row.get(1), total_cents: row.get(2), status: row.get(3), created_at: row.get(4) };
+        chunks.push_str(&format!("data: {}\n\n", serde_json::to_string(&o).unwrap()));
+    }
+    HttpResponse::Ok()
+        .content_type("text/event-stream")
+        .append_header(("Cache-Control", "no-cache"))
+        .append_header(("Connection", "keep-alive"))
+        .body(chunks)
 }
 
 struct AppState {
@@ -179,15 +253,27 @@ async fn main() -> std::io::Result<()> {
         let _ = pool.get().await;
     }
 
-    let app_state = web::Data::new(AppState { pool });
+    let app_state = web::Data::new(AppState { pool: pool.clone() });
 
-    println!("Starting server on 0.0.0.0:8000");
+    
+    let grpc_pool = pool.clone();
+    tokio::spawn(async move {
+        let addr = "0.0.0.0:9000".parse().unwrap();
+        let svc = ApiServerImpl { pool: grpc_pool };
+        tonic::transport::Server::builder()
+            .add_service(ApiServiceServer::new(svc))
+            .serve(addr)
+            .await
+            .unwrap();
+    });
+
+	println!("Starting server on 0.0.0.0:8000");
 
     HttpServer::new(move || {
         App::new()
             .app_data(app_state.clone())
             .service(hello)
-            .service(get_orders)
+            .service(get_orders).service(sse_hello).service(sse_orders)
             .route("/ws/echo", web::get().to(ws_echo))
             .route("/ws/orders", web::get().to(ws_orders))
     })

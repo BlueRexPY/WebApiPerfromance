@@ -49,6 +49,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-reactive-pg-client</artifactId>
         </dependency>
+        <!-- WebSocket (Jakarta WebSocket / Undertow) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-websockets</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

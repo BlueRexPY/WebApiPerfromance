@@ -72,6 +72,7 @@ services:
     build: ./apps/DotNetApi
     ports:
       - "8001:8000"
+      - "9001:9000"
     environment:
       DATABASE_URL: Host=db;Port=5432;Database=${POSTGRES_DB:-ordersdb};Username=${POSTGRES_USER:-apiuser};Password=${POSTGRES_PASSWORD:-apipassword};Maximum Pool Size=120;Multiplexing=true
       ASPNETCORE_ENVIRONMENT: Production
@@ -114,6 +115,7 @@ services:
     build: ./apps/NodeBunApi
     ports:
       - "8002:8000"
+      - "9002:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -175,6 +177,7 @@ services:
     build: ./apps/RustActix
     ports:
       - "8005:8000"
+      - "9005:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -240,6 +243,7 @@ services:
     build: ./apps/GoFiber
     ports:
       - "8008:8000"
+      - "9008:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -326,6 +330,7 @@ services:
     build: ./apps/NodeExpressApi
     ports:
       - "8014:8000"
+      - "9014:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       NODE_ENV: production
@@ -516,6 +521,7 @@ services:
     build: ./apps/RustAxum
     ports:
       - "8022:8000"
+      - "9022:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -536,6 +542,7 @@ services:
     build: ./apps/GoChi
     ports:
       - "8023:8000"
+      - "9023:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -700,6 +707,7 @@ services:
     build: ./apps/GoNetHttp
     ports:
       - "8032:8000"
+      - "9032:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -1102,6 +1110,7 @@ services:
     build: ./apps/NodeExpressClusterApi
     ports:
       - "8041:8000"
+      - "9041:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       NODE_ENV: production
@@ -1234,6 +1243,7 @@ services:
     build: ./apps/NodeBunClusterApi
     ports:
       - "8047:8000"
+      - "9047:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
       WORKERS: "2"
@@ -1645,6 +1655,7 @@ services:
     build: ./apps/GoGin
     ports:
       - "8066:8000"
+      - "9066:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:
@@ -2036,6 +2047,7 @@ services:
     build: ./apps/GoEcho
     ports:
       - "8096:8000"
+      - "9096:9000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-apiuser}:${POSTGRES_PASSWORD:-apipassword}@db:5432/${POSTGRES_DB:-ordersdb}
     depends_on:

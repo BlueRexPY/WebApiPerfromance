@@ -7,9 +7,13 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.sql.Connection
 import java.sql.DriverManager
 import java.net.URI
@@ -67,6 +71,7 @@ fun main() {
 
     embeddedServer(Netty, port = 8000, host = "0.0.0.0") {
         install(ContentNegotiation) { json() }
+        install(WebSockets)
 
         routing {
             get("/") {
@@ -95,6 +100,40 @@ fun main() {
                     }
                 }
                 call.respond(orders)
+            }
+
+            webSocket("/ws/echo") {
+                for (frame in incoming) {
+                    if (frame is Frame.Close) break
+                    if (frame is Frame.Text) send(frame.readText())
+                }
+            }
+
+            webSocket("/ws/orders") {
+                for (frame in incoming) {
+                    if (frame is Frame.Close) break
+                    val orders = pool.use { conn ->
+                        conn.prepareStatement(
+                            "SELECT id, customer_id, total_cents, status, created_at" +
+                            " FROM orders LIMIT 100 OFFSET 1000"
+                        ).use { stmt ->
+                            stmt.executeQuery().use { rs ->
+                                val list = mutableListOf<Order>()
+                                while (rs.next()) {
+                                    list += Order(
+                                        id          = rs.getInt(1),
+                                        customer_id = rs.getInt(2),
+                                        total_cents = rs.getInt(3),
+                                        status      = rs.getString(4),
+                                        created_at  = rs.getObject(5, LocalDateTime::class.java).toString(),
+                                    )
+                                }
+                                list
+                            }
+                        }
+                    }
+                    send(Json.encodeToString(orders))
+                }
             }
         }
     }.start(wait = true)

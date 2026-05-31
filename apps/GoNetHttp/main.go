@@ -1,6 +1,11 @@
 package main
 
 import (
+	"net"
+	"fmt"
+	"google.golang.org/grpc"
+	pb "app/api"
+
 	"context"
 	"encoding/json"
 	"log"
@@ -62,6 +67,20 @@ func main() {
 		Addr:    ":8000",
 		Handler: mux,
 	}
+
+	
+	go func() {
+		lis, err := net.Listen("tcp", ":9000")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		s := grpc.NewServer()
+		pb.RegisterApiServiceServer(s, &apiServer{})
+		log.Println("gRPC server listening on :9000")
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
 
 	log.Println("Starting Go net/http server on :8000")
 	if err := srv.ListenAndServe(); err != nil {
@@ -145,4 +164,61 @@ func ordersHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(orders)
+}
+
+func sseHelloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Accel-Buffering", "no")
+	fmt.Fprintf(w, "data: {\"message\":\"Hello, World!\"}\n\n")
+	w.(http.Flusher).Flush()
+}
+
+func sseOrdersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Accel-Buffering", "no")
+	rows, _ := pool.Query(r.Context(), "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000")
+	defer rows.Close()
+	flusher := w.(http.Flusher)
+	for rows.Next() {
+		var o Order
+		rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+		b, _ := json.Marshal(o)
+		fmt.Fprintf(w, "data: %s\n\n", string(b))
+	}
+	flusher.Flush()
+}
+
+
+type apiServer struct {
+	pb.UnimplementedApiServiceServer
+}
+
+func (s *apiServer) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
+	return &pb.HelloReply{Message: "Hello, World!"}, nil
+}
+
+func (s *apiServer) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
+	rows, err := pool.Query(ctx, "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var orders []*pb.Order
+	for rows.Next() {
+		var o Order
+		rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+		orders = append(orders, &pb.Order{
+			Id:         int32(o.ID),
+			CustomerId: int32(o.CustomerID),
+			TotalCents: int32(o.TotalCents),
+			Status:     o.Status,
+			CreatedAt:  o.CreatedAt.Format(time.RFC3339),
+		})
+	}
+	return &pb.GetOrdersReply{Orders: orders}, nil
 }

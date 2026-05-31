@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import logging
 import shutil
+import socket
 import subprocess
 import time
 import urllib.request
@@ -224,6 +225,27 @@ def wait_for_service(service: Service, timeout: int = SERVICE_START_TIMEOUT) -> 
     )
 
 
+def wait_for_grpc(service: Service, timeout: int = SERVICE_START_TIMEOUT) -> None:
+    """Wait until the gRPC port is accepting TCP connections."""
+    if not service.grpc_port:
+        return
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        try:
+            with socket.create_connection(("127.0.0.1", service.grpc_port), timeout=2):
+                logger.info(
+                    "gRPC port %d on %s is accepting connections",
+                    service.grpc_port,
+                    service.name,
+                )
+                return
+        except OSError:
+            time.sleep(HEALTH_CHECK_INTERVAL)
+    raise ServiceStartError(
+        f"gRPC port {service.grpc_port} on {service.name} not ready within {timeout}s"
+    )
+
+
 def warmup(service: Service, test_type: TestType) -> None:
     """Send a few warmup requests before benchmarking."""
     url = f"http://127.0.0.1:{service.port}{test_type.path}"
@@ -380,6 +402,51 @@ def run_k6(
     return parse_k6_output(output)
 
 
+def run_grpc_k6(
+    service: Service,
+    test_type: TestType,
+    k6_config: K6Config = DEFAULT_K6,
+) -> K6Result:
+    """Execute k6 against a gRPC endpoint and return parsed results."""
+    if not shutil.which("k6"):
+        raise K6NotFoundError("k6 is not installed. Install it with: snap install k6")
+
+    if not service.grpc_port:
+        raise BenchmarkError(
+            f"Service {service.name} has no grpc_port configured"
+        )
+
+    grpc_url = f"127.0.0.1:{service.grpc_port}"
+    proto_root = str(PROJECT_ROOT / "benchmarks" / "proto")
+    script_path = PROJECT_ROOT / test_type.ws_script
+
+    cmd = [
+        "k6",
+        "run",
+        "--vus",
+        str(k6_config.vus),
+        "--duration",
+        k6_config.duration_flag,
+        "-e",
+        f"GRPC_URL={grpc_url}",
+        "-e",
+        f"PROTO_ROOT={proto_root}",
+        "--no-color",
+        str(script_path),
+    ]
+
+    logger.info("Running: %s", " ".join(cmd))
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        timeout=k6_config.duration_seconds + 60,
+    )
+
+    output = result.stdout + "\n" + result.stderr
+    return parse_k6_output(output)
+
+
 @dataclass
 class BenchmarkResult:
     """Result of a single benchmark run."""
@@ -421,6 +488,30 @@ def run_benchmark(
         if test_type.tool == "k6":
             mem_before = get_memory_stats(service)
             k6_result = run_k6(service, test_type, k6_config)
+            mem_after = get_memory_stats(service)
+            memory = mem_after if mem_after.mem_usage else mem_before
+            path = write_ws_result(service, test_type, k6_result, k6_config, memory)
+            logger.info(
+                "✓ %s / %s — %.2f iter/s → %s",
+                service.display_name,
+                test_type.label,
+                k6_result.iterations_per_sec,
+                path,
+            )
+            return BenchmarkResult(
+                service=service,
+                test_type=test_type,
+                wrk_result=WrkResult(),
+                result_path=path,
+                success=True,
+                memory=memory,
+                k6_result=k6_result,
+            )
+
+        if test_type.tool == "grpc_k6":
+            wait_for_grpc(service)
+            mem_before = get_memory_stats(service)
+            k6_result = run_grpc_k6(service, test_type, k6_config)
             mem_after = get_memory_stats(service)
             memory = mem_after if mem_after.mem_usage else mem_before
             path = write_ws_result(service, test_type, k6_result, k6_config, memory)

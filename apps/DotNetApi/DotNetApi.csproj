@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.2" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos/api.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

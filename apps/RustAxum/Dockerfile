@@ -5,9 +5,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
+    protobuf-compiler \
+
     && rm -rf /var/lib/apt/lists/*
 
 COPY Cargo.toml ./
+COPY build.rs ./
+COPY proto/ ./proto/
 
 # Cache dependency build layer
 RUN mkdir src && \
@@ -31,6 +35,6 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /app/target/release/rust-axum-api /app/rust-axum-api
 
-EXPOSE 8000
+EXPOSE 8000 9000
 
 CMD ["/app/rust-axum-api"]

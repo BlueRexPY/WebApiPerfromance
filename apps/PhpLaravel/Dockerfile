@@ -47,6 +47,7 @@ RUN php artisan octane:install --server=swoole --no-interaction
 COPY routes/web.php routes/web.php
 COPY bootstrap/app.php bootstrap/app.php
 COPY config/database.php config/database.php
+COPY swoole_server.php swoole_server.php
 
 # Generate APP_KEY and warm up view cache (no config/route cache — reads env at runtime)
 RUN php artisan key:generate --force --quiet && \

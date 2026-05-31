@@ -22,6 +22,7 @@ class Service:
     port: int  # host port
     display_name: str  # human-readable label for reports
     dir_name: str = ""  # results subdirectory name (e.g. "PythonLitestar")
+    grpc_port: int = 0  # host port for gRPC (0 = gRPC not supported)
 
 
 @dataclass(frozen=True)
@@ -98,6 +99,34 @@ TEST_TYPES: dict[str, TestType] = {
         tool="k6",
         ws_script="benchmarks/ws/orders.js",
     ),
+    "sse_hello": TestType(
+        name="sse_hello",
+        path="/sse/hello",
+        label="SSE Hello",
+        description="Server-Sent Events hello — single event, no database",
+    ),
+    "sse_orders": TestType(
+        name="sse_orders",
+        path="/sse/orders",
+        label="SSE Orders",
+        description="Server-Sent Events orders — server streams 100 orders then closes",
+    ),
+    "grpc_hello": TestType(
+        name="grpc_hello",
+        path="/api.ApiService/SayHello",
+        label="gRPC Hello",
+        description="gRPC unary hello — no database",
+        tool="grpc_k6",
+        ws_script="benchmarks/grpc/hello.js",
+    ),
+    "grpc_orders": TestType(
+        name="grpc_orders",
+        path="/api.ApiService/GetOrders",
+        label="gRPC Orders",
+        description="gRPC unary orders — returns 100 orders from database",
+        tool="grpc_k6",
+        ws_script="benchmarks/grpc/orders.js",
+    ),
 }
 
 
@@ -108,8 +137,8 @@ SERVICES: dict[str, Service] = {
     s.name: s
     for s in [
         Service("litestar", 8000, "Python Litestar", "PythonLitestar"),
-        Service("dotnetapi", 8001, "C# .NET API", "DotNetApi"),
-        Service("bunapi", 8002, "JS Bun", "BunApi"),
+        Service("dotnetapi", 8001, "C# .NET API", "DotNetApi", grpc_port=9001),
+        Service("bunapi", 8002, "JS Bun", "BunApi", grpc_port=9002),
         Service("fastifyapi", 8003, "JS Node Fastify", "FastifyApi"),
         Service("fastapi", 8004, "Python FastAPI", "PythonFastApi"),
         Service("rustactix", 8005, "Rust Actix", "RustActix"),
@@ -121,7 +150,7 @@ SERVICES: dict[str, Service] = {
         Service("denoapi", 8011, "JS Deno", "DenoApi"),
         Service("swiftvapor", 8012, "Swift Vapor", "SwiftVapor"),
         Service("dotnetapiaot", 8013, "C# .NET AOT", "DotNetApiAot"),
-        Service("expressapi", 8014, "JS Node Express", "ExpressApi"),
+        Service("expressapi", 8014, "JS Node Express", "ExpressApi", grpc_port=9014),
         Service("rubyrails", 8015, "Ruby Rails", "RubyRails"),
         Service("djangoapi", 8016, "Python Django", "DjangoApi"),
         Service("cppdrogon", 8017, "C++ Drogon", "CppDrogon"),
@@ -172,6 +201,7 @@ SERVICES: dict[str, Service] = {
             8041,
             "JS Node Express Cluster",
             "NodeExpressClusterApi",
+            grpc_port=9041,
         ),
         Service(
             "fastifyclusterapi",
@@ -193,7 +223,13 @@ SERVICES: dict[str, Service] = {
             "JS Node NestJS Fastify Cluster",
             "NodeNestFastifyClusterApi",
         ),
-        Service("bunclusterapi", 8047, "JS Node Bun Cluster", "NodeBunClusterApi"),
+        Service(
+            "bunclusterapi",
+            8047,
+            "JS Node Bun Cluster",
+            "NodeBunClusterApi",
+            grpc_port=9047,
+        ),
         Service("denoparallelapi", 8048, "JS Deno Parallel", "NodeDenoParallelApi"),
         Service("bunexpressapi", 8049, "JS Bun Express", "NodeBunExpressApi"),
         Service("bunfastifyapi", 8050, "JS Bun Fastify", "NodeBunFastifyApi"),

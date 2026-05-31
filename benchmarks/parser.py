@@ -8,6 +8,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+
 @dataclass
 class MemoryStats:
     """Container memory usage stats from docker stats."""
@@ -17,6 +18,7 @@ class MemoryStats:
     mem_percent: str = ""  # e.g. "4.41%"
     cpu_percent: str = ""  # e.g. "150.2%"
     pids: int = 0
+
 
 @dataclass
 class WrkResult:
@@ -54,6 +56,7 @@ class WrkResult:
     # Raw output
     raw: str = ""
 
+
 _LATENCY_RE = re.compile(r"Latency\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)")
 _REQSEC_RE = re.compile(r"Req/Sec\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)")
 _SUMMARY_RE = re.compile(r"(\d+)\s+requests?\s+in\s+(\S+),\s+(\S+)\s+read")
@@ -65,6 +68,7 @@ _SOCKET_ERR_RE = re.compile(
 )
 _HEADER_RE = re.compile(r"Running\s+(\S+)\s+test\s+@\s+(\S+)")
 _THREADS_RE = re.compile(r"(\d+)\s+threads?\s+and\s+(\d+)\s+connections?")
+
 
 def parse_wrk_output(output: str) -> WrkResult:
     """Parse wrk CLI output into a structured WrkResult."""
@@ -128,6 +132,7 @@ def parse_wrk_output(output: str) -> WrkResult:
 
     return result
 
+
 @dataclass
 class K6Result:
     """Parsed results from a single k6 WebSocket run."""
@@ -143,15 +148,19 @@ class K6Result:
     has_errors: bool = False
     raw: str = ""
 
+
 # iterations.....................: 14976   748.50/s
 _K6_ITERS_RE = re.compile(r"iterations[.\s]+:\s+(\d+)\s+([\d.]+)/s")
 # iteration_duration.............: avg=965.35µs ... p(95)=2.05ms
 _K6_ITER_DUR_RE = re.compile(r"iteration_duration[.\s]+:.*?avg=(\S+).*?p\(95\)=(\S+)")
-# ws_*_rtt_ms....................: avg=0.17 ... max=12.43 ... p(95)=0.56
+# ws_*_rtt_ms or grpc_*_rtt_ms..: avg=0.17 ... max=12.43 ... p(95)=0.56
 _K6_RTT_RE = re.compile(
-    r"ws_\w+_rtt_ms[.\s]+:.*?avg=(\S+)\s+min=\S+\s+med=\S+\s+max=(\S+)\s+p\(90\)=\S+\s+p\(95\)=(\S+)"
+    r"(?:ws|grpc)_\w+_rtt_ms[.\s]+:.*?avg=(\S+)\s+min=\S+\s+med=\S+\s+max=(\S+)\s+p\(90\)=\S+\s+p\(95\)=(\S+)"
 )
 _K6_CHECKS_RE = re.compile(r"checks[.\s]+:\s+([\d.]+)%")
+# New k6 format: "checks_succeeded...: 46.25% ..."
+_K6_CHECKS_SUCCEEDED_RE = re.compile(r"checks_succeeded[.\s]+:\s+([\d.]+)%")
+
 
 def parse_k6_output(output: str) -> K6Result:
     """Parse k6 CLI stdout into a structured K6Result."""
@@ -178,5 +187,12 @@ def parse_k6_output(output: str) -> K6Result:
         result.checks_passed_pct = float(m.group(1))
         if result.checks_passed_pct < 100.0:
             result.has_errors = True
+    else:
+        # New k6 output format uses checks_succeeded / checks_failed lines
+        m = _K6_CHECKS_SUCCEEDED_RE.search(output)
+        if m:
+            result.checks_passed_pct = float(m.group(1))
+            if result.checks_passed_pct < 100.0:
+                result.has_errors = True
 
     return result

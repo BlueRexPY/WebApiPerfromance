@@ -8,5 +8,6 @@ RUN bun install --production
 COPY . .
 
 EXPOSE 8000
+EXPOSE 9000
 
 CMD ["bun", "run", "src/index.ts"]

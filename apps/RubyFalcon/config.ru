@@ -4,6 +4,7 @@ require "pg"
 require "connection_pool"
 require "json"
 require "uri"
+require "async/websocket/adapters/rack"
 
 DATABASE_URL = ENV.fetch("DATABASE_URL", "postgresql://apiuser:apipassword@db:5432/ordersdb")
 
@@ -24,6 +25,40 @@ JSON_HEADER = { "content-type" => "application/json" }.freeze
 
 App = lambda do |env|
   path = env["PATH_INFO"]
+
+  if path == "/ws/echo"
+    return Async::WebSocket::Adapters::Rack.open(env) do |connection|
+      while (message = connection.read)
+        connection.write(message)
+        connection.flush
+      end
+    end || [400, {}, ["Bad Request"]]
+  end
+
+  if path == "/ws/orders"
+    return Async::WebSocket::Adapters::Rack.open(env) do |connection|
+      connection.read # consume trigger message
+      rows = []
+      DB_POOL.with do |conn|
+        result = conn.exec_params(
+          "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",
+          [100, 1000]
+        )
+        result.each do |row|
+          rows << {
+            id:          row["id"].to_i,
+            customer_id: row["customer_id"].to_i,
+            total_cents: row["total_cents"].to_i,
+            status:      row["status"],
+            created_at:  row["created_at"]
+          }
+        end
+      end
+      connection.write(::Protocol::WebSocket::TextMessage.generate(JSON.generate(rows)))
+      connection.flush
+      connection.close
+    end || [400, {}, ["Bad Request"]]
+  end
 
   case path
   when "/"

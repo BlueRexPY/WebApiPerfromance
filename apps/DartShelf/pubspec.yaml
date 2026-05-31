@@ -9,3 +9,4 @@ environment:
 dependencies:
   shelf: ^1.4.1
   postgres: ^3.3.4
+  shelf_web_socket: ^2.0.0

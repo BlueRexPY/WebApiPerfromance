@@ -2,6 +2,9 @@ import cluster from "cluster";
 import express from "express";
 import postgres from "postgres";
 import { WebSocketServer } from "ws";
+import * as grpc from "@grpc/grpc-js";
+import * as protoLoader from "@grpc/proto-loader";
+import path from "path";
 
 const NUM_WORKERS = parseInt(process.env.WORKERS || "2", 10);
 
@@ -20,6 +23,72 @@ if (cluster.isPrimary) {
     );
     cluster.fork();
   });
+
+  // gRPC server in primary (shared port, no load-balancing overhead)
+  const DATABASE_URL =
+    process.env.DATABASE_URL ||
+    "postgresql://apiuser:apipassword@localhost:5432/ordersdb";
+
+  const sqlPrimary = postgres(DATABASE_URL, {
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
+    prepare: true,
+  });
+
+  const PROTO_PATH =
+    process.env.PROTO_PATH ??
+    path.join(import.meta.dirname, "..", "proto", "api.proto");
+
+  const packageDef = protoLoader.loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  });
+  const proto = grpc.loadPackageDefinition(packageDef);
+
+  const grpcServer = new grpc.Server();
+  grpcServer.addService(proto.api.ApiService.service, {
+    sayHello: (_call, callback) => {
+      callback(null, { message: "Hello, World!" });
+    },
+    getOrders: async (_call, callback) => {
+      try {
+        const orders = await sqlPrimary`
+          SELECT id, customer_id, total_cents, status, created_at
+          FROM orders
+          LIMIT 100
+          OFFSET 1000
+        `;
+        callback(null, {
+          orders: orders.map((o) => ({
+            id: o.id,
+            customer_id: o.customer_id,
+            total_cents: o.total_cents,
+            status: o.status,
+            created_at: new Date(o.created_at).toISOString(),
+          })),
+        });
+      } catch (err) {
+        callback({ code: grpc.status.INTERNAL, message: "Internal error" });
+      }
+    },
+  });
+
+  const GRPC_PORT = process.env.GRPC_PORT || 9000;
+  grpcServer.bindAsync(
+    `0.0.0.0:${GRPC_PORT}`,
+    grpc.ServerCredentials.createInsecure(),
+    (err, port) => {
+      if (err) {
+        console.error("gRPC bind error:", err);
+        return;
+      }
+      console.log(`gRPC server listening on port ${port}`);
+    },
+  );
 } else {
   const DATABASE_URL =
     process.env.DATABASE_URL ||
@@ -53,6 +122,35 @@ if (cluster.isPrimary) {
     } catch (error) {
       console.error("Database error:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/sse/hello", (req, res) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.write('data: {"message":"Hello, World!"}\n\n');
+    res.end();
+  });
+
+  app.get("/sse/orders", async (req, res) => {
+    try {
+      const orders = await sql`
+        SELECT id, customer_id, total_cents, status, created_at
+        FROM orders
+        LIMIT 100
+        OFFSET 1000
+      `;
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("X-Accel-Buffering", "no");
+      for (const order of orders) {
+        res.write(`data: ${JSON.stringify(order)}\n\n`);
+      }
+      res.end();
+    } catch (error) {
+      console.error("Database error:", error);
+      res.status(500).end();
     }
   });
 

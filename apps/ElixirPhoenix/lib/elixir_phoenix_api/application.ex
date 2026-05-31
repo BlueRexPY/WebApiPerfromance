@@ -6,7 +6,22 @@ defmodule ElixirPhoenixApi.Application do
     children = [
       ElixirPhoenixApi.Repo,
       {Phoenix.PubSub, name: ElixirPhoenixApi.PubSub},
-      ElixirPhoenixApi.Endpoint
+      {Plug.Cowboy,
+       scheme: :http,
+       plug: ElixirPhoenixApi.Endpoint,
+       options: [
+         port: 8000,
+         transport_options: [num_acceptors: 100],
+         dispatch:
+           :cowboy_router.compile([
+             {:_,
+              [
+                {"/ws/echo", ElixirPhoenixApi.WsEchoHandler, []},
+                {"/ws/orders", ElixirPhoenixApi.WsOrdersHandler, []},
+                {:_, Plug.Cowboy.Handler, {ElixirPhoenixApi.Endpoint, []}}
+              ]}
+           ])
+       ]}
     ]
 
     opts = [strategy: :one_for_one, name: ElixirPhoenixApi.Supervisor]

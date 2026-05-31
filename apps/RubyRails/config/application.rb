@@ -32,5 +32,8 @@ module RubyRails
     # Disable etag generation
     config.middleware.delete Rack::ETag
     config.middleware.delete Rack::ConditionalGet
+
+    # WebSocket middleware (must be inserted before Rails routing)
+    config.middleware.insert_before 0, WebSocketMiddleware
   end
 end

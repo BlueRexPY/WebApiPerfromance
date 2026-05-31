@@ -47,6 +47,11 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- WebSocket support -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-websocket</artifactId>
+        </dependency>
         <!-- Logging: silence everything -->
         <dependency>
             <groupId>org.slf4j</groupId>

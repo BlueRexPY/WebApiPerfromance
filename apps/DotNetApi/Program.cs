@@ -16,6 +16,7 @@ dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 120;
 NpgsqlDataSource dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSingleton(dataSource);
+builder.Services.AddGrpc();
 
 WebApplication app = builder.Build();
 
@@ -151,6 +152,55 @@ app.Map(
         }
     }
 );
+
+app.MapGet(
+    "/sse/hello",
+    async (HttpContext ctx) =>
+    {
+        ctx.Response.Headers["Content-Type"] = "text/event-stream";
+        ctx.Response.Headers["Cache-Control"] = "no-cache";
+        ctx.Response.Headers["X-Accel-Buffering"] = "no";
+        await ctx.Response.WriteAsync("data: {\"message\":\"Hello, World!\"}\n\n");
+        await ctx.Response.Body.FlushAsync();
+    }
+);
+
+app.MapGet(
+    "/sse/orders",
+    async (HttpContext ctx, NpgsqlDataSource ds) =>
+    {
+        ctx.Response.Headers["Content-Type"] = "text/event-stream";
+        ctx.Response.Headers["Cache-Control"] = "no-cache";
+        ctx.Response.Headers["X-Accel-Buffering"] = "no";
+
+        const string sql =
+            @"SELECT id, customer_id, total_cents, status, created_at
+              FROM orders LIMIT $1 OFFSET $2";
+
+        await using NpgsqlConnection connection = await ds.OpenConnectionAsync();
+        await using NpgsqlCommand command = new(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter { Value = 100 });
+        command.Parameters.Add(new NpgsqlParameter { Value = 1000 });
+
+        await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var order = new Order
+            {
+                Id = reader.GetInt32(0),
+                CustomerId = reader.GetInt32(1),
+                TotalCents = reader.GetInt32(2),
+                Status = reader.GetString(3),
+                CreatedAt = reader.GetDateTime(4),
+            };
+            string data = JsonSerializer.Serialize(order);
+            await ctx.Response.WriteAsync($"data: {data}\n\n");
+            await ctx.Response.Body.FlushAsync();
+        }
+    }
+);
+
+app.MapGrpcService<ApiGrpcService>();
 
 app.Run();
 

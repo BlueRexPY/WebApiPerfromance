@@ -5,7 +5,7 @@ config :elixir_phoenix_api, ElixirPhoenixApi.Endpoint,
   render_errors: [view: ElixirPhoenixApi.ErrorView, accepts: ~w(json)],
   pubsub_server: ElixirPhoenixApi.PubSub,
   http: [port: 8000],
-  server: true
+  server: false
 
 config :elixir_phoenix_api, ElixirPhoenixApi.Repo,
   pool_size: 90,

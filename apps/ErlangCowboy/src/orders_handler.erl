@@ -1,5 +1,5 @@
 -module(orders_handler).
--export([init/2]).
+-export([init/2, row_to_order/1]).
 
 init(Req0, State) ->
     Sql = "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT $1 OFFSET $2",

@@ -6,10 +6,21 @@ defmodule ElixirPlugApi.Application do
     db_url = System.get_env("DATABASE_URL") ||
       "postgresql://apiuser:apipassword@localhost:5432/ordersdb"
 
+    dispatch =
+      :cowboy_router.compile([
+        {:_,
+         [
+           {"/ws/echo", ElixirPlugApi.WsEchoHandler, []},
+           {"/ws/orders", ElixirPlugApi.WsOrdersHandler, []},
+           {:_, Plug.Cowboy.Handler, {ElixirPlugApi.Router, []}}
+         ]}
+      ])
+
     children = [
       {Postgrex, postgrex_config(db_url)},
       {Plug.Cowboy, scheme: :http, plug: ElixirPlugApi.Router,
-                    options: [port: 8000, transport_options: [num_acceptors: 100]]}
+                    options: [port: 8000, transport_options: [num_acceptors: 100],
+                              dispatch: dispatch]}
     ]
 
     opts = [strategy: :one_for_one, name: ElixirPlugApi.Supervisor]

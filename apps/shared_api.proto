@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package api;
+
+option csharp_namespace = "Api";
+option go_package = "./api";
+
+service ApiService {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc GetOrders (GetOrdersRequest) returns (GetOrdersReply);
+}
+
+message HelloRequest {}
+
+message HelloReply {
+  string message = 1;
+}
+
+message GetOrdersRequest {}
+
+message GetOrdersReply {
+  repeated Order orders = 1;
+}
+
+message Order {
+  int32 id = 1;
+  int32 customer_id = 2;
+  int32 total_cents = 3;
+  string status = 4;
+  string created_at = 5;
+}

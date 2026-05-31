@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
+import 'package:shelf_web_socket/shelf_web_socket.dart';
 
 late Pool _pool;
 
@@ -40,7 +41,57 @@ Future<void> main() async {
   stderr.writeln('Serving on http://${server.address.host}:${server.port}');
 }
 
+final _wsEchoHandler = webSocketHandler(
+  (socket) {
+    socket.stream.listen(
+      (msg) => socket.sink.add(msg),
+      onDone: () {},
+      onError: (_) {},
+    );
+  },
+);
+
+Handler _wsOrdersHandler = webSocketHandler(
+  (socket) {
+    socket.stream.listen(
+      (_) async {
+        try {
+          await _pool.withConnection((conn) async {
+            final result = await conn.execute(
+              Sql.named(
+                'SELECT id, customer_id, total_cents, status, created_at '
+                'FROM orders LIMIT @limit OFFSET @offset',
+              ),
+              parameters: {'limit': 100, 'offset': 1000},
+            );
+            final orders = result.map((row) {
+              final r = row.toColumnMap();
+              return {
+                'id': r['id'],
+                'customer_id': r['customer_id'],
+                'total_cents': r['total_cents'],
+                'status': r['status'],
+                'created_at': (r['created_at'] as DateTime).toIso8601String(),
+              };
+            }).toList();
+            socket.sink.add(jsonEncode(orders));
+          });
+        } catch (_) {}
+        await socket.sink.close();
+      },
+      onDone: () {},
+      onError: (_) {},
+    );
+  },
+);
+
 Future<Response> _router(Request request) async {
+  if (request.url.path == 'ws/echo') {
+    return _wsEchoHandler(request);
+  }
+  if (request.url.path == 'ws/orders') {
+    return _wsOrdersHandler(request);
+  }
   if (request.method == 'GET') {
     if (request.url.path == '' || request.url.path == '/') {
       return _hello(request);

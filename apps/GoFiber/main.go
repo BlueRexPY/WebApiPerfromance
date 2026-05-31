@@ -1,6 +1,13 @@
 package main
 
 import (
+	"bufio"
+
+	"net"
+	"fmt"
+	"google.golang.org/grpc"
+	pb "app/api"
+
 	"context"
 	"encoding/json"
 	"log"
@@ -65,9 +72,25 @@ func main() {
 	app.Get("/", helloHandler)
 	app.Get("/orders", ordersHandler)
 	app.Get("/ws/echo", websocket.New(wsEchoHandler))
+	app.Get("/sse/hello", sseHelloHandler)
+	app.Get("/sse/orders", sseOrdersHandler)
 	app.Get("/ws/orders", websocket.New(wsOrdersHandler))
 
 	// Start server
+	
+	go func() {
+		lis, err := net.Listen("tcp", ":9000")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		s := grpc.NewServer()
+		pb.RegisterApiServiceServer(s, &apiServer{})
+		log.Println("gRPC server listening on :9000")
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
 	log.Println("Starting server on :8000")
 	if err := app.Listen(":8000"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
@@ -160,4 +183,67 @@ func wsOrdersHandler(c *websocket.Conn) {
 			break
 		}
 	}
+}
+
+func sseHelloHandler(c *fiber.Ctx) error {
+	c.Set("Content-Type", "text/event-stream")
+	c.Set("Cache-Control", "no-cache")
+	c.Set("Connection", "keep-alive")
+	c.Set("X-Accel-Buffering", "no")
+	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
+		fmt.Fprintf(w, "data: {\"message\":\"Hello, World!\"}\n\n")
+		w.Flush()
+	})
+	return nil
+}
+
+func sseOrdersHandler(c *fiber.Ctx) error {
+	c.Set("Content-Type", "text/event-stream")
+	c.Set("Cache-Control", "no-cache")
+	c.Set("Connection", "keep-alive")
+	c.Set("X-Accel-Buffering", "no")
+	
+	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
+		rows, _ := pool.Query(context.Background(), "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000")
+		defer rows.Close()
+		for rows.Next() {
+			var o Order
+			rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+			b, _ := json.Marshal(o)
+			fmt.Fprintf(w, "data: %s\n\n", string(b))
+		}
+		w.Flush()
+	})
+	return nil
+}
+
+
+type apiServer struct {
+	pb.UnimplementedApiServiceServer
+}
+
+func (s *apiServer) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
+	return &pb.HelloReply{Message: "Hello, World!"}, nil
+}
+
+func (s *apiServer) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
+	rows, err := pool.Query(ctx, "SELECT id, customer_id, total_cents, status, created_at FROM orders LIMIT 100 OFFSET 1000")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var orders []*pb.Order
+	for rows.Next() {
+		var o Order
+		rows.Scan(&o.ID, &o.CustomerID, &o.TotalCents, &o.Status, &o.CreatedAt)
+		orders = append(orders, &pb.Order{
+			Id:         int32(o.ID),
+			CustomerId: int32(o.CustomerID),
+			TotalCents: int32(o.TotalCents),
+			Status:     o.Status,
+			CreatedAt:  o.CreatedAt.Format(time.RFC3339),
+		})
+	}
+	return &pb.GetOrdersReply{Orders: orders}, nil
 }

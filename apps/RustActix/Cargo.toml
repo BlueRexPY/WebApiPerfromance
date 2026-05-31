@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+prost = "0.13"
+tonic = "0.12"
 actix-web = "4.9"
 actix-ws = "0.3"
 tokio = { version = "1.41", features = ["full"] }
@@ -19,3 +21,6 @@ postgres-types = { version = "0.2", features = ["derive", "with-chrono-0_4"] }
 opt-level = 3
 lto = true
 codegen-units = 1
+
+[build-dependencies]
+tonic-build = "0.12"

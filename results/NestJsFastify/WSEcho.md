@@ -7,10 +7,10 @@
 
 | Metric | Value |
 | --- | --- |
-| Requests/sec | 2,382.30 |
-| Avg Latency | 0.763961ms |
-| Max Latency | 50ms |
-| Total Requests | 47,765 |
+| Requests/sec | 492.27 |
+| Avg Latency | 38.762891ms |
+| Max Latency | 248ms |
+| Total Requests | 9,949 |
 | Transfer/sec | N/A |
 | Port | 8030 |
 
@@ -26,7 +26,7 @@
 
 | Metric | Value |
 | --- | --- |
-| Memory Usage | 30.57MiB |
+| Memory Usage | 45.66MiB |
 | Memory Limit | 1GiB |
 | Memory % | 2.99% |
 | CPU % | 0.00% |
