@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DotNetApiAot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2a7630be0e1200c42d099d2a45d493746ca288f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f29ed9c08fe1aa62517daaca2a3671411877e75e")]
 [assembly: System.Reflection.AssemblyProductAttribute("DotNetApiAot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DotNetApiAot")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
