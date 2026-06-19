@@ -10,11 +10,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import (
+    DEFAULT_GHZ,
     DEFAULT_K6,
     DEFAULT_WRK,
     RESULTS_DIR,
     SERVICES,
     TEST_TYPES,
+    GhzConfig,
     K6Config,
     Service,
     TestType,
@@ -62,10 +64,32 @@ def write_result(
 | PIDs | {memory.pids} |
 """
 
+    if test_type.tool == "ghz":
+        test_cmd = (
+            f"`ghz --insecure --proto api.proto --call {test_type.path} "
+            f"-c {wrk_config.connections} -z {wrk_config.duration_flag} "
+            f"127.0.0.1:{service.grpc_port}`"
+        )
+        port = service.grpc_port
+        stats_section = ""
+    else:
+        test_cmd = (
+            f"`wrk -t {wrk_config.threads} -c {wrk_config.connections} "
+            f"-d {wrk_config.duration_flag} http://127.0.0.1:{service.port}{test_type.path}`"
+        )
+        port = service.port
+        stats_section = f"""## Thread Stats
+
+| Stat | Avg | Stdev | Max | +/- Stdev |
+| --- | --- | --- | --- | --- |
+| Latency | {wrk_result.avg_latency} | {wrk_result.stdev_latency} | {wrk_result.max_latency} | {wrk_result.latency_pct} |
+| Req/Sec | {wrk_result.avg_req_sec} | {wrk_result.stdev_req_sec} | {wrk_result.max_req_sec} | {wrk_result.req_sec_pct} |
+"""
+
     content = f"""# {service.display_name} — {test_type.label} Benchmark
 
 **Tested**: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")}
-**Command**: `wrk -t {wrk_config.threads} -c {wrk_config.connections} -d {wrk_config.duration_flag} http://127.0.0.1:{service.port}{test_type.path}`
+**Command**: {test_cmd}
 {error_note}
 ## Summary
 
@@ -76,15 +100,8 @@ def write_result(
 | Max Latency | {wrk_result.max_latency} |
 | Total Requests | {wrk_result.total_requests:,} |
 | Transfer/sec | {wrk_result.transfer_per_sec} |
-| Port | {service.port} |
-
-## Thread Stats
-
-| Stat | Avg | Stdev | Max | +/- Stdev |
-| --- | --- | --- | --- | --- |
-| Latency | {wrk_result.avg_latency} | {wrk_result.stdev_latency} | {wrk_result.max_latency} | {wrk_result.latency_pct} |
-| Req/Sec | {wrk_result.avg_req_sec} | {wrk_result.stdev_req_sec} | {wrk_result.max_req_sec} | {wrk_result.req_sec_pct} |
-{mem_section}
+| Port | {port} |
+{stats_section}
 ## Raw Output
 
 ```
@@ -209,7 +226,10 @@ def write_summary(test_type_name: str | None = None) -> list[Path]:
         table_rows = "\n".join(r[1] for r in rows)
 
         summary_path = RESULTS_DIR / f"Summary.{tt.label.replace(' ', '')}.md"
-        if tt.tool == "k6":
+        if tt.tool == "ghz":
+            test_cmd = f"`ghz --insecure --proto api.proto --call {tt.path} -c {DEFAULT_GHZ.concurrency} -z {DEFAULT_GHZ.duration_flag} 127.0.0.1:PORT`"
+            config_lines = f"- Concurrency: {DEFAULT_GHZ.concurrency}\n- Duration: {DEFAULT_GHZ.duration_seconds} seconds"
+        elif tt.tool == "k6":
             test_cmd = f"`k6 run --vus {DEFAULT_K6.vus} --duration {DEFAULT_K6.duration_flag} ws://127.0.0.1:PORT{tt.path}`"
             config_lines = f"- VUs: {DEFAULT_K6.vus}\n- Duration: {DEFAULT_K6.duration_seconds} seconds"
         else:

@@ -18,19 +18,28 @@ from pathlib import Path
 
 from .config import (
     COMPOSE_FILE,
+    DEFAULT_GHZ,
     DEFAULT_K6,
     DEFAULT_WRK,
     MONITORING_SERVICES,
     PROJECT_ROOT,
     SERVICES,
     TEST_TYPES,
+    GhzConfig,
     K6Config,
     Service,
     TestType,
     WrkConfig,
 )
 from .formatter import write_result, write_summary, write_ws_result
-from .parser import K6Result, MemoryStats, WrkResult, parse_k6_output, parse_wrk_output
+from .parser import (
+    K6Result,
+    MemoryStats,
+    WrkResult,
+    parse_ghz_output,
+    parse_k6_output,
+    parse_wrk_output,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +63,10 @@ class WrkNotFoundError(BenchmarkError):
 
 class K6NotFoundError(BenchmarkError):
     """Raised when k6 is not installed."""
+
+
+class GhzNotFoundError(BenchmarkError):
+    """Raised when ghz is not installed."""
 
 
 def _compose_cmd() -> list[str]:
@@ -412,9 +425,7 @@ def run_grpc_k6(
         raise K6NotFoundError("k6 is not installed. Install it with: snap install k6")
 
     if not service.grpc_port:
-        raise BenchmarkError(
-            f"Service {service.name} has no grpc_port configured"
-        )
+        raise BenchmarkError(f"Service {service.name} has no grpc_port configured")
 
     grpc_url = f"127.0.0.1:{service.grpc_port}"
     proto_root = str(PROJECT_ROOT / "benchmarks" / "proto")
@@ -445,6 +456,56 @@ def run_grpc_k6(
 
     output = result.stdout + "\n" + result.stderr
     return parse_k6_output(output)
+
+
+def run_ghz(
+    service: Service,
+    test_type: TestType,
+    ghz_config: GhzConfig = DEFAULT_GHZ,
+) -> WrkResult:
+    """Execute ghz against a gRPC endpoint and return parsed results."""
+    if not shutil.which("ghz"):
+        raise GhzNotFoundError(
+            "ghz is not installed. Install it from: "
+            "https://github.com/bojand/ghz/releases"
+        )
+
+    if not service.grpc_port:
+        raise BenchmarkError(f"Service {service.name} has no grpc_port configured")
+
+    proto_path = str(PROJECT_ROOT / "benchmarks" / "proto" / "api.proto")
+    target = f"127.0.0.1:{service.grpc_port}"
+
+    cmd = [
+        "ghz",
+        "--insecure",
+        "--proto",
+        proto_path,
+        "--call",
+        test_type.path,
+        "-c",
+        str(ghz_config.concurrency),
+        "-n",
+        "0",
+        "-z",
+        ghz_config.duration_flag,
+        target,
+    ]
+
+    logger.info("Running: %s", " ".join(cmd))
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        timeout=ghz_config.duration_seconds + 60,
+    )
+
+    if result.returncode != 0 and not result.stdout.strip():
+        raise BenchmarkError(
+            f"ghz exited with code {result.returncode}: {result.stderr}"
+        )
+
+    return parse_ghz_output(result.stdout)
 
 
 @dataclass
@@ -508,28 +569,27 @@ def run_benchmark(
                 k6_result=k6_result,
             )
 
-        if test_type.tool == "grpc_k6":
+        if test_type.tool == "ghz":
             wait_for_grpc(service)
             mem_before = get_memory_stats(service)
-            k6_result = run_grpc_k6(service, test_type, k6_config)
+            ghz_result = run_ghz(service, test_type, DEFAULT_GHZ)
             mem_after = get_memory_stats(service)
             memory = mem_after if mem_after.mem_usage else mem_before
-            path = write_ws_result(service, test_type, k6_result, k6_config, memory)
+            path = write_result(service, test_type, ghz_result, DEFAULT_WRK, memory)
             logger.info(
-                "✓ %s / %s — %.2f iter/s → %s",
+                "✓ %s / %s — %.2f req/s → %s",
                 service.display_name,
                 test_type.label,
-                k6_result.iterations_per_sec,
+                ghz_result.requests_per_sec,
                 path,
             )
             return BenchmarkResult(
                 service=service,
                 test_type=test_type,
-                wrk_result=WrkResult(),
+                wrk_result=ghz_result,
                 result_path=path,
                 success=True,
                 memory=memory,
-                k6_result=k6_result,
             )
 
         warmup(service, test_type)

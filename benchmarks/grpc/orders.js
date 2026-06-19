@@ -48,6 +48,8 @@ export default function () {
       Array.isArray(r.message.orders) &&
       r.message.orders.length === 100,
   });
+}
 
+export function teardown() {
   client.close();
 }

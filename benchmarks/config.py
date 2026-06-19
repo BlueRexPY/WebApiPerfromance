@@ -68,6 +68,21 @@ class K6Config:
 DEFAULT_K6 = K6Config()
 
 
+@dataclass(frozen=True)
+class GhzConfig:
+    """ghz gRPC load-testing parameters."""
+
+    concurrency: int = 120
+    duration_seconds: int = 20
+
+    @property
+    def duration_flag(self) -> str:
+        return f"{self.duration_seconds}s"
+
+
+DEFAULT_GHZ = GhzConfig()
+
+
 # ── Test types registry ───────────────────────────────────────────────────────
 # Add new test types here. Each entry becomes a selectable benchmark.
 TEST_TYPES: dict[str, TestType] = {
@@ -113,19 +128,17 @@ TEST_TYPES: dict[str, TestType] = {
     ),
     "grpc_hello": TestType(
         name="grpc_hello",
-        path="/api.ApiService/SayHello",
+        path="api.ApiService/SayHello",
         label="gRPC Hello",
         description="gRPC unary hello — no database",
-        tool="grpc_k6",
-        ws_script="benchmarks/grpc/hello.js",
+        tool="ghz",
     ),
     "grpc_orders": TestType(
         name="grpc_orders",
-        path="/api.ApiService/GetOrders",
+        path="api.ApiService/GetOrders",
         label="gRPC Orders",
         description="gRPC unary orders — returns 100 orders from database",
-        tool="grpc_k6",
-        ws_script="benchmarks/grpc/orders.js",
+        tool="ghz",
     ),
 }
 

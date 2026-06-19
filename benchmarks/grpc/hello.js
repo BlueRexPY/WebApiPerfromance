@@ -45,6 +45,8 @@ export default function () {
     "message correct": (r) =>
       r && r.message && r.message.message === "Hello, World!",
   });
+}
 
+export function teardown() {
   client.close();
 }

@@ -196,3 +196,48 @@ def parse_k6_output(output: str) -> K6Result:
                 result.has_errors = True
 
     return result
+
+
+# ── ghz output parsing ───────────────────────────────────────────────────────
+
+_GHZ_COUNT_RE = re.compile(r"Count:\s+(\d+)")
+_GHZ_TOTAL_RE = re.compile(r"Total:\s+([\d.]+)\s*s")
+_GHZ_SLOWEST_RE = re.compile(r"Slowest:\s+([\d.]+)\s*ms")
+_GHZ_AVERAGE_RE = re.compile(r"Average:\s+([\d.]+)\s*ms")
+_GHZ_RPS_RE = re.compile(r"Requests/sec:\s+([\d.]+)")
+_GHZ_OK_RE = re.compile(r"\[OK\]\s+(\d+)")
+
+
+def parse_ghz_output(output: str) -> WrkResult:
+    """Parse ghz CLI summary output into a WrkResult."""
+    result = WrkResult(raw=output)
+
+    m = _GHZ_COUNT_RE.search(output)
+    if m:
+        result.total_requests = int(m.group(1))
+
+    m = _GHZ_TOTAL_RE.search(output)
+    if m:
+        result.total_duration = f"{m.group(1)}s"
+
+    m = _GHZ_SLOWEST_RE.search(output)
+    if m:
+        result.max_latency = f"{m.group(1)}ms"
+
+    m = _GHZ_AVERAGE_RE.search(output)
+    if m:
+        result.avg_latency = f"{m.group(1)}ms"
+
+    m = _GHZ_RPS_RE.search(output)
+    if m:
+        result.requests_per_sec = float(m.group(1))
+
+    # Detect errors: if OK count < total, or if error lines exist
+    m_ok = _GHZ_OK_RE.search(output)
+    if m_ok:
+        ok_count = int(m_ok.group(1))
+        if ok_count < result.total_requests:
+            result.has_errors = True
+            result.non_2xx_3xx = result.total_requests - ok_count
+
+    return result
