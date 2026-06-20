@@ -1,0 +1,3 @@
+services:
+  dotnetapi:
+    network_mode: host
