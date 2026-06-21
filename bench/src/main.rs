@@ -1,7 +1,8 @@
 //! Unified REST + gRPC benchmarking tool.
 //!
-//! Single binary, two modes, both over HTTP/2, identical methodology.
-//! Eliminates the wrk-vs-ghz instrumentation bias.
+//! Single binary, two modes.  REST uses reqwest (HTTP/1.1 with connection
+//! pooling), gRPC uses tonic (HTTP/2).  Both measure end-to-end framework
+//! throughput.
 
 mod api {
     tonic::include_proto!("api");
@@ -9,7 +10,7 @@ mod api {
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use anyhow::{Context, Result};
 use clap::Parser;
@@ -44,12 +45,22 @@ struct Cli {
     /// Use TLS (default: plaintext)
     #[arg(long, default_value = "false")]
     tls: bool,
+
+    /// gRPC endpoint: hello (SayHello) or orders (GetOrders)
+    #[arg(long, value_enum, default_value = "hello")]
+    endpoint: Endpoint,
 }
 
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Mode {
     Rest,
     Grpc,
+}
+
+#[derive(clap::ValueEnum, Clone, Debug)]
+enum Endpoint {
+    Hello,
+    Orders,
 }
 
 // ── Shared result type ───────────────────────────────────────────────────────
@@ -68,29 +79,19 @@ struct BenchReport {
 
 // ── Benchmark engine ─────────────────────────────────────────────────────────
 
-/// Run the REST benchmark.
+/// Run the REST benchmark using reqwest (HTTP/1.1 with connection pooling).
 async fn bench_rest(cli: &Cli) -> Result<BenchReport> {
-    let mut builder = reqwest::Client::builder().timeout(Duration::from_secs(30));
-
-    // HTTP/2 only with TLS; plaintext uses HTTP/1.1 (same as wrk)
-    if cli.tls {
-        builder = builder.http2_prior_knowledge();
-    }
-
-    let client = builder.build()?;
+    let client = reqwest::Client::builder()
+        .http1_only()
+        .pool_max_idle_per_host(cli.concurrency)
+        .build()
+        .context("failed to build reqwest client")?;
 
     let warmup = cli.requests / 10;
     let measured = cli.requests - warmup;
 
     // Warmup (discarded)
-    run_concurrent(
-        &client,
-        &cli.url,
-        warmup,
-        cli.concurrency,
-        None, // no histogram during warmup
-    )
-    .await?;
+    run_rest_concurrent(&client, &cli.url, warmup, cli.concurrency, None).await?;
 
     // Measurement
     let histogram = Arc::new(tokio::sync::Mutex::new(
@@ -99,7 +100,7 @@ async fn bench_rest(cli: &Cli) -> Result<BenchReport> {
     let errors = Arc::new(AtomicU64::new(0));
 
     let t0 = Instant::now();
-    run_concurrent(
+    run_rest_concurrent(
         &client,
         &cli.url,
         measured,
@@ -148,6 +149,7 @@ async fn bench_grpc(cli: &Cli) -> Result<BenchReport> {
         warmup,
         cli.concurrency,
         None,
+        &cli.endpoint,
     )
     .await?;
 
@@ -169,6 +171,7 @@ async fn bench_grpc(cli: &Cli) -> Result<BenchReport> {
         measured,
         cli.concurrency,
         Some((histogram.clone(), errors.clone())),
+        &cli.endpoint,
     )
     .await?;
     let elapsed = t0.elapsed();
@@ -193,9 +196,9 @@ async fn bench_grpc(cli: &Cli) -> Result<BenchReport> {
     })
 }
 
-// ── REST concurrent runner ───────────────────────────────────────────────────
+// ── REST concurrent runner (reqwest with connection pooling) ─────────────────
 
-async fn run_concurrent(
+async fn run_rest_concurrent(
     client: &reqwest::Client,
     url: &str,
     total: u64,
@@ -204,8 +207,6 @@ async fn run_concurrent(
 ) -> Result<()> {
     let sem = Arc::new(Semaphore::new(concurrency));
     let counter = Arc::new(AtomicU64::new(0));
-    let url = Arc::new(url.to_string());
-    let client = client.clone();
 
     let per_task = total / concurrency as u64;
     let remainder = total % concurrency as u64;
@@ -215,9 +216,9 @@ async fn run_concurrent(
     for i in 0..concurrency {
         let sem = sem.clone();
         let counter = counter.clone();
-        let url = url.clone();
-        let client = client.clone();
         let hist = histogram.clone();
+        let client = client.clone();
+        let url = url.to_string();
         let mut my_count = per_task;
         if (i as u64) < remainder {
             my_count += 1;
@@ -228,12 +229,13 @@ async fn run_concurrent(
 
             for _ in 0..my_count {
                 let t0 = Instant::now();
-                match client.get(url.as_str()).send().await {
+                match client.get(&url).send().await {
                     Ok(resp) => {
                         let lat_us = t0.elapsed().as_micros() as u64;
                         if let Some((ref h, _)) = hist {
                             h.lock().await.record(lat_us).ok();
                         }
+                        // Drain body so the connection can be reused.
                         let _ = resp.bytes().await;
                     }
                     Err(_) => {
@@ -262,12 +264,14 @@ async fn run_grpc_concurrent(
     total: u64,
     concurrency: usize,
     histogram: Option<(Arc<tokio::sync::Mutex<Histogram<u64>>>, Arc<AtomicU64>)>,
+    endpoint: &Endpoint,
 ) -> Result<()> {
     let sem = Arc::new(Semaphore::new(concurrency));
     let counter = Arc::new(AtomicU64::new(0));
 
     let per_task = total / concurrency as u64;
     let remainder = total % concurrency as u64;
+    let is_orders = matches!(endpoint, Endpoint::Orders);
 
     let mut handles = Vec::with_capacity(concurrency);
 
@@ -286,19 +290,34 @@ async fn run_grpc_concurrent(
 
             for _ in 0..my_count {
                 let t0 = Instant::now();
-                match client
-                    .say_hello(api::HelloRequest {})
-                    .await
-                {
-                    Ok(_) => {
-                        let lat_us = t0.elapsed().as_micros() as u64;
-                        if let Some((ref h, _)) = hist {
-                            h.lock().await.record(lat_us).ok();
+                if is_orders {
+                    let req = tonic::Request::new(api::GetOrdersRequest {});
+                    match client.get_orders(req).await {
+                        Ok(_) => {
+                            let lat_us = t0.elapsed().as_micros() as u64;
+                            if let Some((ref h, _)) = hist {
+                                h.lock().await.record(lat_us).ok();
+                            }
+                        }
+                        Err(_) => {
+                            if let Some((_, ref e)) = hist {
+                                e.fetch_add(1, Ordering::Relaxed);
+                            }
                         }
                     }
-                    Err(_) => {
-                        if let Some((_, ref e)) = hist {
-                            e.fetch_add(1, Ordering::Relaxed);
+                } else {
+                    let req = tonic::Request::new(api::HelloRequest {});
+                    match client.say_hello(req).await {
+                        Ok(_) => {
+                            let lat_us = t0.elapsed().as_micros() as u64;
+                            if let Some((ref h, _)) = hist {
+                                h.lock().await.record(lat_us).ok();
+                            }
+                        }
+                        Err(_) => {
+                            if let Some((_, ref e)) = hist {
+                                e.fetch_add(1, Ordering::Relaxed);
+                            }
                         }
                     }
                 }

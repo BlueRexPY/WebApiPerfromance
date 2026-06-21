@@ -1,0 +1,4 @@
+sanic[ext]
+psycopg[binary,pool]
+grpcio
+python-dotenv

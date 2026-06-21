@@ -1,0 +1,5 @@
+quart
+psycopg[binary,pool]
+grpcio
+python-dotenv
+hypercorn

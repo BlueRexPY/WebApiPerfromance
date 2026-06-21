@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-#
-# run_all.sh — Unified REST + gRPC benchmark for all frameworks (HelloWorld).
-#
-# Captures REST and gRPC resource usage separately for comparison.
-#
-
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -15,7 +9,6 @@ RESULTS_DIR="$PROJECT_ROOT/results"
 TOTAL=100000
 CONCURRENCY=120
 
-# ── Service registry ─────────────────────────────────────────────────────
 declare -A SERVICES
 SERVICES=(
   ["dotnetapi"]="C# .NET API|8001|9001|DotNetApi"
@@ -26,13 +19,9 @@ SERVICES=(
   ["expressclusterapi"]="JS Node Express Cluster|8041|9041|NodeExpressClusterApi"
   ["bunapi"]="JS Bun|8002|9002|BunApi"
   ["bunclusterapi"]="JS Bun Cluster|8047|9047|NodeBunClusterApi"
-  ["pythonsanic"]="Python Sanic|8098|9098|PythonSanic"
-  ["pythonquart"]="Python Quart|8099|9099|PythonQuart"
-  ["rustrocket"]="Rust Rocket|8100|9100|RustRocket"
-  ["rustwarp"]="Rust Warp|8101|9101|RustWarp"
 )
 
-ORDER=(dotnetapi gochi goechoapi gofiber expressapi expressclusterapi bunapi bunclusterapi pythonsanic pythonquart rustrocket rustwarp)
+ORDER=(dotnetapi gochi goechoapi gofiber expressapi expressclusterapi bunapi bunclusterapi)
 
 # ── Ensure bench binary ──────────────────────────────────────────────────
 if [ ! -x "$BENCH_BIN" ]; then
@@ -55,20 +44,23 @@ printf "\n%-26s | %8s | %8s | %6s | %8s | %8s | %6s | %10s\n" \
 printf "%-26s-|-%-8s-|-%-8s-|-%-6s-|-%-8s-|-%-8s-|-%-6s-|-%-10s\n" \
   "--------------------------" "--------" "--------" "------" "--------" "--------" "------" "----------"
 
-# ── helpers ──────────────────────────────────────────────────────────────
 extract_rps() { echo "$1" | sed -n 's/.*RPS:\s*\([0-9.]*\).*/\1/p' | head -1; }
 
 capture_stats() {
   local svc=$1
-  local json=$(docker compose -f "$COMPOSE_FILE" stats --no-stream --format json "$svc" 2>/dev/null)
-  local mem_raw=$(echo "$json" | sed 's/.*"MemUsage":"\([^"]*\)".*/\1/')
-  local cpu_raw=$(echo "$json" | sed 's/.*"CPUPerc":"\([^"]*\)".*/\1/')
-  local pids_raw=$(echo "$json" | sed 's/.*"PIDs":"\([^"]*\)".*/\1/')
-  local mem_used=$(echo "$mem_raw" | sed 's/ \/ .*//')
-  echo "${mem_used}|${cpu_raw}|${pids_raw}"
+  local json
+  json=$(docker compose -f "$COMPOSE_FILE" stats --no-stream --format json "$svc" 2>/dev/null || true)
+  if [ -z "$json" ]; then
+    echo "N/A|N/A"
+    return
+  fi
+  local mem_raw cpu_raw mem_used
+  mem_raw=$(echo "$json" | sed 's/.*"MemUsage":"\([^"]*\)".*/\1/')
+  cpu_raw=$(echo "$json" | sed 's/.*"CPUPerc":"\([^"]*\)".*/\1/')
+  mem_used=$(echo "${mem_raw:-N/A}" | sed 's/ \/ .*//')
+  echo "${mem_used:-N/A}|${cpu_raw:-N/A}"
 }
 
-# ── Run benchmarks ───────────────────────────────────────────────────────
 SUMMARY_ROWS=""
 SUMMARY_DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
@@ -78,12 +70,19 @@ for svc in "${ORDER[@]}"; do
   echo "=== Starting $name ===" >&2
   docker compose -f "$COMPOSE_FILE" up -d "$svc" 2>&1 | tail -1
 
-  # Wait for HTTP
+  ok=0
   for i in $(seq 1 60); do
-    if curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${http_port}/" 2>/dev/null | grep -q 200; then break; fi
+    if curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${http_port}/orders" 2>/dev/null | grep -q 200; then
+      ok=1; break
+    fi
     sleep 1
   done
-  # Wait for gRPC port
+  if [ "$ok" = "0" ]; then
+    echo "  SKIP $name (orders endpoint not responding)" >&2
+    docker compose -f "$COMPOSE_FILE" rm -sf "$svc" 2>/dev/null || true
+    continue
+  fi
+
   for i in $(seq 1 30); do
     if timeout 1 bash -c "echo >/dev/tcp/127.0.0.1/${grpc_port}" 2>/dev/null; then break; fi
     sleep 1
@@ -91,36 +90,36 @@ for svc in "${ORDER[@]}"; do
   sleep 2
 
   # ── REST bench ──────────────────────────────────────────────────────────
-  rest_out=$("$BENCH_BIN" --mode rest --url "http://127.0.0.1:${http_port}/" \
-    --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null)
-  rest_rps=$(extract_rps "$rest_out"); rest_rps="${rest_rps:-0}"
+  rest_out=$("$BENCH_BIN" --mode rest --url "http://127.0.0.1:${http_port}/orders" \
+    --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null || echo "RPS: 0")
+  rest_rps=$(extract_rps "$rest_out")
+  rest_rps="${rest_rps:-0}"
   echo "  $rest_out" >&2
 
-  # Snapshot resources after REST
   rest_stats=$(capture_stats "$svc")
-  rest_mem=$(echo "$rest_stats" | cut -d'|' -f1); rest_mem="${rest_mem:-N/A}"
-  rest_cpu=$(echo "$rest_stats" | cut -d'|' -f2); rest_cpu="${rest_cpu:-N/A}"
-  rest_pids=$(echo "$rest_stats" | cut -d'|' -f3); rest_pids="${rest_pids:-N/A}"
+  rest_mem=$(echo "$rest_stats" | cut -d'|' -f1)
+  rest_cpu=$(echo "$rest_stats" | cut -d'|' -f2)
 
   # ── gRPC bench ──────────────────────────────────────────────────────────
   grpc_out=$("$BENCH_BIN" --mode grpc --url "http://127.0.0.1:${grpc_port}" \
-    --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null)
-  grpc_rps=$(extract_rps "$grpc_out"); grpc_rps="${grpc_rps:-0}"
+    --endpoint orders --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null || echo "RPS: 0")
+  grpc_rps=$(extract_rps "$grpc_out")
+  grpc_rps="${grpc_rps:-0}"
   echo "  $grpc_out" >&2
 
-  # Snapshot resources after gRPC
   grpc_stats=$(capture_stats "$svc")
-  grpc_mem=$(echo "$grpc_stats" | cut -d'|' -f1); grpc_mem="${grpc_mem:-N/A}"
-  grpc_cpu=$(echo "$grpc_stats" | cut -d'|' -f2); grpc_cpu="${grpc_cpu:-N/A}"
-  grpc_pids=$(echo "$grpc_stats" | cut -d'|' -f3); grpc_pids="${grpc_pids:-N/A}"
+  grpc_mem=$(echo "$grpc_stats" | cut -d'|' -f1)
+  grpc_cpu=$(echo "$grpc_stats" | cut -d'|' -f2)
 
   # ── Compute ratio ──────────────────────────────────────────────────────
   ratio_str="N/A"
   if command -v bc &>/dev/null; then
     rest_is_pos=$(echo "$rest_rps > 0" | bc -l 2>/dev/null || echo "0")
     if [ "$rest_is_pos" = "1" ]; then
-      ratio=$(echo "scale=1; ($grpc_rps - $rest_rps) * 100 / $rest_rps" | bc -l 2>/dev/null)
-      ratio_str="${ratio}%"
+      ratio=$(echo "scale=1; ($grpc_rps - $rest_rps) * 100 / $rest_rps" | bc -l 2>/dev/null || echo "N/A")
+      if [ "$ratio" != "N/A" ]; then
+        ratio_str="${ratio}%"
+      fi
     fi
   fi
 
@@ -130,28 +129,37 @@ for svc in "${ORDER[@]}"; do
   # ── Save per-framework result ───────────────────────────────────────────
   RESULT_DIR="$RESULTS_DIR/$dir_name"
   mkdir -p "$RESULT_DIR"
-  cat > "$RESULT_DIR/Unified.md" <<MDEOF
-# $name — Unified REST + gRPC Benchmark
+
+  rest_p50=$(echo "$rest_out" | sed -n 's/.*p50: \([0-9.]*\)ms.*/\1/p' | head -1)
+  rest_p99=$(echo "$rest_out" | sed -n 's/.*p99: \([0-9.]*\)ms.*/\1/p' | head -1)
+  rest_p999=$(echo "$rest_out" | sed -n 's/.*p999: \([0-9.]*\)ms.*/\1/p' | head -1)
+  grpc_p50=$(echo "$grpc_out" | sed -n 's/.*p50: \([0-9.]*\)ms.*/\1/p' | head -1)
+  grpc_p99=$(echo "$grpc_out" | sed -n 's/.*p99: \([0-9.]*\)ms.*/\1/p' | head -1)
+  grpc_p999=$(echo "$grpc_out" | sed -n 's/.*p999: \([0-9.]*\)ms.*/\1/p' | head -1)
+
+  cat > "$RESULT_DIR/UnifiedOrders.md" <<MDEOF
+# $name — Unified REST + gRPC Benchmark (Orders)
 
 **Tested**: $SUMMARY_DATE
-**Tool**: \`bench\` (Rust, unified REST + gRPC)
+**Tool**: \`bench\` (Rust, \`reqwest\` + \`tonic\`)
+**Endpoint**: /orders (Orders with DB query)
 **Concurrency**: $CONCURRENCY | **Total requests**: $TOTAL (10% warmup discarded)
 
 ## Results
 
 | Mode  | RPS | p50 | p99 | p999 |
 | ----- | --- | --- | --- | ---- |
-| REST  | $(echo "$rest_out" | sed -n 's/.*RPS: \([0-9.]*\).*p50: \([0-9.]*\)ms.*p99: \([0-9.]*\)ms.*p999: \([0-9.]*\)ms.*/\1 | \2ms | \3ms | \4ms/p') |
-| gRPC  | $(echo "$grpc_out" | sed -n 's/.*RPS: \([0-9.]*\).*p50: \([0-9.]*\)ms.*p99: \([0-9.]*\)ms.*p999: \([0-9.]*\)ms.*/\1 | \2ms | \3ms | \4ms/p') |
+| REST  | $rest_rps | ${rest_p50:-N/A}ms | ${rest_p99:-N/A}ms | ${rest_p999:-N/A}ms |
+| gRPC  | $grpc_rps | ${grpc_p50:-N/A}ms | ${grpc_p99:-N/A}ms | ${grpc_p999:-N/A}ms |
 
 **gRPC vs REST**: $ratio_str
 
 ## Resource Usage
 
-| Phase | Memory | CPU   | PIDs |
-| ----- | ------ | ----- | ---- |
-| REST  | $rest_mem | $rest_cpu | $rest_pids |
-| gRPC  | $grpc_mem | $grpc_cpu | $grpc_pids |
+| Phase | Memory | CPU   |
+| ----- | ------ | ----- |
+| REST  | $rest_mem | $rest_cpu |
+| gRPC  | $grpc_mem | $grpc_cpu |
 
 ## Raw Output
 
@@ -168,17 +176,16 @@ MDEOF
 
   SUMMARY_ROWS+="| $name | $rest_rps | $rest_mem | $rest_cpu | $grpc_rps | $grpc_mem | $grpc_cpu | $ratio_str |"$'\n'
 
-  # ── Cleanup ─────────────────────────────────────────────────────────────
-  docker compose -f "$COMPOSE_FILE" down "$svc" 2>&1 | tail -1
-  sleep 2
+  docker compose -f "$COMPOSE_FILE" rm -sf "$svc" 2>/dev/null || true
+  sleep 3
 done
 
-# ── Write summary ────────────────────────────────────────────────────────
-cat > "$RESULTS_DIR/Summary.Unified.md" <<MDEOF
-# Unified REST + gRPC Performance Results — Summary
+cat > "$RESULTS_DIR/Summary.UnifiedOrders.md" <<MDEOF
+# Unified REST + gRPC Performance Results (Orders) — Summary
 
 **Generated**: $SUMMARY_DATE
-**Tool**: \`bench\` (Rust, unified \`reqwest\` + \`tonic\`)
+**Tool**: \`bench\` (Rust, \`reqwest\` HTTP/1.1 + \`tonic\` gRPC)
+**Endpoint**: /orders (Orders with DB query)
 **Concurrency**: $CONCURRENCY | **Total requests**: $TOTAL (10% warmup)
 
 ## Results
@@ -189,7 +196,7 @@ $SUMMARY_ROWS
 MDEOF
 
 echo ""
-echo "Results saved to:"
-echo "  Per-framework: results/<Framework>/Unified.md"
-echo "  Summary:       results/Summary.Unified.md"
+echo "Orders benchmark complete. Results:"
+echo "  Per-framework: results/<Framework>/UnifiedOrders.md"
+echo "  Summary:       $RESULTS_DIR/Summary.UnifiedOrders.md"
 echo "Done."

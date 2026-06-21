@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run_all.sh — Unified REST + gRPC benchmark for all frameworks (HelloWorld).
+# run_all_orders.sh — Unified REST + gRPC benchmark (Orders endpoint).
 #
 # Captures REST and gRPC resource usage separately for comparison.
 #
@@ -78,9 +78,9 @@ for svc in "${ORDER[@]}"; do
   echo "=== Starting $name ===" >&2
   docker compose -f "$COMPOSE_FILE" up -d "$svc" 2>&1 | tail -1
 
-  # Wait for HTTP
+  # Wait for HTTP /orders
   for i in $(seq 1 60); do
-    if curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${http_port}/" 2>/dev/null | grep -q 200; then break; fi
+    if curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${http_port}/orders" 2>/dev/null | grep -q 200; then break; fi
     sleep 1
   done
   # Wait for gRPC port
@@ -91,7 +91,7 @@ for svc in "${ORDER[@]}"; do
   sleep 2
 
   # ── REST bench ──────────────────────────────────────────────────────────
-  rest_out=$("$BENCH_BIN" --mode rest --url "http://127.0.0.1:${http_port}/" \
+  rest_out=$("$BENCH_BIN" --mode rest --url "http://127.0.0.1:${http_port}/orders" \
     --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null)
   rest_rps=$(extract_rps "$rest_out"); rest_rps="${rest_rps:-0}"
   echo "  $rest_out" >&2
@@ -104,7 +104,7 @@ for svc in "${ORDER[@]}"; do
 
   # ── gRPC bench ──────────────────────────────────────────────────────────
   grpc_out=$("$BENCH_BIN" --mode grpc --url "http://127.0.0.1:${grpc_port}" \
-    --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null)
+    --endpoint orders --name "$name" --concurrency "$CONCURRENCY" --requests "$TOTAL" 2>/dev/null)
   grpc_rps=$(extract_rps "$grpc_out"); grpc_rps="${grpc_rps:-0}"
   echo "  $grpc_out" >&2
 
@@ -130,11 +130,12 @@ for svc in "${ORDER[@]}"; do
   # ── Save per-framework result ───────────────────────────────────────────
   RESULT_DIR="$RESULTS_DIR/$dir_name"
   mkdir -p "$RESULT_DIR"
-  cat > "$RESULT_DIR/Unified.md" <<MDEOF
-# $name — Unified REST + gRPC Benchmark
+  cat > "$RESULT_DIR/UnifiedOrders.md" <<MDEOF
+# $name — Unified REST + gRPC Benchmark (Orders)
 
 **Tested**: $SUMMARY_DATE
 **Tool**: \`bench\` (Rust, unified REST + gRPC)
+**Endpoint**: /orders (Orders)
 **Concurrency**: $CONCURRENCY | **Total requests**: $TOTAL (10% warmup discarded)
 
 ## Results
@@ -174,11 +175,12 @@ MDEOF
 done
 
 # ── Write summary ────────────────────────────────────────────────────────
-cat > "$RESULTS_DIR/Summary.Unified.md" <<MDEOF
-# Unified REST + gRPC Performance Results — Summary
+cat > "$RESULTS_DIR/Summary.UnifiedOrders.md" <<MDEOF
+# Unified REST + gRPC Performance Results (Orders) — Summary
 
 **Generated**: $SUMMARY_DATE
 **Tool**: \`bench\` (Rust, unified \`reqwest\` + \`tonic\`)
+**Endpoint**: /orders (Orders with DB query)
 **Concurrency**: $CONCURRENCY | **Total requests**: $TOTAL (10% warmup)
 
 ## Results
@@ -189,7 +191,7 @@ $SUMMARY_ROWS
 MDEOF
 
 echo ""
-echo "Results saved to:"
-echo "  Per-framework: results/<Framework>/Unified.md"
-echo "  Summary:       results/Summary.Unified.md"
+echo "Orders benchmark complete. Results saved to:"
+echo "  Per-framework: results/<Framework>/UnifiedOrders.md"
+echo "  Summary:       results/Summary.UnifiedOrders.md"
 echo "Done."
